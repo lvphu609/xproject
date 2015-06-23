@@ -60,5 +60,4 @@ class common extends Rest_Controller
     	);
     	$this->response($results, HEADER_SUCCESS);
     }
-
 }
