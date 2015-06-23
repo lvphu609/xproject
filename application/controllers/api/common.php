@@ -9,7 +9,6 @@ class common extends Rest_Controller
     {
         parent::__construct();
         $this->load->model('api/common');
-
     }
 
     function
