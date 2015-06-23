@@ -12,5 +12,5 @@ class common extends Rest_Controller
 
     }
 
-    function 
+    function
 }
