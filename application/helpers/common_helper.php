@@ -22,5 +22,25 @@ if ( ! function_exists('getDateType'))
 	}
 }
 
+if ( ! function_exists('getGenderData'))
+{
+	function getGenderData()
+	{
+		return array(
+			1 => 'Nam',
+			2 => 'Nu'
+		);
+	}
+}
+
+if ( ! function_exists('getGender'))
+{
+	function getGender($id)
+	{
+		$genderData = getGenderData();
+    	return $genderData[$id];
+	}
+}
+
 
 ?>

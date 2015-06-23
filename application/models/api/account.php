@@ -8,5 +8,18 @@ class account extends CI_Model {
 
     }
     
+    function createAccount($data){
+    	$temp = array(
+    		'created_at' => getCurrentDate()
+    	);
 
+    	$recordData = array_merge($data,$temp);
+
+    	$isInsert = $this->db->insert('accounts',$recordData);
+		
+		if($isInsert){
+			return true;
+		}
+		return false;
+    }
 }
