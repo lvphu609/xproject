@@ -8,7 +8,6 @@ class Accounts extends Rest_Controller
     function __construct()
     {
         parent::__construct();
-        // var_dump(phpinfo()); die();
         $this->load->model(array('api/account','file_model','api/common_model'));
         $this->load->helper(array('form', 'url'));
 
@@ -275,7 +274,7 @@ class Accounts extends Rest_Controller
                 $email = $this->input->post('email');
 
                 //check reset_password_key exist
-                if(!$this->account->checkExistRessetPasswordKey($email)){
+                //if(!$this->account->checkExistRessetPasswordKey($email)){
                     $content = $this->account->generalHtmlForGotPassword($email);
 
                     $dataSend = array(
@@ -289,13 +288,12 @@ class Accounts extends Rest_Controller
                     if(!$sendMail){
                         $status = 'failure';
                         $message = $this->lang->line('send_mail_forgot_password_fail');
-                    }else{
-                        
                     }
-                }else{
+                    
+                /*}else{
                     $status = 'failure';
                     $message = $this->lang->line('send_mail_forgot_password_exist_key');
-                }
+                }*/
 
             }else{
                 $status = 'failure';
