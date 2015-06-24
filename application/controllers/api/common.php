@@ -3,7 +3,7 @@
 
 require APPPATH.'/libraries/Base_Controller.php';
 
-class common extends Rest_Controller
+class Common extends Rest_Controller
 {
     function __construct()
     {
@@ -60,5 +60,4 @@ class common extends Rest_Controller
     	);
     	$this->response($results, HEADER_SUCCESS);
     }
-
 }
