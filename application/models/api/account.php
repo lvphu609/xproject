@@ -55,4 +55,37 @@ class Account extends CI_Model {
         }
         return false;
     }
+
+    function reset_password_key($is_access_token)
+    {
+        $key_code = uniqid();
+        $query = $this->db->get_where('accounts',array('is_access_token' => $is_access_token));
+        $this->db->where('is_access_token', $is_access_token);
+        $this->db->update('accounts', array('reset_password_key' => $key_code));
+
+        if($query->num_rows()==1)
+            return $key_code;
+        else
+            return 'failure';
+    }
+
+    function reset_password($reset_password_key,$password)
+    {
+        if($reset_password_key != NULL || $reset_password_key != '') {
+            $query1 = $this->db->get_where('accounts', array('reset_password_key' => $reset_password_key));
+            $this->db->where('reset_password_key', $reset_password_key);
+            $query2 = $this->db->update('accounts', array('password' => md5($password), 'reset_password_key' => NULL));
+
+            if ($query1->num_rows() == 1 && $query2) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+        else{
+            return FALSE;
+        }
+    }
+
+
 }
