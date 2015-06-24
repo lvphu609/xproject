@@ -24,6 +24,16 @@ class Common_model extends CI_Model {
 	    return $result;
     }
     
-    
+    function checkTokenAccess(){
+        $headers = $this->input->request_headers();
+        if(!empty($headers['Token'])){
+            $query = $this->db->get_where('accounts',array('access_token' => $headers['Token']));
+            if($query->num_rows() == 1){
+                return true;
+            }
+        }else{
+            return  false;    
+        }
+    }
 
 }

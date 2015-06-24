@@ -3,60 +3,49 @@
 
 require APPPATH.'/libraries/Base_Controller.php';
 
-class accounts extends Rest_Controller
+class Accounts extends Rest_Controller
 {
     function __construct()
     {
         parent::__construct();
-        $this->load->model('api/account');
-        $this->load->model('file_model');
+        // var_dump(phpinfo()); die();
+        $this->load->model(array('api/account','file_model','api/common_model'));
         $this->load->helper(array('form', 'url'));
+
+        /*validation--------------*/
         $this->load->library('form_validation');
         $this->lang->load('api_account','vn');
+        //custom html of message validation
+        $this->form_validation->set_error_delimiters('', '');
+
+        // custom lang of the form validation
+        $set_message = array(
+            'required'=>$this->lang->line('is_required'),
+            'valid_email'=>$this->lang->line('is_valid_email'),
+            'matches'=>$this->lang->line('matches_field'),
+            'min_length'=>$this->lang->line('min_length'),
+            'is_unique'=>$this->lang->line('is_unique')
+        );
+        $this->form_validation->set_message($set_message);
     }
 
-
-    /* 
-        username
-        password
-        confirm_password
-        email
-        full_name
-        date_of_birth
-        gender
-        identity_card_id
-        phone_number
-        blood_group_id
-        blood_group_rh_id
-        avatar
-        address
-        contact_name
-        contact_phone
+    /*
+    * Create account
+    *  
     */
-
     function create_post(){
+        //initialize
         $status = 'success';
         $message = '';
         $results = null;
         $validation = null;
-
-        /*custom html of message validation*/
-        $this->form_validation->set_error_delimiters('', '');
-
-        /*custom lang of the form validation*/
-        $set_message = array(
-            'required'=>$this->lang->line('is_required'),
-            'valid_email'=>$this->lang->line('is_valid_email'),
-            'matches'=>$this->lang->line('matches_field')
-        );
-        $this->form_validation->set_message($set_message);
         
         /*Set the form validation rules*/
         $rules = array(
-            array('field'=>'username', 'label'=>'lang:username', 'rules'=>'required'),
+            array('field'=>'username', 'label'=>'lang:username', 'rules'=>'required|min_length[5]|is_unique[accounts.username]'),
             array('field'=>'password', 'label'=>'lang:password', 'rules'=>'required'),
             array('field'=>'confirm_password', 'label'=>'lang:confirm_password', 'rules'=>'required|matches[password]'),
-            array('field'=>'email', 'label'=>'lang:email', 'rules'=>'required|valid_email'),
+            array('field'=>'email', 'label'=>'lang:email', 'rules'=>'required|valid_email|is_unique[accounts.email]'),
             array('field'=>'full_name', 'label'=>'lang:full_name', 'rules'=>'required'),
             array('field'=>'date_of_birth', 'label'=>'lang:date_of_birth', 'rules'=>'required|callback_date_valid'),
             array('field'=>'gender', 'label'=>'lang:gender', 'rules'=>'required'),
@@ -74,10 +63,10 @@ class accounts extends Rest_Controller
 
         $this->form_validation->set_rules($rules);
        
-         /*Check if the form passed its validation */
+        /*Check if the form passed its validation */
         if ($this->form_validation->run() == FALSE) {
             $status = 'failure';
-            $message = "error";
+            $message = '';
             $validation = array(
                 'username' => $this->form_validation->error('username'),
                 'password' => $this->form_validation->error('password'),
@@ -101,7 +90,7 @@ class accounts extends Rest_Controller
 
             $accountRecord = array(
                 'username' => $dataInput['username'],
-                'password' => md5($dataInput['password']),
+                'password' => trim($dataInput['password']),
                 'email' => $dataInput['email'],
                 'full_name' => $dataInput['full_name'],
                 'date_of_birth' => $dataInput['date_of_birth'],
@@ -155,55 +144,102 @@ class accounts extends Rest_Controller
 
     function login_post()
     {
+        //initialize
         $status = 'success';
         $message = '';
         $results = null;
+        $validation = null;
 
         /*Set the form validation rules*/
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-        $this->form_validation->set_rules('password', 'Password', 'required');
+        $rules = array(
+            array('field'=>'username', 'label'=>'lang:username', 'rules'=>'trim|required|min_length[5]'),
+            array('field'=>'password', 'label'=>'lang:password', 'rules'=>'trim|required'),
+        );
 
+        $this->form_validation->set_rules($rules);
+       
         /*Check if the form passed its validation */
         if ($this->form_validation->run() == FALSE) {
             $status = 'failure';
-            $message = validation_errors();
+            $message = "error";
+            $validation = array(
+                'username' => $this->form_validation->error('username'),
+                'password' => $this->form_validation->error('password')
+            );
         }
-        else
-        {
-            $value = $this->input->post();
-            $is_access_token=$this->account->check_account($value['email'],md5($value['password']));
-            if($is_access_token['is_access_token'] != '')
-            {
-                $results = $is_access_token;
-            }
-            else
-            {
+        //validate success
+        else{
+            
+            $checkLogin = $this->account->checkAccount($this->input->post());
+            
+            if($checkLogin == false){
                 $status = 'failure';
-                $message = 'email or password isn\'t correct';
+                $message = $this->lang->line('login_failure');
+            }else{
+                $results = $checkLogin['access_token'];
             }
         }
+
         $data = array(
             'status' => $status,
             'message' => $message,
             'results' => $results,
+            'validation' => $validation
         );
+
         $this->response($data, HEADER_SUCCESS);
+        
     }
 
     function logout_post()
     {
-        $status = 'failure';
+        //initialize
+        $status = 'success';
         $message = '';
-        if(isset($_GET['is_access_token'])) {
-            $value = $this->input->get('is_access_token');
-            $status = $this->account->logout_account($value);
-            if ($status == 'success')
-                $message = 'You have been logout';
+        $results = null;
+        $validation = null;
+        
+        $headers = $this->input->request_headers();
+
+        if(!empty($headers['Token'])){
+            $isLogout = $this->account->logout_account($headers['Token']);
+            if($isLogout){
+                $message = $this->lang->line('user_logout_success');
+            }else{
+                $status = 'failure';
+                $message = $this->lang->line('user_logout_failure'); 
+            }
         }
+
         $data = array(
             'status' => $status,
-            'message' => $message
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+
+        $this->response($data, HEADER_SUCCESS);
+    }
+
+    function get_list_account_get(){
+
+        $status = 'success';
+        $message = '';
+        $results = null;
+        $validation = array(
+            'check_token' => $this->common_model->checkTokenAccess()
+        );
+
+
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+
 }
