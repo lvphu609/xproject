@@ -98,8 +98,13 @@ class Account extends CI_Model {
     }
 
     function generalHtmlForGotPassword($email){
-        $key = $this->get_reset_password_key($email);
-        return $key;
+        $data['code'] = $this->get_reset_password_key($email);
+
+        $account = $this->getAccountByEmail($email);
+        $data['full_name'] = $account['full_name'];
+        $data['link_reset_password'] = 'link';
+        $htmlContent = $this->load->view('email/forgot_password_tpl',$data,TRUE);
+        return $htmlContent;
     }
 
     function checkExistRessetPasswordKey($email){
@@ -131,6 +136,14 @@ class Account extends CI_Model {
             }
         }
         return $this->lang->line('token_not_exist');
+    }
+
+    function getAccountByEmail($email){
+        $this->db->from('accounts');
+        $this->db->where('email',$email);
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return $result[0];
     }
 
 }
