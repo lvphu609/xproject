@@ -27,6 +27,7 @@ class Accounts extends Rest_Controller
             'is_unique'=>$this->lang->line('is_unique')
         );
         $this->form_validation->set_message($set_message);
+
     }
 
     /*
@@ -241,58 +242,89 @@ class Accounts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
-    function forgotPassword_post()
-    {
-        $this->load->library('email');
-        $this->config->load('email');
-
-        $status = 'failure';
-        $message ='';
-
-        if(isset($_GET['is_access_token'])) {
-            $access_token = $this->input->get('is_access_token');
-            $key_code = $this->account->reset_password_key($access_token);
-            $value = $this->input->post();
-            $mail_from = $this->config->item('mail_from');
-            $mail_to = 'leB1204173@student.ctu.edu.vn';//$value['mail_to'];
-            $mail_subject = 'test';//$value['mail_subject'];
-            $mail_message = "hello my friend.\nKey Code: " . $key_code . ".\n Click here to reset your password: http://google.com.vn";//$value['mail_message'];
-
-            $this->email->from($mail_from); // change it to yours
-            $this->email->to($mail_to);// change it to yours
-            $this->email->subject($mail_subject);
-            $this->email->message($mail_message);
-
-            if ($this->email->send()) {
-                $status = 'success';
-            } else {
-                $message = 'error';
-                //$message = $this->email->print_debugger();
-            }
-        }
-        $data = array(
-            'status' => $status,
-            'message' => $message,
-            'results' => null,
-            'validation' => null,
-        );
-
-
-        $this->response($data, HEADER_SUCCESS);
-    }
-
-    function resetPassword_post()
+    function forgot_password_post()
     {
         $status = 'success';
         $message = '';
         $results = null;
+        $validation = null;
 
         /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'email', 'label'=>'lang:email', 'rules'=>'required|valid_email'),
+        );
+        $this->form_validation->set_rules($rules);
+       
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $status = 'failure';
+            $message = "error";
+            $validation = array(
+                'email' => $this->form_validation->error('email')
+            );
+        }
+        //validate success
+        else{
+            //check exist email
+            $rules = array(
+                array('field'=>'email', 'label'=>'lang:email', 'rules'=>'is_unique[accounts.email]'),
+            );
+            $this->form_validation->set_rules($rules);
+            if ($this->form_validation->run() == FALSE) {
+                //email exist --> send key to mail
+                $email = $this->input->post('email');
+
+                //check reset_password_key exist
+                if(!$this->account->checkExistRessetPasswordKey($email)){
+                    $content = $this->account->generalHtmlForGotPassword($email);
+
+                    $dataSend = array(
+                        'mail_to' => $email,
+                        'subject' => $this->lang->line('forgot_password_subject'),
+                        'content' => $content
+                    );
+
+                    $sendMail = $this->common_model->sendMail($dataSend);
+                    
+                    if(!$sendMail){
+                        $status = 'failure';
+                        $message = $this->lang->line('send_mail_forgot_password_fail');
+                    }else{
+                        
+                    }
+                }else{
+                    $status = 'failure';
+                    $message = $this->lang->line('send_mail_forgot_password_exist_key');
+                }
+
+            }else{
+                $status = 'failure';
+                $message = $this->lang->line('email_not_exist');
+            }            
+        }
+
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
+
+    function reset_password_post()
+    {
+        /*$status = 'success';
+        $message = '';
+        $results = null;
+
+        // Set the form validation rules
         $this->form_validation->set_rules('password', 'Password', 'trim|required');
         $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'trim|required|matches[password]');
         $this->form_validation->set_rules('key_code', 'Key Code', 'trim|required');
 
-        /*Check if the form passed its validation */
+        // Check if the form passed its validation 
         if ($this->form_validation->run() == FALSE) {
             $status = 'failure';
             $message = validation_errors();
@@ -309,7 +341,51 @@ class Accounts extends Rest_Controller
             'message' => $message,
             'results' => $results,
         );
+        $this->response($data, HEADER_SUCCESS);*/
+
+        $status = 'success';
+        $message = '';
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'code', 'label'=>'lang:key_code', 'rules'=>'required'),
+            array('field'=>'password', 'label'=>'lang:password', 'rules'=>'required'),
+            array('field'=>'confirm_password', 'label'=>'lang:confirm_password', 'rules'=>'required|matches[password]')
+        );
+        $this->form_validation->set_rules($rules);
+       
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $status = 'failure';
+            $message = "error";
+            $validation = array(
+                'code' => $this->form_validation->error('code'),
+                'password' => $this->form_validation->error('password'),
+                'confirm_password' => $this->form_validation->error('confirm_password')
+            );
+        }
+        //validate success
+        else{
+            //check exist forgot_password_code and email
+            $updateToken = $this->account->updateTokenResetPass($this->input->post());
+
+            if(!empty($updateToken)){
+                $status = 'failure';
+                $message = $updateToken;
+            } 
+        }
+
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
         $this->response($data, HEADER_SUCCESS);
+
     }
 
 }
