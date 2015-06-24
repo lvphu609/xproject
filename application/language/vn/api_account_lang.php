@@ -23,4 +23,9 @@ $lang['is_unique'] = '%s đã tồn tại.';
 $lang['login_failure'] = 'bạn nhập sai tên hoặc mật khẩu';
 $lang['user_logout_success'] = 'đã đăng xuất';
 $lang['user_logout_failure'] = 'lỗi đăng xuất';
-
+$lang['email_not_exist'] = 'địa chỉ email chưa được đăng ký';
+$lang['forgot_password_subject'] = 'Quên Mật Khẩu';
+$lang['send_mail_forgot_password_fail'] = 'lỗi gửi mail';
+$lang['send_mail_forgot_password_exist_key'] = 'đã gửi mã xác nhận đến mail của bạn.';
+$lang['key_code'] = 'mã xác nhận';
+$lang['token_not_exist'] = 'mã xác nhận không đúng';

@@ -43,30 +43,40 @@ class Account extends CI_Model {
         ));
 
         if($query->num_rows()==1){
+            $result = $query->result_array();
+
             $access_token = md5(uniqid().time().md5(trim($input['username'])));
-            $this->db->where(array(
-                'username' => trim($input['username']),
-                'password' => trim($input['password'])
+            $isCreateToken = $this->db->insert('tokens',array(
+                'access_token' => $access_token,
+                'email' => $result[0]['email'],
+                'account_id' => $result[0]['id'],
+                'access_token' => $access_token,
+                'access_token_start_at' => getCurrentDate()
             ));
-            $isUpdate = $this->db->update('accounts',array('access_token' => $access_token));
-            if($isUpdate){
+            if($isCreateToken){
                 return array('access_token' => $access_token);
             }
         }
         return false;
     }
 
-    function reset_password_key($is_access_token)
+    function get_reset_password_key($email)
     {
         $key_code = uniqid();
-        $query = $this->db->get_where('accounts',array('is_access_token' => $is_access_token));
-        $this->db->where('is_access_token', $is_access_token);
-        $this->db->update('accounts', array('reset_password_key' => $key_code));
-
-        if($query->num_rows()==1)
-            return $key_code;
-        else
-            return 'failure';
+        $query = $this->db->get_where('accounts',array('email' => $email));
+        if($query->num_rows()==1){
+            $result = $query->result_array();
+            $isCreateCode = $this->db->insert('tokens',array(
+                'forgot_password_code' => $key_code,
+                'email' => $email,
+                'account_id' => $result[0]['id'],
+                'access_token_start_at' => getCurrentDate()
+            ));
+            if($isCreateCode){
+                return $key_code;
+            }
+        }
+        return null;
     }
 
     function reset_password($reset_password_key,$password)
@@ -87,5 +97,40 @@ class Account extends CI_Model {
         }
     }
 
+    function generalHtmlForGotPassword($email){
+        $key = $this->get_reset_password_key($email);
+        return $key;
+    }
+
+    function checkExistRessetPasswordKey($email){
+        $this->db->from('tokens');
+        $this->db->where('email',$email);
+        $this->db->where('forgot_password_code IS NOT NULL');
+        $query = $this->db->get();
+        if($query->num_rows() >= 1){
+            return true;
+        }
+        return false;
+    }
+
+    function updateTokenResetPass($data){
+        //check exist token
+        $this->db->from('tokens');
+        $this->db->where('email',$data['email']);
+        $this->db->where('forgot_password_code',$data['code']);
+        $query = $this->db->get();
+        if($query->num_rows() == 1){
+            //update password for account
+            $result = $query->result_array();
+
+            $this->db->where('id', $result[0]['account_id']);
+            if($this->db->update('accounts', array('password' => $data['password']))){
+                //delete token
+                $this->db->delete('tokens',array('id' => $result[0]['id']));
+                return null;    
+            }
+        }
+        return $this->lang->line('token_not_exist');
+    }
 
 }
