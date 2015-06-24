@@ -18,4 +18,9 @@ $lang['address'] = 'địa chỉ';
 $lang['contact_name'] = 'tên liên lạc khẩn cấp';
 $lang['contact_phone'] = 'số điện thoại liên lạc khẩn cấp';
 $lang['date_valid'] = 'định dạng ngày tháng phải là mm-dd-yyyy';
+$lang['min_length'] = '%s phải lớn hơn %s ký tự.';
+$lang['is_unique'] = '%s đã tồn tại.';
+$lang['login_failure'] = 'bạn nhập sai tên hoặc mật khẩu';
+$lang['user_logout_success'] = 'đã đăng xuất';
+$lang['user_logout_failure'] = 'lỗi đăng xuất';
 
