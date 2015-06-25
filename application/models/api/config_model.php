@@ -54,7 +54,7 @@ class Config_model extends CI_Model {
             if(count($result)>0){
                 $arrTemp = array();
                 foreach($result as $key => $type){
-                    $type['avatar'] = $this->file_model->getLinkFileById($type['avatar'],'thumbs');
+                    $type['avatar'] = $this->file_model->getLinkFileById($type['avatar'],'resized');
                     array_push($arrTemp,$type);
                 }
                 return $arrTemp;
