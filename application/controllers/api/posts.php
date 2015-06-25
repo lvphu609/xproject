@@ -86,4 +86,44 @@ class Posts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+    //the posts is important
+    function emergency_post(){
+        $status = 'failure';
+        $message = 'error';
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'location_lat', 'label'=>'lang:location_lat', 'rules'=>'required'),
+            array('field'=>'location_lng', 'label'=>'lang:location_lng', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = 'validation';
+            $validation = array(
+                'location_lat' => $this->form_validation->error('location_lat'),
+                'location_lng' => $this->form_validation->error('location_lng')
+            );
+        } else {
+            $input = $this->input->post();
+            $isSavePost = $this->post->saveEmergency($this->account_info, $input);
+            if ($isSavePost) {
+                $status = 'success';
+                $message = '';
+            }
+        }
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
 }
