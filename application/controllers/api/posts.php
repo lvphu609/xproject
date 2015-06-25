@@ -40,7 +40,7 @@ class Posts extends Rest_Controller
         $this->form_validation->set_rules('content', 'Content', 'required|max_length[255]');
 
         /*Check if the form passed its validation */
-        if ($this->form_validation->run() == TRUE) {
+        if (!$this->form_validation->run()) {
             $status = 'failure';
             $message = 'error';
             $validation = array(
@@ -77,13 +77,13 @@ class Posts extends Rest_Controller
                     $message = 'error';
                 }
             }
-            $data = array(
-                'status' => $status,
-                'message' => $message,
-                'results' => $results,
-                'validation' => $validation
-            );
-            $this->response($data, HEADER_SUCCESS);
         }
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
     }
 }

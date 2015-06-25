@@ -16,5 +16,10 @@ $config['images'] = array(
 		'resized' => array('width' => 128, 'height' => 128),
 		'thumbs' => array('width' => 36, 'height' => 36),
 		'small' => array('width' => 16, 'height' => 16)
+	),
+	'type_posts' => array(
+		'resized' => array('width' => 128, 'height' => 128),
+		'thumbs' => array('width' => 36, 'height' => 36),
+		'small' => array('width' => 16, 'height' => 16)
 	)
 );
