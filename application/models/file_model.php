@@ -14,7 +14,7 @@ class File_model extends CI_Model {
             mkdir('uploads/'.$model, 0777, true);
         }
 
-        $tempFolder = uniqid(getCurrentDate());
+        $tempFolder = uniqid(date("m-d-Y H_i_s"));
 
         if (!file_exists('uploads/temp/'.$tempFolder)){
             mkdir('uploads/temp/'.$tempFolder, 0777, true);
@@ -164,6 +164,10 @@ class File_model extends CI_Model {
             }
         }
         rmdir($dirPath);
+    }
+
+    function getLinkFileById($id,$option = ""){
+        return base_url('file/show/'.$id.'/'.$option);
     }
 
 }

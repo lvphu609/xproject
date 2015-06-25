@@ -46,4 +46,23 @@ class Config_model extends CI_Model {
         return $result[0];
     }
 
+    function getListTypePost(){
+        $this->db->select('id, name, description, avatar');
+        $query = $this->db->get('type_posts');
+        if($query->num_rows() > 0 ){
+            $result = $query->result_array();
+            if(count($result)>0){
+                $arrTemp = array();
+                foreach($result as $key => $type){
+                    $type['avatar'] = $this->file_model->getLinkFileById($type['avatar'],'thumbs');
+                    array_push($arrTemp,$type);
+                }
+                return $arrTemp;
+            }
+
+            return $result;
+        }
+        return array();
+    }
+
 }

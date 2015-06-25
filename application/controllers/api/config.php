@@ -118,4 +118,25 @@ class Config extends Rest_Controller
 
         $this->response($data, HEADER_SUCCESS);
     }
+
+    function get_list_type_post_get(){
+        //initialize
+        $status = 'success';
+        $message = '';
+        $results = null;
+        $validation = null;
+
+        $list_type_post = $this->config_model->getListTypePost();
+
+        $results = $list_type_post;
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+
+        $this->response($data, HEADER_SUCCESS);
+    }
 }
