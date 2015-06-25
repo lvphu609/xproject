@@ -126,16 +126,12 @@ class Config extends Rest_Controller
         $results = null;
         $validation = null;
 
-        $list_type_post = $this->config_model->getListTypePost();
-
-        $results = $list_type_post;
+        $results = $this->config_model->getListTypePost();
 
         $data = array(
             'status' => $status,
             'message' => $message,
-            'results' => array(
-                'type_posts' => $results
-            ),
+            'results' => $results,
             'validation' => $validation
         );
 
