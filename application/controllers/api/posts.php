@@ -29,8 +29,61 @@ class Posts extends Rest_Controller
 
     }
 
-    function create_post(){
-        
-    }
+    function create_post()
+    {
+        $status = 'success';
+        $message = '';
+        $results = null;
+        $validation = null;
 
+        /*Set the form validation rules*/
+        $this->form_validation->set_rules('content', 'Content', 'required|max_length[255]');
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == TRUE) {
+            $status = 'failure';
+            $message = 'error';
+            $validation = array(
+                'content' => $this->form_validation->error('content'),
+            );
+        } else {
+            $type_id = $this->input->get('type_id');
+            $notice = $this->input->get('content');
+            $location_lat = $this->input->get('location_lat');
+            $location_lng = $this->input->get('location_lng');
+            $headers = $this->input->request_headers();
+            if (!empty($headers['Token'])) {
+                $result = $this->post->getIdByToken($headers['Token']);
+                if ($result != NULL) {
+                    $create_by = $result[0]['id'];
+                    //var_dump($result[0]['id']); die();
+                    $values = array(
+                        'type_id' => (int)$type_id,
+                        'content' => $notice,
+                        'created_at' => getCurrentDate(),
+                        'updated_at' => getCurrentDate(),
+                        'location_lat' => $location_lat,
+                        'location_lng' => $location_lng,
+                        'created_by' => (int)$create_by
+                    );
+                    if ($this->post->createPost($values)) {
+                        $message = 'insert successfully!';
+                    } else {
+                        $status = 'failure';
+                        $message = 'insert error';
+                    }
+                } else {
+                    $status = 'failure';
+                    $message = 'error';
+                }
+            }
+            $data = array(
+                'status' => $status,
+                'message' => $message,
+                'results' => $results,
+                'validation' => $validation
+            );
+            $this->response($data, HEADER_SUCCESS);
+        }
+    }
 }
