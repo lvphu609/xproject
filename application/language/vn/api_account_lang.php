@@ -29,3 +29,4 @@ $lang['send_mail_forgot_password_fail'] = 'lỗi gửi mail';
 $lang['send_mail_forgot_password_exist_key'] = 'đã gửi mã xác nhận đến mail của bạn.';
 $lang['key_code'] = 'mã xác nhận';
 $lang['token_not_exist'] = 'mã xác nhận không đúng';
+$lang['content']='nội dung';
