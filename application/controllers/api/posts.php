@@ -13,7 +13,7 @@ class Posts extends Rest_Controller
 
         /*validation--------------*/
         $this->load->library('form_validation');
-        $this->lang->load('api_account','vn');
+        $this->lang->load('api_common','vn');
         //custom html of message validation
         $this->form_validation->set_error_delimiters('', '');
 
@@ -27,57 +27,57 @@ class Posts extends Rest_Controller
         );
         $this->form_validation->set_message($set_message);
 
+        //check token-----------------------------------------
+        $checkToken = $this->common_model->checkAccessToken();
+        if(!$checkToken['status']){
+            $this->response($checkToken['res'], HEADER_SUCCESS);
+        }else{
+            $this->account_info = $checkToken['account'];
+        }
     }
 
     function create_post()
     {
-        $status = 'success';
-        $message = '';
+        $status = 'failure';
+        $message = 'insert error';
         $results = null;
         $validation = null;
 
         /*Set the form validation rules*/
-        $this->form_validation->set_rules('content', 'Content', 'required|max_length[255]');
+        $rules = array(
+            array('field'=>'type_id', 'label'=>'lang:type_id', 'rules'=>'required'),
+            array('field'=>'content', 'label'=>'lang:content', 'rules'=>'required'),
+            array('field'=>'location_lat', 'label'=>'lang:location_lat', 'rules'=>'required'),
+            array('field'=>'location_lng', 'label'=>'lang:location_lng', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
 
         /*Check if the form passed its validation */
-        if (!$this->form_validation->run()) {
-            $status = 'failure';
-            $message = 'error';
+        if ($this->form_validation->run() == FALSE) {
+            $message = 'validation';
             $validation = array(
+                'type_id' => $this->form_validation->error('type_id'),
                 'content' => $this->form_validation->error('content'),
+                'location_lat' => $this->form_validation->error('location_lat'),
+                'location_lng' => $this->form_validation->error('location_lng')
             );
         } else {
-            $type_id = $this->input->get('type_id');
-            $notice = $this->input->get('content');
-            $location_lat = $this->input->get('location_lat');
-            $location_lng = $this->input->get('location_lng');
-            $headers = $this->input->request_headers();
-            if (!empty($headers['Token'])) {
-                $result = $this->post->getIdByToken($headers['Token']);
-                if ($result != NULL) {
-                    $create_by = $result[0]['id'];
-                    //var_dump($result[0]['id']); die();
-                    $values = array(
-                        'type_id' => (int)$type_id,
-                        'content' => $notice,
-                        'created_at' => getCurrentDate(),
-                        'updated_at' => getCurrentDate(),
-                        'location_lat' => $location_lat,
-                        'location_lng' => $location_lng,
-                        'created_by' => (int)$create_by
-                    );
-                    if ($this->post->createPost($values)) {
-                        $message = 'insert successfully!';
-                    } else {
-                        $status = 'failure';
-                        $message = 'insert error';
-                    }
-                } else {
-                    $status = 'failure';
-                    $message = 'error';
-                }
+            $input = $this->input->post();
+            $account = $this->account_info;
+            $record = array(
+                'type_id' => $input['type_id'],
+                'content' => $input['content'],
+                'location_lat' => $input['location_lat'],
+                'location_lng' => $input['location_lng'],
+                'created_by' => $account['id']
+            );
+            if ($this->post->createPost($record)) {
+                $status = 'success';
+                $message = 'insert post successfully!';
             }
         }
+
         $data = array(
             'status' => $status,
             'message' => $message,

@@ -11,10 +11,9 @@ class Account extends CI_Model {
     //logout
     function logout_account($access_token)
     {
-        $query = $this->db->get_where('accounts',array('access_token' => $access_token));      
+        $query = $this->db->get_where('tokens',array('access_token' => $access_token));
         if($query->num_rows()==1){
-            $this->db->where('access_token', $access_token);
-            if($this->db->update('accounts', array('access_token' => NULL)))
+            if($this->db->delete('tokens', array('access_token' => $access_token)))
                 return true;
         }
         return false;
@@ -141,6 +140,14 @@ class Account extends CI_Model {
     function getAccountByEmail($email){
         $this->db->from('accounts');
         $this->db->where('email',$email);
+        $query = $this->db->get();
+        $result = $query->result_array();
+        return $result[0];
+    }
+
+    function getAccountById($id){
+        $this->db->from('accounts');
+        $this->db->where('id',$id);
         $query = $this->db->get();
         $result = $query->result_array();
         return $result[0];

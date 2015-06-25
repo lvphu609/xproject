@@ -13,7 +13,7 @@ class Accounts extends Rest_Controller
 
         /*validation--------------*/
         $this->load->library('form_validation');
-        $this->lang->load('api_account','vn');
+        $this->lang->load('api_common','vn');
         //custom html of message validation
         $this->form_validation->set_error_delimiters('', '');
 
@@ -194,8 +194,8 @@ class Accounts extends Rest_Controller
     function logout_post()
     {
         //initialize
-        $status = 'success';
-        $message = '';
+        $status = 'failure';
+        $message = $this->lang->line('user_logout_failure');
         $results = null;
         $validation = null;
         
@@ -204,10 +204,8 @@ class Accounts extends Rest_Controller
         if(!empty($headers['Token'])){
             $isLogout = $this->account->logout_account($headers['Token']);
             if($isLogout){
+                $status = 'success';
                 $message = $this->lang->line('user_logout_success');
-            }else{
-                $status = 'failure';
-                $message = $this->lang->line('user_logout_failure'); 
             }
         }
 

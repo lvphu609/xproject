@@ -13,7 +13,7 @@ class Config extends Rest_Controller
 
         /*validation--------------*/
         $this->load->library('form_validation');
-        $this->lang->load('api_account','vn');
+        $this->lang->load('api_common','vn');
         //custom html of message validation
         $this->form_validation->set_error_delimiters('', '');
 

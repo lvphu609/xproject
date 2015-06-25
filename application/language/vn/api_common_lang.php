@@ -30,3 +30,7 @@ $lang['send_mail_forgot_password_exist_key'] = 'đã gửi mã xác nhận đế
 $lang['key_code'] = 'mã xác nhận';
 $lang['token_not_exist'] = 'mã xác nhận không đúng';
 $lang['content']='nội dung';
+$lang['access_token_is_not_exist'] = 'Chứng chỉ xác thực hết hạn hoặc bạn chưa đăng nhập';
+$lang['type_id'] = 'id chủ đề bài viết';
+$lang['location_lat'] = 'vĩ độ';
+$lang['location_lng'] = 'kinh độ';

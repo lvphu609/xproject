@@ -5,7 +5,7 @@ class Common_model extends CI_Model {
     function __construct()
     {
         parent::__construct();
-
+        $this->load->model('api/account');
     }
 
     function getListBloodGroup(){
@@ -24,7 +24,7 @@ class Common_model extends CI_Model {
 	    return $result;
     }
     
-    function checkTokenAccess(){
+    /*function checkTokenAccess(){
         $headers = $this->input->request_headers();
         if(!empty($headers['Token'])){
             $query = $this->db->get_where('accounts',array('access_token' => $headers['Token']));
@@ -32,9 +32,9 @@ class Common_model extends CI_Model {
                 return true;
             }
         }else{
-            return  false;    
+            return  false;
         }
-    }
+    }*/
 
     /*
   | -------------------------------------------------------------------------
@@ -91,6 +91,33 @@ class Common_model extends CI_Model {
         }
 
         return false;
+    }
+
+    function checkAccessToken(){
+        $results = array(
+            'status' => false,
+            'res' => array(
+                'status' => 'failure',
+                'message' => $this->lang->line('access_token_is_not_exist'),
+                'results' => null,
+                'validation' => null
+            )
+        );
+
+        $headers = $this->input->request_headers();
+        if(!empty($headers['Token'])){
+            $query = $this->db->get_where('tokens',array('access_token' => $headers['Token']));
+            if($query->num_rows() == 1){
+                $results['status'] = true;
+                $results['res']['status'] = 'success';
+                $results['res']['message'] = '';
+
+                $temp = $query->result_array();
+                $results['account'] = $this->account->getAccountById($temp[0]['account_id']);
+            }
+        }
+
+        return $results;
     }
 
 }
