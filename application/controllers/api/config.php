@@ -133,7 +133,9 @@ class Config extends Rest_Controller
         $data = array(
             'status' => $status,
             'message' => $message,
-            'results' => $results,
+            'results' => array(
+                'type_posts' => $results
+            ),
             'validation' => $validation
         );
 
