@@ -46,7 +46,7 @@ class Posts extends Rest_Controller
         /*Set the form validation rules*/
         $rules = array(
             array('field'=>'type_id', 'label'=>'lang:type_id', 'rules'=>'required'),
-            array('field'=>'content', 'label'=>'lang:content', 'rules'=>'required'),
+            /*array('field'=>'content', 'label'=>'lang:content', 'rules'=>'required'),*/
             array('field'=>'location_lat', 'label'=>'lang:location_lat', 'rules'=>'required'),
             array('field'=>'location_lng', 'label'=>'lang:location_lng', 'rules'=>'required')
         );
@@ -58,7 +58,7 @@ class Posts extends Rest_Controller
             $message = 'validation';
             $validation = array(
                 'type_id' => $this->form_validation->error('type_id'),
-                'content' => $this->form_validation->error('content'),
+                /*'content' => $this->form_validation->error('content'),*/
                 'location_lat' => $this->form_validation->error('location_lat'),
                 'location_lng' => $this->form_validation->error('location_lng')
             );
@@ -126,4 +126,47 @@ class Posts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+    function get_post_list_by_location_post(){
+        $status = 'failure';
+        $message = 'error';
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'location_lat', 'label'=>'lang:location_lat', 'rules'=>'required'),
+            array('field'=>'location_lng', 'label'=>'lang:location_lng', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = 'validation';
+            $validation = array(
+                'location_lat' => $this->form_validation->error('location_lat'),
+                'location_lng' => $this->form_validation->error('location_lng')
+            );
+        } else {
+            $input = $this->input->post();
+            $listPost = $this->post->getPostByLocation($input);
+            $message = '';
+            $status = 'success';
+            $results = $listPost;
+        }
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
+
+
+
 }
+
+

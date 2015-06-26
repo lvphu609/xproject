@@ -21,7 +21,9 @@ class Post extends CI_Model {
         else
             return FALSE;
     }
-
+    /*
+     * The post is important
+     * */
     function saveEmergency($account, $input){
         $record = array(
             'location_lat' => $input['location_lat'],
@@ -36,6 +38,40 @@ class Post extends CI_Model {
             return TRUE;
         else
             return FALSE;
+    }
+
+    /*
+     * Get post by location
+     *
+     * query search location http://www.plumislandmedia.net/mysql/haversine-mysql-nearest-loc/
+     * */
+    function getPostByLocation($location){
+        $LAT_HERE = $location['location_lat'];
+        $LONG_HERE = $location['location_lng'];
+
+        $query = $this->db->query("
+            SELECT *,
+                p.distance_unit
+                         * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                         * COS(RADIANS(z.location_lat))
+                         * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
+                         + SIN(RADIANS(p.latpoint))
+                         * SIN(RADIANS(z.location_lat)))) AS distance_in_km
+              FROM posts AS z
+              JOIN (
+                SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
+                10.0 AS radius,      111.045 AS distance_unit
+                ) AS p ON 1=1
+              WHERE z.location_lat
+              BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+              AND p.latpoint  + (p.radius / p.distance_unit)
+              AND z.location_lng
+              BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+              AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+              ORDER BY distance_in_km
+        ");
+        $result = $query->result_array();
+        return $result;
     }
 
 }
