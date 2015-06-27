@@ -23,7 +23,8 @@ class Accounts extends Rest_Controller
             'valid_email'=>$this->lang->line('is_valid_email'),
             'matches'=>$this->lang->line('matches_field'),
             'min_length'=>$this->lang->line('min_length'),
-            'is_unique'=>$this->lang->line('is_unique')
+            'is_unique'=>$this->lang->line('is_unique'),
+            'integer'=>$this->lang->line('account_type_int')
         );
         $this->form_validation->set_message($set_message);
 
@@ -44,7 +45,7 @@ class Accounts extends Rest_Controller
      *  @blood_group_id       int
      *  @blood_group_rh_id    int
      *  @avatar               string base64
-     *
+     *  @account_type         int
      *@response  object
      * */
 
@@ -68,7 +69,8 @@ class Accounts extends Rest_Controller
             array('field'=>'phone_number', 'label'=>'lang:phone_number', 'rules'=>'required'),
             array('field'=>'blood_group_id', 'label'=>'lang:blood_group_id', 'rules'=>'required'),
             array('field'=>'blood_group_rh_id', 'label'=>'lang:blood_group_rh_id', 'rules'=>'required'),
-            array('field'=>'avatar', 'label'=>'lang:avatar', 'rules'=>'required')
+            array('field'=>'avatar', 'label'=>'lang:avatar', 'rules'=>'required'),
+            array('field'=>'account_type', 'label'=>'lang:account_type', 'rules'=>'required|integer')
         );
         
        /* if (empty($_FILES['avatar']['name']))
@@ -94,7 +96,8 @@ class Accounts extends Rest_Controller
                 'phone_number' => $this->form_validation->error('phone_number'),
                 'blood_group_id' => $this->form_validation->error('blood_group_id'),
                 'blood_group_rh_id' => $this->form_validation->error('blood_group_rh_id'),
-                'avatar' => $this->form_validation->error('avatar')
+                'avatar' => $this->form_validation->error('avatar'),
+                'account_type' => $this->form_validation->error('account_type')
             );
         }
         //validate success
@@ -117,7 +120,8 @@ class Accounts extends Rest_Controller
                 'avatar' => $file_id,
                 'address' => $dataInput['address'],
                 'contact_name' => $dataInput['contact_name'],
-                'contact_phone' => $dataInput['contact_phone']
+                'contact_phone' => $dataInput['contact_phone'],
+                'account_type' => $dataInput['account_type']
             ); 
             //save record account
             $isInsert = $this->account->createAccount($accountRecord);

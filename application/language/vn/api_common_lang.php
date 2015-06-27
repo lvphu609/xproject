@@ -34,3 +34,5 @@ $lang['access_token_is_not_exist'] = 'Chứng chỉ xác thực hết hạn ho�
 $lang['type_id'] = 'id chủ đề bài viết';
 $lang['location_lat'] = 'vĩ độ';
 $lang['location_lng'] = 'kinh độ';
+$lang['account_type'] = 'loại tài khoản';
+$lang['account_type_int'] = '%s phải là số nguyên';
