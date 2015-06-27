@@ -49,48 +49,51 @@ class Common_model extends CI_Model {
                 'content' => 'Content'
             );
         */
-        
-        //send mail
-        $this->load->library('email');
-        $this->config->load('email');
-        
-        $from_mail   = $this->config->item('smtp_user');
-        $pass        = $this->config->item('smtp_pass');
-        $full_name   = $this->config->item('full_name');
-        $protocol    = $this->config->item('protocol');
-        $host        = $this->config->item('smtp_host');
-        $port        = $this->config->item('smtp_port');
-        $mail_type   = $this->config->item('mailtype');
-        $newline   = $this->config->item('newline');
-       
-       //set content
-        $to_mail     = $mailData['mail_to'];
-        $subject     = $mailData['subject'];
-        $message     = $mailData['content'];
-       
-        $config = array(
-            'protocol'  => $protocol,
-            'host' => $host,
-            'smtp_port' => $port,
-            'smtp_user' => $from_mail,
-            'smtp_pass' => $pass,
-            'mail_type'  => $mail_type
-        );
-        
-        $this->email->set_newline($newline);
-        $this->email->from($from_mail, $full_name);
-        $this->email->to($to_mail);
-        $this->email->subject($subject);
-        $this->email->message($message);
-        
-        // send mail
-        $send = $this->email->send();
-        
-        if($send){
-            return true;
-        }
+        try{
+            //send mail
+            $this->load->library('email');
+            $this->config->load('email');
 
-        return false;
+            $from_mail = $this->config->item('smtp_user');
+            $pass = $this->config->item('smtp_pass');
+            $full_name = $this->config->item('full_name');
+            $protocol = $this->config->item('protocol');
+            $host = $this->config->item('smtp_host');
+            $port = $this->config->item('smtp_port');
+            $mail_type = $this->config->item('mailtype');
+            $newline = $this->config->item('newline');
+
+            //set content
+            $to_mail = $mailData['mail_to'];
+            $subject = $mailData['subject'];
+            $message = $mailData['content'];
+
+            $config = array(
+                'protocol' => $protocol,
+                'host' => $host,
+                'smtp_port' => $port,
+                'smtp_user' => $from_mail,
+                'smtp_pass' => $pass,
+                'mail_type' => $mail_type
+            );
+
+            $this->email->set_newline($newline);
+            $this->email->from($from_mail, $full_name);
+            $this->email->to($to_mail);
+            $this->email->subject($subject);
+            $this->email->message($message);
+
+            // send mail
+            $send = $this->email->send();
+
+            if ($send) {
+                return true;
+            }
+
+            return false;
+        }catch (Exception $e) {
+            return false;
+        }
     }
 
     function checkAccessToken(){

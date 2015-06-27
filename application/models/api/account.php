@@ -53,7 +53,10 @@ class Account extends CI_Model {
                 'access_token_start_at' => getCurrentDate()
             ));
             if($isCreateToken){
-                return array('access_token' => $access_token);
+                return array(
+                    'access_token' => $access_token,
+                    'account_id' => $result[0]['id']
+                );
             }
         }
         return false;

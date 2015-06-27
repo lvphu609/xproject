@@ -29,10 +29,25 @@ class Accounts extends Rest_Controller
 
     }
 
-    /*
-    * Create account
-    *  
-    */
+    /*url : http://domain/xproject/api/accounts/create
+     * @method POST
+     * param
+     *
+     *  @username             string
+     *  @password             string md5
+     *  @confirm_password     string md5
+     *  @email                string
+     *  @full_name            string
+     *  @date_of_birth        string
+     *  @identity_card_id     string
+     *  @phone_number         string
+     *  @blood_group_id       int
+     *  @blood_group_rh_id    int
+     *  @avatar               string base64
+     *
+     *@response  object
+     * */
+
     function create_post(){
         //initialize
         $status = 'success';
@@ -142,6 +157,13 @@ class Accounts extends Rest_Controller
         return false;
     }
 
+    /*url : http://domain/xproject/api/accounts/login
+     *@param
+     *  @username   string
+     *  @password   string md5
+     *
+     *@response  object
+     * */
     function login_post()
     {
         //initialize
@@ -176,7 +198,7 @@ class Accounts extends Rest_Controller
                 $status = 'failure';
                 $message = $this->lang->line('login_failure');
             }else{
-                $results = $checkLogin['access_token'];
+                $results = $checkLogin;
             }
         }
 
@@ -191,6 +213,14 @@ class Accounts extends Rest_Controller
         
     }
 
+    /*url : http://domain/xproject/api/accounts/logout
+     * @method POST
+     * @param
+     *  <--- header  token --->
+     *  @token  string has
+     *
+     *@response  object
+     * */
     function logout_post()
     {
         //initialize
@@ -239,6 +269,14 @@ class Accounts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
+
+    /*url : http://domain/xproject/api/accounts/forgot_password
+     * @method POST
+     * @param
+     *  @email    string
+     *
+     *@response  object
+     * */
     function forgot_password_post()
     {
         $status = 'success';
@@ -309,36 +347,20 @@ class Accounts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
+
+    /*url : http://domain/xproject/api/accounts/reset_password
+     * @method POST
+     * param
+     *
+     *  @code        string
+     *  @password    string md5
+     *  @confirm_password   string md5
+     *  @email   string md5
+     *
+     *@response  object
+     * */
     function reset_password_post()
     {
-        /*$status = 'success';
-        $message = '';
-        $results = null;
-
-        // Set the form validation rules
-        $this->form_validation->set_rules('password', 'Password', 'trim|required');
-        $this->form_validation->set_rules('confirm_password', 'Password Confirmation', 'trim|required|matches[password]');
-        $this->form_validation->set_rules('key_code', 'Key Code', 'trim|required');
-
-        // Check if the form passed its validation 
-        if ($this->form_validation->run() == FALSE) {
-            $status = 'failure';
-            $message = validation_errors();
-        } else {
-            $value = $this->input->post();
-            if(!$this->account->reset_password($value['key_code'],$value['password']))
-            {
-                $status = 'failure';
-                $message = 'error';
-            }
-        }
-        $data = array(
-            'status' => $status,
-            'message' => $message,
-            'results' => $results,
-        );
-        $this->response($data, HEADER_SUCCESS);*/
-
         $status = 'success';
         $message = '';
         $results = null;
@@ -348,7 +370,8 @@ class Accounts extends Rest_Controller
         $rules = array(
             array('field'=>'code', 'label'=>'lang:key_code', 'rules'=>'required'),
             array('field'=>'password', 'label'=>'lang:password', 'rules'=>'required'),
-            array('field'=>'confirm_password', 'label'=>'lang:confirm_password', 'rules'=>'required|matches[password]')
+            array('field'=>'confirm_password', 'label'=>'lang:confirm_password', 'rules'=>'required|matches[password]'),
+            array('field'=>'email', 'label'=>'lang:email', 'rules'=>'required')
         );
         $this->form_validation->set_rules($rules);
        
@@ -359,7 +382,8 @@ class Accounts extends Rest_Controller
             $validation = array(
                 'code' => $this->form_validation->error('code'),
                 'password' => $this->form_validation->error('password'),
-                'confirm_password' => $this->form_validation->error('confirm_password')
+                'confirm_password' => $this->form_validation->error('confirm_password'),
+                'email' => $this->form_validation->error('email')
             );
         }
         //validate success
