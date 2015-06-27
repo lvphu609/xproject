@@ -36,6 +36,18 @@ class Posts extends Rest_Controller
         }
     }
 
+    /*url : http://domain/xproject/api/posts/create
+    *header
+    * @token  string has
+    *
+    *@param
+    *  @type_id   int
+    *  @content   string
+     * @location_lat   string
+     * @location_lng   string
+    *
+    *@response  object
+    * */
     function create_post()
     {
         $status = 'failure';
@@ -88,6 +100,16 @@ class Posts extends Rest_Controller
     }
 
     //the posts is important
+    /*url : http://domain/xproject/api/posts/emergency
+    *header
+    * @token  string has
+    *
+    *@param
+     * @location_lat   string
+     * @location_lng   string
+    *
+    *@response  object
+    * */
     function emergency_post(){
         $status = 'failure';
         $message = 'error';
@@ -126,6 +148,18 @@ class Posts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+    //the posts is important
+    /*url : http://domain/xproject/api/posts/get_post_list_by_location
+    *header
+    * @token  string has
+    *
+    *@param
+     * @location_lat   string
+     * @location_lng   string
+    *
+    *@response  object
+    * */
 
     function get_post_list_by_location_post(){
         $status = 'failure';

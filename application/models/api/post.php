@@ -45,7 +45,7 @@ class Post extends CI_Model {
      *
      * query search location http://www.plumislandmedia.net/mysql/haversine-mysql-nearest-loc/
      * */
-    function getPostByLocation($location){
+    function getPostByLocation($location, $RADIUS = 10.0){
         $LAT_HERE = $location['location_lat'];
         $LONG_HERE = $location['location_lng'];
 
@@ -60,7 +60,7 @@ class Post extends CI_Model {
               FROM posts AS z
               JOIN (
                 SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
-                10.0 AS radius,      111.045 AS distance_unit
+                $RADIUS  AS radius,      111.045 AS distance_unit
                 ) AS p ON 1=1
               WHERE z.location_lat
               BETWEEN p.latpoint  - (p.radius / p.distance_unit)
