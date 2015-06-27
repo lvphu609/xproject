@@ -200,14 +200,14 @@ class Posts extends Rest_Controller
     }
 
     /*url : http://domain/xproject/api/posts/get_my_posts_post
-   *header
-   * @token  string has
-   *
-   *@param
-    * @account_id   string
-   *
-   *@response  object
-   * */
+     *header
+     * @token  string has
+     *
+     *@param
+     * @account_id   string
+     *
+     *@response  object
+     * */
 
     function get_my_posts_post(){
         $status = 'failure';
