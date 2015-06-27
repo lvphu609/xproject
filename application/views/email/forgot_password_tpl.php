@@ -10,9 +10,9 @@
       
     <p>Mã xác nhận của bạn là: <?php echo $code;?></p>
 
-    <p>Hoặc bạn có thể xác nhận ở liên kết bên dưới:</p>
+   <!-- <p>Hoặc bạn có thể xác nhận ở liên kết bên dưới:</p>
 
-    <p><a href="<?php echo $link_reset_password; ?>"><?php echo $link_reset_password; ?></a></p>
+    <p><a href="<?php /*echo $link_reset_password; */?>"><?php /*echo $link_reset_password; */?></a></p>-->
 
    <p>Regards,</p>
 
