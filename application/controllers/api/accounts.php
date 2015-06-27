@@ -48,6 +48,7 @@ class Accounts extends Rest_Controller
      *  @avatar               string base64
      *  @account_type         int
      *@response  object
+     * 
      * */
 
     function create_post(){
