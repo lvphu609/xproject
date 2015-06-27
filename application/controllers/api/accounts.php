@@ -46,6 +46,9 @@ class Accounts extends Rest_Controller
      *  @blood_group_id       int
      *  @blood_group_rh_id    int
      *  @avatar               string base64
+     *  @address              string
+     *  @contact_name         string
+     *  @contact_phone        string
      *  @account_type         int
      *@response  object
      * */

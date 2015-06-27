@@ -28,7 +28,7 @@
       <file leaf-file-name="posts.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/controllers/api/posts.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.0" vertical-offset="3131" max-vertical-offset="4335">
+            <state vertical-scroll-proportion="2.7307692" vertical-offset="3488" max-vertical-offset="4335">
               <caret line="201" column="4" selection-start-line="201" selection-start-column="4" selection-end-line="201" selection-end-column="4" />
               <folding />
             </state>
@@ -38,31 +38,8 @@
       <file leaf-file-name="accounts.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/controllers/api/accounts.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.3445946" vertical-offset="510" max-vertical-offset="7174">
-              <caret line="42" column="8" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="post.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/models/api/post.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-13.615385" vertical-offset="989" max-vertical-offset="1581">
-              <caret line="79" column="8" selection-start-line="79" selection-start-column="8" selection-end-line="79" selection-end-column="8" />
-              <folding>
-                <marker date="1435389477303" expanded="true" signature="1359:2365" placeholder="SELECT *, p...posts..." />
-                <marker date="1435389477303" expanded="true" signature="1796:1919" placeholder="SELECT ${$LA..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_common_lang.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/language/vn/api_common_lang.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-20.5" vertical-offset="130" max-vertical-offset="765">
-              <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.6959459" vertical-offset="455" max-vertical-offset="7225">
+              <caret line="51" column="8" selection-start-line="51" selection-start-column="8" selection-end-line="51" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -406,8 +383,8 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1292" max-vertical-offset="1394">
           <caret line="76" column="1" selection-start-line="76" selection-start-column="1" selection-end-line="76" selection-end-column="1" />
           <folding>
-            <marker date="1435389477303" expanded="true" signature="1359:2365" placeholder="SELECT *, p...posts..." />
-            <marker date="1435389477303" expanded="true" signature="1796:1919" placeholder="SELECT ${$LA..." />
+            <marker date="1435389477303" expanded="true" signature="-1:-1" placeholder="SELECT *, p...posts..." />
+            <marker date="1435389477303" expanded="true" signature="-1:-1" placeholder="SELECT ${$LA..." />
           </folding>
         </state>
       </provider>
@@ -422,18 +399,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/models/api/post.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.615385" vertical-offset="989" max-vertical-offset="1581">
+        <state vertical-scroll-proportion="0.597973" vertical-offset="989" max-vertical-offset="1581">
           <caret line="79" column="8" selection-start-line="79" selection-start-column="8" selection-end-line="79" selection-end-column="8" />
           <folding>
-            <marker date="1435389477303" expanded="true" signature="1359:2365" placeholder="SELECT *, p...posts..." />
-            <marker date="1435389477303" expanded="true" signature="1796:1919" placeholder="SELECT ${$LA..." />
+            <marker date="1435389477303" expanded="true" signature="-1:-1" placeholder="SELECT *, p...posts..." />
+            <marker date="1435389477303" expanded="true" signature="-1:-1" placeholder="SELECT ${$LA..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/language/vn/api_common_lang.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-20.5" vertical-offset="130" max-vertical-offset="765">
+        <state vertical-scroll-proportion="0.9003378" vertical-offset="130" max-vertical-offset="765">
           <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
           <folding />
         </state>
@@ -441,7 +418,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/api/posts.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.0" vertical-offset="3131" max-vertical-offset="4335">
+        <state vertical-scroll-proportion="2.7307692" vertical-offset="3488" max-vertical-offset="4335">
           <caret line="201" column="4" selection-start-line="201" selection-start-column="4" selection-end-line="201" selection-end-column="4" />
           <folding />
         </state>
@@ -449,8 +426,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/controllers/api/accounts.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3445946" vertical-offset="510" max-vertical-offset="7174">
-          <caret line="42" column="8" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="8" />
+        <state vertical-scroll-proportion="0.6959459" vertical-offset="455" max-vertical-offset="7225">
+          <caret line="51" column="8" selection-start-line="51" selection-start-column="8" selection-end-line="51" selection-end-column="8" />
           <folding />
         </state>
       </provider>
