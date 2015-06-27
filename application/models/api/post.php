@@ -81,7 +81,7 @@ class Post extends CI_Model {
 
     function getMyPosts($account_id)
     {
-        $query = $this->db->get_where('posts',array('account_id' => $account_id));
+        $query = $this->db->get_where('posts',array('created_by' => $account_id));
         return $query->result_array();
     }
 
