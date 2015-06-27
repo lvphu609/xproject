@@ -199,7 +199,40 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
+    function get_my_posts_post(){
+        $status = 'failure';
+        $message = 'error';
+        $results = null;
+        $validation = null;
 
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'account_id', 'label'=>'lang:account_id', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = 'validation';
+            $validation = array(
+                'account_id' => $this->form_validation->error('account_id')
+            );
+        } else {
+            $listPost = $this->post->getMyPosts($this->input->post('account_id'));
+            $message = '';
+            $status = 'success';
+            $results = $listPost;
+        }
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
 
 }
 

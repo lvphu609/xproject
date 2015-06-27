@@ -40,6 +40,7 @@ class Accounts extends Rest_Controller
      *  @email                string
      *  @full_name            string
      *  @date_of_birth        string
+     *  @gender               string
      *  @identity_card_id     string
      *  @phone_number         string
      *  @blood_group_id       int
