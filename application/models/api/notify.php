@@ -89,10 +89,9 @@ class Notify extends CI_Model {
         $result = curl_exec($ch);
         if ($result === FALSE) {
             die('Curl failed: ' . curl_error($ch));
-        }else{
-            echo $result;
         }
         curl_close($ch);
         return $result;
     }
+
 }

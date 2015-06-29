@@ -79,10 +79,64 @@ class Post extends CI_Model {
     *
     * */
 
-    function getMyPosts($account_id)
+    function getMyPosts($account_id,$page = null,$numberPerPage = null)
     {
-        $query = $this->db->get_where('posts',array('created_by' => $account_id));
-        return $query->result_array();
+        $this->load->model('file_model');
+        $this->db->select('
+            po.*
+        ');
+        $this->db->from('posts as po');
+        $this->db->join('type_posts as pot','pot.id = po.type_id');
+        $this->db->where('po.created_by',$account_id);
+        $this->db->order_by('po.created_at','DESC');
+
+        if ($page !== null)
+        {
+            $begin = ($page - 1)*$numberPerPage;
+            $this->db->limit($numberPerPage, $begin);
+        }
+        $query = $this->db->get();
+
+        if($query->num_rows() > 0 ){
+            $result = $query->result_array();
+            if(count($result)>0){
+                $arrTemp = array();
+                foreach($result as $key => $type){
+                    $type['type_posts'] = $this->getTypePostById($type['type_id']);
+                    array_push($arrTemp,$type);
+                }
+                return $arrTemp;
+            }
+            return $result;
+        }
+    }
+
+    function countAllPost($account_id){
+        $this->db->where('created_by', $account_id);
+        $this->db->from('posts');
+        return $this->db->count_all_results();
+    }
+
+    function getTypePostById($id){
+        $this->db->select('id, name, description, avatar');
+        $this->db->from('type_posts');
+        $this->db->where('id',$id);
+        $query = $this->db->get();
+
+        if($query->num_rows() > 0 ){
+            $result = $query->result_array();
+            if(count($result)>0){
+                $arrTemp = array();
+                foreach($result as $key => $type){
+                    $type['avatar'] = $this->file_model->getLinkFileById($type['avatar'],'resized');
+                    array_push($arrTemp,$type);
+                }
+                return $arrTemp[0];
+            }
+
+            return $result;
+        }
+        return array();
     }
 
 }
