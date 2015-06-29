@@ -220,8 +220,7 @@ class Posts extends Rest_Controller
         /*Set the form validation rules*/
         $rules = array(
             array('field'=>'account_id', 'label'=>'lang:account_id', 'rules'=>'required'),
-            array('field'=>'page', 'label'=>'lang:page', 'rules'=>'required'),
-            array('field'=>'row_per_page', 'label'=>'lang:row_per_page', 'rules'=>'required')
+            array('field'=>'page', 'label'=>'lang:page', 'rules'=>'required')
         );
 
         $this->form_validation->set_rules($rules);
@@ -231,11 +230,16 @@ class Posts extends Rest_Controller
             $message = 'validation';
             $validation = array(
                 'account_id' => $this->form_validation->error('account_id'),
-                'page' => $this->form_validation->error('page'),
-                'row_per_page' => $this->form_validation->error('row_per_page')
+                'page' => $this->form_validation->error('page')
             );
         } else {
-            $listPost = $this->post->getMyPosts($this->input->post('account_id'),$this->input->post('page'),$this->input->post('row_per_page'));
+
+            if(!empty($this->input->post('row_per_page'))){
+                $row_per_page = $this->input->post('row_per_page');
+            }else{
+                $row_per_page = DEFIND_PER_PAGE_DEFAULT;
+            }
+            $listPost = $this->post->getMyPosts($this->input->post('account_id'),$this->input->post('page'),$row_per_page);
             $message = '';
             $status = 'success';
             $results = $listPost;
@@ -248,8 +252,8 @@ class Posts extends Rest_Controller
             'validation' => $validation,
             'pagination' => array(
                 'page' => $this->input->post('page'),
-                'row_per_page' => $this->input->post('row_per_page'),
-                'total_page' => ceil($this->post->countAllPost($this->input->post('account_id'))/$this->input->post('row_per_page'))
+                'row_per_page' => count($results),
+                'total_page' => ceil($this->post->countAllPost($this->input->post('account_id'))/$row_per_page)
             )
         );
         $this->response($data, HEADER_SUCCESS);
