@@ -90,3 +90,6 @@ define('POST_STATUS_COMPLETED',             'Completed');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
 
+/*App ID for pushing notify*/
+define('DEFINE_ANDROID_APP_ID','AIzaSyBLlt3QBbXR4K-ie8kfW2NCRUgpv3m-Xs4');
+define('DEFIND_GOOGLE_API_KEY','AIzaSyBLlt3QBbXR4K-ie8kfW2NCRUgpv3m-Xs4');

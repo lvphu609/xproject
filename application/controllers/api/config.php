@@ -137,4 +137,9 @@ class Config extends Rest_Controller
 
         $this->response($data, HEADER_SUCCESS);
     }
+
+    function test_post(){
+        $this->load->model('api/notify');
+        $this->notify->sendPushNotificationToGCM(array(),array('34D7B6E5214A14BC'));
+    }
 }
