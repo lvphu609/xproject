@@ -233,12 +233,12 @@ class Posts extends Rest_Controller
                 'page' => $this->form_validation->error('page')
             );
         } else {
+            $row_per_page = DEFIND_PER_PAGE_DEFAULT;
 
-            if(!empty($this->input->post('row_per_page'))){
+            if($this->input->post('row_per_page')){
                 $row_per_page = $this->input->post('row_per_page');
-            }else{
-                $row_per_page = DEFIND_PER_PAGE_DEFAULT;
             }
+
             $listPost = $this->post->getMyPosts($this->input->post('account_id'),$this->input->post('page'),$row_per_page);
             $message = '';
             $status = 'success';
