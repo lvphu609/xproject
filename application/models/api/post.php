@@ -103,7 +103,11 @@ class Post extends CI_Model {
             if(count($result)>0){
                 $arrTemp = array();
                 foreach($result as $key => $type){
-                    $type['type_posts'] = $this->getTypePostById($type['type_id']);
+                    if(!empty($type['type_id'])) {
+                        $type['post_type'] = $this->getTypePostById($type['type_id']);
+                    }else{
+                        $type['post_type'] = null;
+                    }
                     array_push($arrTemp,$type);
                 }
                 return $arrTemp;
@@ -138,6 +142,17 @@ class Post extends CI_Model {
             return $result;
         }
         return array();
+    }
+
+    function getTypePostEmergency(){
+        $this->db->select('id, name, description, avatar');
+
+        return array(
+            'id' => null,
+            'name' => 'Emergency',
+            'description' => 'Emergency',
+            'avatar' => null
+        );
     }
 
 }

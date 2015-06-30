@@ -75,7 +75,9 @@ class Posts extends Rest_Controller
                 'location_lng' => $this->form_validation->error('location_lng')
             );
         } else {
-            $input = $this->input->post();
+
+            $this->get_content('http://geocoder.ca/?latt=40.70771000786733&longt=-74.0109443664550&reverse=1&allna=1&geoit=xml&corner=1&jsonp=1&callback=data');
+            /*$input = $this->input->post();
             $account = $this->account_info;
             $record = array(
                 'type_id' => $input['type_id'],
@@ -87,7 +89,7 @@ class Posts extends Rest_Controller
             if ($this->post->createPost($record)) {
                 $status = 'success';
                 $message = 'insert post successfully!';
-            }
+            }*/
         }
 
         $data = array(
