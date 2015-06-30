@@ -86,8 +86,9 @@ class Post extends CI_Model {
             po.*
         ');
         $this->db->from('posts as po');
-        $this->db->join('type_posts as pot','pot.id = po.type_id');
+        $this->db->join('type_posts as pot','pot.id = po.type_id', 'left');
         $this->db->where('po.created_by',$account_id);
+        $this->db->order_by('po.is_emergency','DESC');
         $this->db->order_by('po.created_at','DESC');
 
         if ($page !== null)
