@@ -94,3 +94,16 @@ define('POST_STATUS_COMPLETED',             'Completed');
 define('DEFINE_ANDROID_APP_ID','AIzaSyBLlt3QBbXR4K-ie8kfW2NCRUgpv3m-Xs4');
 define('DEFIND_GOOGLE_API_KEY','AIzaSyBLlt3QBbXR4K-ie8kfW2NCRUgpv3m-Xs4');
 define('DEFIND_PER_PAGE_DEFAULT',10);
+
+//api results define string
+define('API_STATUS','status');
+define('API_MESSAGE','message');
+define('API_RESULTS','results');
+define('API_VALIDATION','validation');
+define('API_PAGINATION','pagination');
+define('API_PAGE','page');
+define('API_ROW_PER_PAGE','row_per_page');
+define('API_TOTAL_PAGE','total_page');
+define('API_SUCCESS','success');
+define('API_FAILURE','failure');
+define('API_ERROR','error');

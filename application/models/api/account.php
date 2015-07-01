@@ -44,7 +44,7 @@ class Account extends CI_Model {
         if($query->num_rows()==1){
             $result = $query->result_array();
 
-            $access_token = md5(uniqid().time().md5(trim($input['username'])));
+            $access_token = md5(uniqid().time().md5($result[0]['email']));
             $isCreateToken = $this->db->insert('tokens',array(
                 'access_token' => $access_token,
                 'email' => $result[0]['email'],

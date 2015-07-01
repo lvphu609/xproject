@@ -155,4 +155,39 @@ class Post extends CI_Model {
         );
     }
 
+    function getNewestMyPosts($input){
+        $account_id = $input['account_id'];
+        $created_at = $input['created_at'];
+
+        $this->load->model('file_model');
+        $this->db->select('
+            po.*
+        ');
+        $this->db->from('posts as po');
+        $this->db->join('type_posts as pot','pot.id = po.type_id', 'left');
+        $this->db->where('po.created_by',$account_id);
+        $this->db->where('po.created_at >=',$created_at);
+        $this->db->order_by('po.is_emergency','DESC');
+        $this->db->order_by('po.created_at','DESC');
+
+        $query = $this->db->get();
+
+        if($query->num_rows() > 0 ){
+            $result = $query->result_array();
+            if(count($result)>0){
+                $arrTemp = array();
+                foreach($result as $key => $type){
+                    if(!empty($type['type_id'])) {
+                        $type['post_type'] = $this->getTypePostById($type['type_id']);
+                    }else{
+                        $type['post_type'] = null;
+                    }
+                    array_push($arrTemp,$type);
+                }
+                return $arrTemp;
+            }
+            return $result;
+        }
+    }
+
 }
