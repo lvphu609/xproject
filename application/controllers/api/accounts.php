@@ -53,92 +53,159 @@ class Accounts extends Rest_Controller
      *@response  object
      * */
 
-    function create_post(){
+    function create_post()
+    {
         //initialize
         $status = 'success';
         $message = '';
         $results = null;
         $validation = null;
-        
-        /*Set the form validation rules*/
-        $rules = array(
-            array('field'=>'username', 'label'=>'lang:username', 'rules'=>'required|min_length[5]|is_unique[accounts.username]'),
-            array('field'=>'password', 'label'=>'lang:password', 'rules'=>'required'),
-            array('field'=>'confirm_password', 'label'=>'lang:confirm_password', 'rules'=>'required|matches[password]'),
-            array('field'=>'email', 'label'=>'lang:email', 'rules'=>'required|valid_email|is_unique[accounts.email]'),
-            array('field'=>'full_name', 'label'=>'lang:full_name', 'rules'=>'required'),
-            array('field'=>'date_of_birth', 'label'=>'lang:date_of_birth', 'rules'=>'required|callback_date_valid'),
-            array('field'=>'gender', 'label'=>'lang:gender', 'rules'=>'required'),
-            array('field'=>'identity_card_id', 'label'=>'lang:identity_card_id', 'rules'=>'required'),
-            array('field'=>'phone_number', 'label'=>'lang:phone_number', 'rules'=>'required'),
-            array('field'=>'blood_group_id', 'label'=>'lang:blood_group_id', 'rules'=>'required'),
-            array('field'=>'blood_group_rh_id', 'label'=>'lang:blood_group_rh_id', 'rules'=>'required'),
-            array('field'=>'avatar', 'label'=>'lang:avatar', 'rules'=>'required'),
-            array('field'=>'account_type', 'label'=>'lang:account_type', 'rules'=>'required|integer'),
-            array('field'=>'android_id', 'label'=>'lang:android_id', 'rules'=>'required')
-        );
-        
-       /* if (empty($_FILES['avatar']['name']))
+
+        /*create account--------------------------------------------------------------------------*/
+        if(empty($this->input->post('id')))
         {
-            $this->form_validation->set_rules('avatar', 'lang:avatar', 'required');
-        }*/
-
-        $this->form_validation->set_rules($rules);
-       
-        /*Check if the form passed its validation */
-        if ($this->form_validation->run() == FALSE) {
-            $status = 'failure';
-            $message = '';
-            $validation = array(
-                'username' => $this->form_validation->error('username'),
-                'password' => $this->form_validation->error('password'),
-                'confirm_password' => $this->form_validation->error('confirm_password'),
-                'email' => $this->form_validation->error('email'),
-                'full_name' => $this->form_validation->error('full_name'),
-                'date_of_birth' => $this->form_validation->error('date_of_birth'),
-                'gender' => $this->form_validation->error('gender'),
-                'identity_card_id' => $this->form_validation->error('identity_card_id'),
-                'phone_number' => $this->form_validation->error('phone_number'),
-                'blood_group_id' => $this->form_validation->error('blood_group_id'),
-                'blood_group_rh_id' => $this->form_validation->error('blood_group_rh_id'),
-                'avatar' => $this->form_validation->error('avatar'),
-                'account_type' => $this->form_validation->error('account_type'),
-                'android_id' => $this->form_validation->error('android_id')
+            /*Set the form validation rules*/
+            $rules = array(
+                array('field' => 'username', 'label' => 'lang:username', 'rules' => 'required|min_length[5]|is_unique[accounts.username]'),
+                array('field' => 'password', 'label' => 'lang:password', 'rules' => 'required'),
+                array('field' => 'confirm_password', 'label' => 'lang:confirm_password', 'rules' => 'required|matches[password]'),
+                array('field' => 'email', 'label' => 'lang:email', 'rules' => 'required|valid_email|is_unique[accounts.email]'),
+                array('field' => 'full_name', 'label' => 'lang:full_name', 'rules' => 'required'),
+                array('field' => 'date_of_birth', 'label' => 'lang:date_of_birth', 'rules' => 'required|callback_date_valid'),
+                array('field' => 'gender', 'label' => 'lang:gender', 'rules' => 'required'),
+                array('field' => 'identity_card_id', 'label' => 'lang:identity_card_id', 'rules' => 'required'),
+                array('field' => 'phone_number', 'label' => 'lang:phone_number', 'rules' => 'required'),
+                array('field' => 'blood_group_id', 'label' => 'lang:blood_group_id', 'rules' => 'required'),
+                array('field' => 'blood_group_rh_id', 'label' => 'lang:blood_group_rh_id', 'rules' => 'required'),
+                array('field' => 'avatar', 'label' => 'lang:avatar', 'rules' => 'required'),
+                array('field' => 'account_type', 'label' => 'lang:account_type', 'rules' => 'required|integer'),
+                array('field' => 'android_id', 'label' => 'lang:android_id', 'rules' => 'required')
             );
-        }
-        //validate success
-        else{
-            //call model save account data
-            $file_id = $this->file_model->do_upload('accounts',TRUE);
-            $dataInput = $this->input->post();
 
-            $accountRecord = array(
-                'username' => $dataInput['username'],
-                'password' => trim($dataInput['password']),
-                'email' => $dataInput['email'],
-                'full_name' => $dataInput['full_name'],
-                'date_of_birth' => $dataInput['date_of_birth'],
-                'gender' => $dataInput['gender'],
-                'identity_card_id' => $dataInput['identity_card_id'],
-                'phone_number' => $dataInput['phone_number'],
-                'blood_group_id' => $dataInput['blood_group_id'],
-                'blood_group_rh_id' => $dataInput['blood_group_rh_id'],
-                'avatar' => $file_id,
-                'address' => $dataInput['address'],
-                'contact_name' => $dataInput['contact_name'],
-                'contact_phone' => $dataInput['contact_phone'],
-                'account_type' => $dataInput['account_type'],
-                'android_id' => $dataInput['android_id']
-            );
-            //save record account
-            $isInsert = $this->account->createAccount($accountRecord);
-            
-            if(!$isInsert){
-                //delete avatar
-                $this->file_model->deleteFileById($file_id);
+            /* if (empty($_FILES['avatar']['name']))
+             {
+                 $this->form_validation->set_rules('avatar', 'lang:avatar', 'required');
+             }*/
 
+            $this->form_validation->set_rules($rules);
+
+            /*Check if the form passed its validation */
+            if ($this->form_validation->run() == FALSE) {
                 $status = 'failure';
-                $message = "insert error";
+                $message = '';
+                $validation = array(
+                    'username' => $this->form_validation->error('username'),
+                    'password' => $this->form_validation->error('password'),
+                    'confirm_password' => $this->form_validation->error('confirm_password'),
+                    'email' => $this->form_validation->error('email'),
+                    'full_name' => $this->form_validation->error('full_name'),
+                    'date_of_birth' => $this->form_validation->error('date_of_birth'),
+                    'gender' => $this->form_validation->error('gender'),
+                    'identity_card_id' => $this->form_validation->error('identity_card_id'),
+                    'phone_number' => $this->form_validation->error('phone_number'),
+                    'blood_group_id' => $this->form_validation->error('blood_group_id'),
+                    'blood_group_rh_id' => $this->form_validation->error('blood_group_rh_id'),
+                    'avatar' => $this->form_validation->error('avatar'),
+                    'account_type' => $this->form_validation->error('account_type'),
+                    'android_id' => $this->form_validation->error('android_id')
+                );
+            } //validate success
+            else {
+                //call model save account data
+                $file_id = $this->file_model->do_upload('accounts', TRUE);
+                $dataInput = $this->input->post();
+
+                $accountRecord = array(
+                    'username' => $dataInput['username'],
+                    'password' => trim($dataInput['password']),
+                    'email' => $dataInput['email'],
+                    'full_name' => $dataInput['full_name'],
+                    'date_of_birth' => $dataInput['date_of_birth'],
+                    'gender' => $dataInput['gender'],
+                    'identity_card_id' => $dataInput['identity_card_id'],
+                    'phone_number' => $dataInput['phone_number'],
+                    'blood_group_id' => $dataInput['blood_group_id'],
+                    'blood_group_rh_id' => $dataInput['blood_group_rh_id'],
+                    'avatar' => $file_id,
+                    'address' => $dataInput['address'],
+                    'contact_name' => $dataInput['contact_name'],
+                    'contact_phone' => $dataInput['contact_phone'],
+                    'account_type' => $dataInput['account_type'],
+                    'android_id' => $dataInput['android_id']
+                );
+                //save record account
+                $isInsert = $this->account->createAccount($accountRecord);
+
+                if (!$isInsert) {
+                    //delete avatar
+                    $this->file_model->deleteFileById($file_id);
+
+                    $status = 'failure';
+                    $message = "insert error";
+                }
+            }
+        }//end create account
+
+        /*update account--------------------------------------------------------------------------*/
+        else{
+            /*Set the form validation rules*/
+            $rules = array(
+                array('field' => 'email', 'label' => 'lang:email', 'rules' => 'required|valid_email|callback_check_email_unique'),
+                array('field' => 'full_name', 'label' => 'lang:full_name', 'rules' => 'required'),
+                array('field' => 'date_of_birth', 'label' => 'lang:date_of_birth', 'rules' => 'required|callback_date_valid'),
+                array('field' => 'gender', 'label' => 'lang:gender', 'rules' => 'required'),
+                array('field' => 'identity_card_id', 'label' => 'lang:identity_card_id', 'rules' => 'required'),
+                array('field' => 'phone_number', 'label' => 'lang:phone_number', 'rules' => 'required'),
+                array('field' => 'blood_group_id', 'label' => 'lang:blood_group_id', 'rules' => 'required'),
+                array('field' => 'blood_group_rh_id', 'label' => 'lang:blood_group_rh_id', 'rules' => 'required'),
+            );
+
+            $this->form_validation->set_rules($rules);
+
+            /*Check if the form passed its validation */
+            if ($this->form_validation->run() == FALSE) {
+                $status = 'failure';
+                $message = API_VALIDATION;
+                $validation = array(
+                    'email' => $this->form_validation->error('email'),
+                    'full_name' => $this->form_validation->error('full_name'),
+                    'date_of_birth' => $this->form_validation->error('date_of_birth'),
+                    'gender' => $this->form_validation->error('gender'),
+                    'identity_card_id' => $this->form_validation->error('identity_card_id'),
+                    'phone_number' => $this->form_validation->error('phone_number'),
+                    'blood_group_id' => $this->form_validation->error('blood_group_id'),
+                    'blood_group_rh_id' => $this->form_validation->error('blood_group_rh_id'),
+                );
+            } //validate success
+            else {
+                //call model save account data
+                $dataInput = $this->input->post();
+                $accountRecord = array(
+                    'email' => $dataInput['email'],
+                    'full_name' => $dataInput['full_name'],
+                    'date_of_birth' => $dataInput['date_of_birth'],
+                    'gender' => $dataInput['gender'],
+                    'identity_card_id' => $dataInput['identity_card_id'],
+                    'phone_number' => $dataInput['phone_number'],
+                    'blood_group_id' => $dataInput['blood_group_id'],
+                    'blood_group_rh_id' => $dataInput['blood_group_rh_id'],
+                    'address' => $dataInput['address'],
+                    'contact_name' => $dataInput['contact_name'],
+                    'contact_phone' => $dataInput['contact_phone']
+                );
+                if(!empty($dataInput['avatar'])) {
+                    $file_id = $this->file_model->do_upload('accounts', TRUE);
+                    $accountRecord['avatar'] = $file_id;
+                }
+                //save record account
+                $isUpdate = $this->account->createAccount($accountRecord,$dataInput['id']);
+
+                if (!$isUpdate) {
+                    //delete avatar
+                    $this->file_model->deleteFileById($file_id);
+                    $status = 'failure';
+                    $message = "insert error";
+                }
             }
         }
 
@@ -168,7 +235,19 @@ class Accounts extends Rest_Controller
         return false;
     }
 
-    /*url : http://domain/xproject/api/accounts/login
+    /**
+     * Check email validate
+     *
+     */
+    public function check_email_unique(){
+        $account_id = $this->input->post('id');
+        $email = $this->input->post('email');
+        $check = $this->account->checkEmailUniqueToUpdateAccount($account_id,$email);
+        return $check;
+    }
+
+
+    /**url : http://domain/xproject/api/accounts/login
      *@param
      *  @username   string
      *  @password   string md5

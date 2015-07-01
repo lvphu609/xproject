@@ -38,3 +38,4 @@ $lang['account_type'] = 'loại tài khoản';
 $lang['account_type_int'] = '%s phải là số nguyên';
 $lang['account_id'] = 'id người dùng';
 $lang['created_at'] = 'ngày tạo';
+$lang['check_email_unique'] = 'Địa chỉ email đã tồn tại';
