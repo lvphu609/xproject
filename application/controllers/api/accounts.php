@@ -129,7 +129,7 @@ class Accounts extends Rest_Controller
                 'contact_phone' => $dataInput['contact_phone'],
                 'account_type' => $dataInput['account_type'],
                 'android_id' => $dataInput['android_id']
-            ); 
+            );
             //save record account
             $isInsert = $this->account->createAccount($accountRecord);
             

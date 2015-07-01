@@ -82,7 +82,8 @@ class Posts extends Rest_Controller
                 'content' => $input['content'],
                 'location_lat' => $input['location_lat'],
                 'location_lng' => $input['location_lng'],
-                'created_by' => $account['id']
+                'created_by' => $account['id'],
+                'location_name' =>  $this->common_model->getLocationNameByLatLng($input['location_lat'],$input['location_lng'])
             );
             if ($this->post->createPost($record)) {
                 $status = 'success';
@@ -271,7 +272,7 @@ class Posts extends Rest_Controller
      *@response  object
      * */
 
-    function get_newest_my_post_by_time_post(){
+    function get_my_post_newest_by_time_post(){
         $status = API_FAILURE;
         $message = API_ERROR;
         $results = null;

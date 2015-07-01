@@ -91,8 +91,10 @@ define('POST_STATUS_COMPLETED',             'Completed');
 /* Location: ./application/config/constants.php */
 
 /*App ID for pushing notify*/
-define('DEFINE_ANDROID_APP_ID','AIzaSyBLlt3QBbXR4K-ie8kfW2NCRUgpv3m-Xs4');
-define('DEFIND_GOOGLE_API_KEY','AIzaSyBLlt3QBbXR4K-ie8kfW2NCRUgpv3m-Xs4');
+//define('DEFINE_ANDROID_APP_ID','AIzaSyBLlt3QBbXR4K-ie8kfW2NCRUgpv3m-Xs4');
+//define('DEFIND_GOOGLE_API_KEY','AIzaSyBLlt3QBbXR4K-ie8kfW2NCRUgpv3m-Xs4');
+define('DEFIND_GOOGLE_API_KEY_SERVER','AIzaSyDptqMgUz_req_mH6IbI6liMEknGfEE3Xs');
+
 define('DEFIND_PER_PAGE_DEFAULT',10);
 
 //api results define string
