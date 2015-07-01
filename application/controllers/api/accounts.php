@@ -62,7 +62,8 @@ class Accounts extends Rest_Controller
         $validation = null;
 
         /*create account--------------------------------------------------------------------------*/
-        if(empty($this->input->post('id')))
+        $input = $this->input->post();
+        if(empty($input['id']))
         {
             /*Set the form validation rules*/
             $rules = array(
