@@ -5,6 +5,7 @@ class Post extends CI_Model {
     function __construct()
     {
         parent::__construct();
+        $this->load->model('api/common_model');
     }
 
     function createPost($data)
@@ -30,7 +31,8 @@ class Post extends CI_Model {
             'location_lng' => $input['location_lng'],
             'created_by' => $account['id'],
             'created_at' => getCurrentDate(),
-            'is_emergency' => 1
+            'is_emergency' => 1,
+            'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'],$input['location_lng'])
         );
 
         $isInsert = $this->db->insert('posts', $record);
