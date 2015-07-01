@@ -5,7 +5,7 @@ class Account extends CI_Model {
     function __construct()
     {
         parent::__construct();
-        $this->load->database();
+        $this->load->model('file_model');
     }
 
     //logout
@@ -46,7 +46,7 @@ class Account extends CI_Model {
                  //delete file avatar
                  if (!empty($recordData['avatar'])) {
                      $account = $this->getAccountById($account_id);
-                     $this->load->model('file_model');
+
                      $this->file_model->deleteFileById($account['avatar']);
                  }
 
@@ -190,6 +190,26 @@ class Account extends CI_Model {
         $this->db->or_where('id <>',$account_id);
         $query = $this->db->get();
         return $query->num_rows() === 0;
+    }
+
+    function getAccountInfoById($id){
+        $this->db->select(
+            'id, username, email, full_name,
+            date_of_birth, gender, identity_card_id,
+            phone_number, blood_group_id, blood_group_rh_id,
+            avatar, address, updated_at,
+            contact_name, contact_phone'
+        );
+        $this->db->from('accounts');
+        $this->db->where('id',$id);
+        $query = $this->db->get();
+        $result = $query->result_array();
+        if(count($result)>0){
+            $account = $result[0];
+            $account['avatar'] = $this->file_model->getLinkFileById($account['avatar']);
+            return $account;
+        }
+        return false;
     }
 
     /*

@@ -498,4 +498,65 @@ class Accounts extends Rest_Controller
 
     }
 
+    /**url : http://domain/xproject/api/accounts/get_account_info_by_id()
+     * @method POST
+     * param
+     *
+     *  @id        int
+     *
+     * header
+     *
+     * @token    string has
+     *
+     *@response  object
+     * */
+    function get_account_info_by_id_post()
+    {
+        $this->checkToken();
+
+        $status = 'success';
+        $message = '';
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'id', 'label'=>'lang:id', 'rules'=>'required')
+        );
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $status = 'failure';
+            $message = "error";
+            $validation = array(
+                'id' => $this->form_validation->error('id')
+            );
+        }
+        //validate success
+        else{
+            $status = API_SUCCESS;
+            $results = $this->account->getAccountInfoById($this->input->post('id'));
+        }
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+
+    }
+
+    function checkToken(){
+        //check token-----------------------------------------
+        $checkToken = $this->common_model->checkAccessToken();
+        if(!$checkToken['status']){
+            $this->response($checkToken['res'], HEADER_SUCCESS);
+        }else{
+            $this->account_info = $checkToken['account'];
+        }
+    }
+
 }
