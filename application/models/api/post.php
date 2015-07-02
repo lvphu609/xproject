@@ -240,6 +240,18 @@ class Post extends CI_Model {
             ");
 
         $result = $query->result_array();
+        if(count($result)>0){
+            $arrTemp = array();
+            foreach($result as $key => $type){
+                if(!empty($type['type_id'])) {
+                    $type['post_type'] = $this->getTypePostById($type['type_id']);
+                }else{
+                    $type['post_type'] = null;
+                }
+                array_push($arrTemp,$type);
+            }
+            return $arrTemp;
+        }
         return $result;
     }
 

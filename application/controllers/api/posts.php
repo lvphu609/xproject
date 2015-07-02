@@ -317,8 +317,8 @@ class Posts extends Rest_Controller
      *@param
      * @lat   string
      * @lng   string
-     * @key   string
-     * @page  int
+     * @key   string       allow null
+     * @page  int          allow null
      * @row_per_page  int  allow null
      *
      *@response  object
