@@ -1,9 +1,9 @@
 <?php
 $lang['username'] = 'Tên đăng nhập';
 $lang['is_required'] = '%s không được để trống.';
-$lang['password'] = 'mật khẩu';
+$lang['password'] = 'Mật khẩu';
 $lang['confirm_password'] = 'Xác nhận mật khẩu';
-$lang['email'] = 'email';
+$lang['email'] = 'Email';
 $lang['is_valid_email'] = 'Địa chỉ email không hợp lệ.';
 $lang['matches_field'] = '%s không phù hợp với trường %s.';
 $lang['full_name'] = 'Họ và tên';
@@ -39,3 +39,4 @@ $lang['account_type_int'] = '%s phải là số nguyên.';
 $lang['account_id'] = 'Id người dùng';
 $lang['created_at'] = 'Ngày tạo';
 $lang['check_email_unique'] = 'Địa chỉ email đã tồn tại.';
+$lang['key_search'] = 'Từ khóa tìm kiếm';

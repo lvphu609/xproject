@@ -124,10 +124,15 @@ class Common_model extends CI_Model {
     }
 
     function getLocationNameByLatLng($lat,$lng){
-        $server_key = DEFIND_GOOGLE_API_KEY_SERVER;
-        $json = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&location_type=ROOFTOP&result_type=street_address&key=$server_key");
-        $obj = json_decode($json);
-        $result = $obj->results;
-        return $result[0]->formatted_address;
+        try {
+            $server_key = DEFIND_GOOGLE_API_KEY_SERVER;
+            $json = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&location_type=ROOFTOP&result_type=street_address&key=$server_key");
+            $obj = json_decode($json);
+            $result = $obj->results;
+            return $result[0]->formatted_address;
+        }
+        catch(ErrorException $e){
+            return "";
+        }
     }
 }
