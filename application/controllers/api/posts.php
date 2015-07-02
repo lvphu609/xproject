@@ -309,6 +309,63 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
+    /*url : http://domain/xproject/api/posts/search
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @lat   string
+     * @lng   string
+     * @key   string
+     * @page  int
+     * @row_per_page  int  allow null
+     *
+     *@response  object
+     * */
+
+    function search_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'lat', 'label'=>'lang:lat', 'rules'=>'required'),
+            array('field'=>'lng', 'label'=>'lang:lng', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'lat' => $this->form_validation->error('lat'),
+                'lng' => $this->form_validation->error('lng')
+            );
+        } else {
+            $listPost = $this->post->searchPost();
+            $message = '';
+            $status = API_SUCCESS;
+            $results = $listPost;
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation,
+            API_PAGINATION => array(
+                API_PAGE => $this->input->post('page'),
+                API_ROW_PER_PAGE => count($results),
+                API_TOTAL_PAGE => $this->post->postSearchTotalPage()
+            )
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
+
 }
 
 

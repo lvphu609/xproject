@@ -192,4 +192,96 @@ class Post extends CI_Model {
         }
     }
 
+    function searchPost(){
+        $input = $this->input->post();
+        $LAT_HERE = $input['lat'];
+        $LONG_HERE = $input['lng'];
+        $RADIUS = 10.0;
+
+        //paging
+        $limit = "";
+
+        $numberPerPage = DEFIND_PER_PAGE_DEFAULT;
+
+        if($this->input->post('row_per_page')){
+            $numberPerPage = $this->input->post('row_per_page');
+        }
+
+        if (!empty($input['page']))
+        {
+            $begin = ($input['page'] - 1)*$numberPerPage;
+            $limit = "LIMIT $numberPerPage OFFSET  $begin";
+        }
+
+        $query = $this->db->query("
+            SELECT z.id, z.type_id, z.content, z.is_emergency, z.created_by, z.location_lat, z.location_lng, x.name,
+                p.distance_unit
+                         * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                         * COS(RADIANS(z.location_lat))
+                         * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
+                         + SIN(RADIANS(p.latpoint))
+                         * SIN(RADIANS(z.location_lat)))) AS distance_in_km
+              FROM posts AS z
+              LEFT JOIN type_posts AS x ON x.id = z.type_id
+              JOIN (
+                    SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
+                    $RADIUS  AS radius,      111.045 AS distance_unit
+                ) AS p ON 1=1
+              WHERE z.location_lat
+                    BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+                            AND p.latpoint  + (p.radius / p.distance_unit)
+              AND z.location_lng
+                    BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                            AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+              AND x.name LIKE '%".$input['key']."%'
+
+              ORDER BY distance_in_km, z.is_emergency, z.created_at DESC
+              ".$limit."
+            ");
+
+        $result = $query->result_array();
+        return $result;
+    }
+
+    function postSearchTotalPage(){
+        $input = $this->input->post();
+        $LAT_HERE = $input['lat'];
+        $LONG_HERE = $input['lng'];
+        $RADIUS = 10.0;
+
+        $row_per_page = DEFIND_PER_PAGE_DEFAULT;
+
+        if($this->input->post('row_per_page')){
+            $row_per_page = $this->input->post('row_per_page');
+        }
+
+        $query = $this->db->query("
+            SELECT z.id, z.type_id, z.content, z.is_emergency, z.created_by, z.location_lat, z.location_lng, x.name,
+                p.distance_unit
+                         * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                         * COS(RADIANS(z.location_lat))
+                         * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
+                         + SIN(RADIANS(p.latpoint))
+                         * SIN(RADIANS(z.location_lat)))) AS distance_in_km
+              FROM posts AS z
+              LEFT JOIN type_posts AS x ON x.id = z.type_id
+              JOIN (
+                    SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
+                    $RADIUS  AS radius,      111.045 AS distance_unit
+                ) AS p ON 1=1
+              WHERE z.location_lat
+                    BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+                            AND p.latpoint  + (p.radius / p.distance_unit)
+              AND z.location_lng
+                    BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                            AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+              AND x.name LIKE '%".$input['key']."%'
+
+              ORDER BY distance_in_km, z.is_emergency, z.created_at DESC
+            ");
+
+        $result = $query->result_array();
+        return ceil(count($result)/$row_per_page);
+    }
+
 }
