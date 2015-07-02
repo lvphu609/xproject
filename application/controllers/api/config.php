@@ -140,9 +140,12 @@ class Config extends Rest_Controller
 
     function test_post(){
         $this->load->model('api/notify');
-
+        $this->load->model('api/post');
+        $posts = $this->post->getMyPosts(60,1,100);
+        $posts = array('data' => $posts);
+        $status = $this->notify->sendPushNotificationToGCM(array('cQYbgQ9cg_M:APA91bGlI_HKSSYvoSTJKpFwdZak4h-jblX36oUKj-ekwkDS0T3Xf0S3VSyJqRGk_tfd17cHfn8vLHI-24Ml7KwugGgVD6Fo5_JEVLaEN8AyIoYjYzTeNwv05fzMiM_CrOYfp8iFIyUY'), $posts);
         $data = array(
-            'status' => print($this->notify->sendPushNotificationToGCM(array('2ef49b62162461e9'),array('message' => 'ok')))
+            'status' => $status
         );
 
         $this->response($data, HEADER_SUCCESS);
