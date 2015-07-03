@@ -38,7 +38,7 @@
 |
 */
 
-$route['default_controller'] = "welcome";
+$route['default_controller'] = "ad_home";
 $route['404_override'] = '';
 
 
@@ -47,5 +47,10 @@ $route['404_override'] = '';
 
 // $route['receive'] = "comming_soon/action/receive";
 // $route['checkmail'] = "comming_soon/action/check_mail";
+
+
+$route['admin'] = "ad_home/ad_home";
+$route['admin/login'] = "ad_login/ad_login";
+
 
 

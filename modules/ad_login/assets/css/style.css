@@ -1,0 +1,46 @@
+
+.vertical-offset-100{
+    padding-top:15%;
+}
+
+.avatar{
+  background: url('../../../../resources/img/logo_Service.png');
+  width: 200px;
+  height: 80px;
+  margin-top: -25px;
+  margin-left: -20px;
+  
+}
+
+.panel-heading{
+   background-image: none !important;
+   background-color: #268ed0 !important;
+   height: 50px !important;
+}
+
+.col-md-offset-3 {
+  /*margin-left: 30% !important;*/
+}
+
+fieldset {
+padding: 2% 0 0 0;
+margin: 0;
+border: 0;
+min-width: 0;
+width: 95%;
+margin-left: 2.5%;
+}
+/*.panel-default{
+  border-color: #19699d !important;
+}*/
+/*
+.btn-success{
+   background-color: #19699d !important;
+   background-image: none !important;
+   border-color: transparent !important;
+   border-color: transparent !important;
+}*/
+
+label{
+  font-weight: normal;
+}
