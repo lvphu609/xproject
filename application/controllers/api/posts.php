@@ -377,8 +377,8 @@ class Posts extends Rest_Controller
 
         /*Set the form validation rules*/
         $rules = array(
-            array('field'=>'lat', 'label'=>'lang:lat', 'rules'=>'required'),
-            array('field'=>'lng', 'label'=>'lang:lng', 'rules'=>'required')
+            array('field'=>'location_lat', 'label'=>'lang:location_lat', 'rules'=>'required'),
+            array('field'=>'location_lng', 'label'=>'lang:location_lng', 'rules'=>'required')
         );
 
         $this->form_validation->set_rules($rules);
@@ -387,8 +387,8 @@ class Posts extends Rest_Controller
         if ($this->form_validation->run() == FALSE) {
             $message = API_VALIDATION;
             $validation = array(
-                'lat' => $this->form_validation->error('lat'),
-                'lng' => $this->form_validation->error('lng')
+                'location_lat' => $this->form_validation->error('location_lat'),
+                'location_lng' => $this->form_validation->error('location_lng')
             );
         } else {
             $listPost = $this->post->searchPost();

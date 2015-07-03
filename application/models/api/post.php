@@ -217,8 +217,8 @@ class Post extends CI_Model {
     function searchPost(){
         try {
             $input = $this->input->post();
-            $LAT_HERE = $input['lat'];
-            $LONG_HERE = $input['lng'];
+            $LAT_HERE = $input['location_lat'];
+            $LONG_HERE = $input['location_lng'];
             $RADIUS = 10.0;
 
             //paging
@@ -284,8 +284,8 @@ class Post extends CI_Model {
     function postSearchTotalPage(){
         try {
             $input = $this->input->post();
-            $LAT_HERE = $input['lat'];
-            $LONG_HERE = $input['lng'];
+            $LAT_HERE = $input['location_lat'];
+            $LONG_HERE = $input['location_lng'];
             $RADIUS = 10.0;
 
             $row_per_page = DEFIND_PER_PAGE_DEFAULT;
