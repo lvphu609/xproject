@@ -129,10 +129,13 @@ class Common_model extends CI_Model {
             $json = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&location_type=ROOFTOP&result_type=street_address&key=$server_key");
             $obj = json_decode($json);
             $result = $obj->results;
-            return $result[0]->formatted_address;
+            if(count($result)>0) {
+                return $result[0]->formatted_address;
+            }
         }
-        catch(ErrorException $e){
+        catch(Exception $e){
             return "";
         }
+        return "";
     }
 }

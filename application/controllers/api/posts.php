@@ -37,15 +37,21 @@ class Posts extends Rest_Controller
     }
 
     /**url : http://domain/xproject/api/posts/create
-    *header
-    * @token  string has
-    *
-    *@param
-    *  @type_id   int
-    *  @content   string
-     * @location_lat   string
-     * @location_lng   string
-    *
+     *header
+     * @token  string has
+     *----------------------------create-----------------
+     *@param
+     *  @type_id   int
+     *  @content   string
+     *  @location_lat   string
+     *  @location_lng   string
+     *
+     * ------------------------update-------------------
+     * @id              int
+     * @location_lat    string
+     * @location_lng    string
+     * @content         string
+     *
     *@response  object
     * */
     function create_post()
@@ -55,39 +61,76 @@ class Posts extends Rest_Controller
         $results = null;
         $validation = null;
 
-        /*Set the form validation rules*/
-        $rules = array(
-            array('field'=>'type_id', 'label'=>'lang:type_id', 'rules'=>'required'),
-            /*array('field'=>'content', 'label'=>'lang:content', 'rules'=>'required'),*/
-            array('field'=>'location_lat', 'label'=>'lang:location_lat', 'rules'=>'required'),
-            array('field'=>'location_lng', 'label'=>'lang:location_lng', 'rules'=>'required')
-        );
-
-        $this->form_validation->set_rules($rules);
-
-        /*Check if the form passed its validation */
-        if ($this->form_validation->run() == FALSE) {
-            $message = 'validation';
-            $validation = array(
-                'type_id' => $this->form_validation->error('type_id'),
-                /*'content' => $this->form_validation->error('content'),*/
-                'location_lat' => $this->form_validation->error('location_lat'),
-                'location_lng' => $this->form_validation->error('location_lng')
+        $input = $this->input->post();
+        /*insert post---------------------------------------------------------*/
+        if(empty($input['id'])) {
+            /*Set the form validation rules*/
+            $rules = array(
+                array('field' => 'type_id', 'label' => 'lang:type_id', 'rules' => 'required'),
+                /*array('field'=>'content', 'label'=>'lang:content', 'rules'=>'required'),*/
+                array('field' => 'location_lat', 'label' => 'lang:location_lat', 'rules' => 'required'),
+                array('field' => 'location_lng', 'label' => 'lang:location_lng', 'rules' => 'required')
             );
-        } else {
-            $input = $this->input->post();
-            $account = $this->account_info;
-            $record = array(
-                'type_id' => $input['type_id'],
-                'content' => $input['content'],
-                'location_lat' => $input['location_lat'],
-                'location_lng' => $input['location_lng'],
-                'created_by' => $account['id'],
-                'location_name' =>  $this->common_model->getLocationNameByLatLng($input['location_lat'],$input['location_lng'])
+
+            $this->form_validation->set_rules($rules);
+
+            /*Check if the form passed its validation */
+            if ($this->form_validation->run() == FALSE) {
+                $message = 'validation';
+                $validation = array(
+                    'type_id' => $this->form_validation->error('type_id'),
+                    /*'content' => $this->form_validation->error('content'),*/
+                    'location_lat' => $this->form_validation->error('location_lat'),
+                    'location_lng' => $this->form_validation->error('location_lng')
+                );
+            } else {
+                $input = $this->input->post();
+                $account = $this->account_info;
+                $record = array(
+                    'type_id' => $input['type_id'],
+                    'content' => $input['content'],
+                    'location_lat' => $input['location_lat'],
+                    'location_lng' => $input['location_lng'],
+                    'created_by' => $account['id'],
+                    'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng'])
+                );
+                if ($this->post->createPost($record)) {
+                    $status = 'success';
+                    $message = 'insert post successfully!';
+                }
+            }
+        }
+        /*update post ------------------------------------------------------------------*/
+        else{
+            /*Set the form validation rules*/
+            $rules = array(
+                array('field' => 'location_lat', 'label' => 'lang:location_lat', 'rules' => 'required'),
+                array('field' => 'location_lng', 'label' => 'lang:location_lng', 'rules' => 'required')
             );
-            if ($this->post->createPost($record)) {
-                $status = 'success';
-                $message = 'insert post successfully!';
+
+            $this->form_validation->set_rules($rules);
+
+            /*Check if the form passed its validation */
+            if ($this->form_validation->run() == FALSE) {
+                $message = 'validation';
+                $validation = array(
+                    'location_lat' => $this->form_validation->error('location_lat'),
+                    'location_lng' => $this->form_validation->error('location_lng')
+                );
+            } else {
+                $record = array(
+                    'content' => $input['content'],
+                    'location_lat' => $input['location_lat'],
+                    'location_lng' => $input['location_lng'],
+                    'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng']),
+                    'created_by' => $input['account_id']
+                );
+
+                $isUpdate = $this->post->createPost($record,$input['id']);
+                if ($isUpdate) {
+                    $status = 'success';
+                    $message = 'Update post successfully.';
+                }
             }
         }
 

@@ -8,19 +8,41 @@ class Post extends CI_Model {
         $this->load->model('api/common_model');
     }
 
-    function createPost($data)
+    function createPost($data, $post_id = null)
     {
-        $temp = array(
-            'created_at' => getCurrentDate()
-        );
+        try {
+            //create post
+            if (empty($post_id)) {
+                $temp = array(
+                    'created_at' => getCurrentDate()
+                );
 
-        $recordData = array_merge($data,$temp);
+                $recordData = array_merge($data, $temp);
 
-        $isInsert = $this->db->insert('posts', $recordData);
-        if ($isInsert)
-            return TRUE;
-        else
-            return FALSE;
+                $isInsert = $this->db->insert('posts', $recordData);
+
+                if ($isInsert) {
+                    return true;
+                }
+            } //update posts
+            else {
+                $temp = array(
+                    'updated_at' => getCurrentDate()
+                );
+
+                $recordData = array_merge($data, $temp);
+
+                $isUpdate = $this->db->update('posts', $recordData, array('id' => $post_id,'created_by' => $recordData['created_by']));
+
+                if ($isUpdate) {
+                    return true;
+                }
+            }
+        }catch (ErrorException $e){
+            return false;
+        }
+        return false;
+
     }
     /*
      * The post is important
