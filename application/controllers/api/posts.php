@@ -360,14 +360,20 @@ class Posts extends Rest_Controller
     * @token  string has
     *
     *@param
-    * @lat   string
-    * @lng   string
-    * @key   string       allow null
+     * @location_lat             string
+     * @location_lng             string
+     * @query                      string       allow null
     * @page  int          allow null
     * @row_per_page  int  allow null
     *
     *@response  object
     * */
+
+    /**
+     * search newest post
+     * add parram
+     * @created_at       string date time
+    */
 
     function search_post(){
         $status = API_FAILURE;
@@ -459,7 +465,6 @@ class Posts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
-
 
 }
 

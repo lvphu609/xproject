@@ -232,7 +232,7 @@ class Post extends CI_Model {
 
             //paging
             $limit = "";
-
+            $query_newest = "";
             $numberPerPage = DEFIND_PER_PAGE_DEFAULT;
 
             if ($this->input->post('row_per_page')) {
@@ -244,8 +244,16 @@ class Post extends CI_Model {
                 $limit = "LIMIT $numberPerPage OFFSET  $begin";
             }
 
+            //get newest posts > created_at
+            if(!empty($input['created_at'])){
+                $created_at = $input['created_at'];
+                $query_newest = "AND z.created_at > '$created_at' ";
+                $limit = "";
+            }
+
             $query = $this->db->query("
-                SELECT z.id, z.type_id, z.content, z.is_emergency, z.created_by, z.location_lat, z.location_lng, x.name,
+                SELECT z.id, z.type_id, z.content, z.is_emergency,
+                      z.created_by, z.location_lat, z.location_lng,  z.created_at, x.name,
                     p.distance_unit
                              * DEGREES(ACOS(COS(RADIANS(p.latpoint))
                              * COS(RADIANS(z.location_lat))
@@ -265,8 +273,8 @@ class Post extends CI_Model {
                         BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                                 AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                   AND z.is_delete IS NULL
+                  ".$query_newest."
                   AND x.name LIKE '%" . $input['query'] . "%'
-
                   ORDER BY distance_in_km, z.is_emergency, z.created_at DESC
                   " . $limit . "
                 ");
