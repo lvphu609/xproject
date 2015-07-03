@@ -185,12 +185,21 @@ class Post extends CI_Model {
 
         $this->load->model('file_model');
         $this->db->select('
-            po.*
+            po.id,
+            po.type_id,
+            po.content,
+            po.location_lat,
+            po.location_lng,
+            po.is_emergency,
+            po.created_at,
+            po.updated_at,
+            po.location_name
         ');
         $this->db->from('posts as po');
         $this->db->join('type_posts as pot','pot.id = po.type_id', 'left');
         $this->db->where('po.created_by',$account_id);
         $this->db->where('po.created_at >',$created_at);
+        $this->db->where('po.is_delete',NULL);
         $this->db->order_by('po.is_emergency','DESC');
         $this->db->order_by('po.created_at','DESC');
 
@@ -255,6 +264,7 @@ class Post extends CI_Model {
                   AND z.location_lng
                         BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                                 AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  AND z.is_delete IS NULL
                   AND x.name LIKE '%" . $input['query'] . "%'
 
                   ORDER BY distance_in_km, z.is_emergency, z.created_at DESC
@@ -314,6 +324,7 @@ class Post extends CI_Model {
                   AND z.location_lng
                         BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                                 AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  AND z.is_delete IS NULL
                   AND x.name LIKE '%" . $input['query'] . "%'
 
                   ORDER BY distance_in_km, z.is_emergency, z.created_at DESC
@@ -325,6 +336,14 @@ class Post extends CI_Model {
         catch(ErrorException $e){
             return null;
         }
+    }
+
+    function deletePostById($id,$account_id){
+        $isDelete = $this->db->update('posts',array('is_delete' => 1),array('id' => $id,'created_by' => $account_id));
+        if($isDelete){
+            return true;
+        }
+        return false;
     }
 
 }

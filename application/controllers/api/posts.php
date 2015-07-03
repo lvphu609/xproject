@@ -303,7 +303,7 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
-    /**url : http://domain/xproject/api/posts/get_newest_post_by_time
+    /**url : http://domain/xproject/api/posts/get_my_post_newest_by_time
      * @method: POST
      *header
      * @token  string has
@@ -418,8 +418,8 @@ class Posts extends Rest_Controller
      * @token  string has
      *
      *@param
-     * @post_id   int
-     *
+     * @id   int
+     * @account_id int
      *@response  object
      * */
 
@@ -431,7 +431,8 @@ class Posts extends Rest_Controller
 
         /*Set the form validation rules*/
         $rules = array(
-            array('field'=>'post_id', 'label'=>'lang:post_id', 'rules'=>'required')
+            array('field'=>'id', 'label'=>'lang:id', 'rules'=>'required'),
+            array('field'=>'account_id', 'label'=>'lang:account_id', 'rules'=>'required')
         );
 
         $this->form_validation->set_rules($rules);
@@ -440,13 +441,14 @@ class Posts extends Rest_Controller
         if ($this->form_validation->run() == FALSE) {
             $message = API_VALIDATION;
             $validation = array(
-                'post_id' => $this->form_validation->error('post_id')
+                'id' => $this->form_validation->error('id'),
+                'account_id' => $this->form_validation->error('account_id')
             );
         } else {
-            $listPost = null; //$this->post->searchPost();
-            $message = '';
-            $status = API_SUCCESS;
-            $results = $listPost;
+            $isDelete = $this->post->deletePostById($this->input->post('id'),$this->input->post('account_id'));
+            if($isDelete) {
+                $status = API_SUCCESS;
+            }
         }
 
         $data = array(
