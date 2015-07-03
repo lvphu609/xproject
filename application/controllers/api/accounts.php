@@ -561,4 +561,59 @@ class Accounts extends Rest_Controller
         }
     }
 
+    /**url : http://domain/xproject/api/accounts/change_password
+     * @method POST
+     * param
+     *
+     * @account_id        int
+     * @password        string md5
+     * @confirm_password        string md5
+     *
+     * header
+     *
+     * @token    string has
+     *
+     *@response  object
+     * */
+    function change_password_post(){
+        $this->checkToken();
+
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'account_id', 'label'=>'lang:account_id', 'rules'=>'required'),
+            array('field' => 'password', 'label' => 'lang:password', 'rules' => 'required'),
+            array('field' => 'confirm_password', 'label' => 'lang:confirm_password', 'rules' => 'required|matches[password]')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'account_id' => $this->form_validation->error('account_id'),
+                'password' => $this->form_validation->error('password'),
+                'confirm_password' => $this->form_validation->error('confirm_password')
+            );
+        } else {
+            $isUpdate = $this->account->changePassword($this->input->post('password'),$this->input->post('account_id'));
+            if($isUpdate) {
+                $status = API_SUCCESS;
+            }
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
+
 }
