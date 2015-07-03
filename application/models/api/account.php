@@ -186,8 +186,10 @@ class Account extends CI_Model {
     function checkEmailUniqueToUpdateAccount($account_id,$email){
         $this->db->select('*');
         $this->db->from('accounts');
-        $this->db->where('email',$email);
-        $this->db->or_where('id <>',$account_id);
+        $this->db->where(array(
+            'email' => $email,
+            'id <>' => $account_id
+        ));
         $query = $this->db->get();
         return $query->num_rows() === 0;
     }

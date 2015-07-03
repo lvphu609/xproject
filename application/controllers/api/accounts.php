@@ -149,6 +149,7 @@ class Accounts extends Rest_Controller
 
         /*update account--------------------------------------------------------------------------*/
         else{
+            $this->checkToken();
             /*Set the form validation rules*/
             $rules = array(
                 array('field' => 'email', 'label' => 'lang:email', 'rules' => 'required|valid_email|callback_check_email_unique'),
@@ -265,7 +266,7 @@ class Accounts extends Rest_Controller
 
         /*Set the form validation rules*/
         $rules = array(
-            array('field'=>'username', 'label'=>'lang:username', 'rules'=>'trim|required|min_length[5]'),
+            array('field'=>'username', 'label'=>'lang:username', 'rules'=>'trim|required'),
             array('field'=>'password', 'label'=>'lang:password', 'rules'=>'trim|required'),
         );
 

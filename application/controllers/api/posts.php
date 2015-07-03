@@ -36,7 +36,7 @@ class Posts extends Rest_Controller
         }
     }
 
-    /*url : http://domain/xproject/api/posts/create
+    /**url : http://domain/xproject/api/posts/create
     *header
     * @token  string has
     *
@@ -101,7 +101,7 @@ class Posts extends Rest_Controller
     }
 
     //the posts is important
-    /*url : http://domain/xproject/api/posts/emergency
+    /**url : http://domain/xproject/api/posts/emergency
     *header
     * @token  string has
     *
@@ -151,7 +151,7 @@ class Posts extends Rest_Controller
     }
 
     //the posts is important
-    /*url : http://domain/xproject/api/posts/get_post_list_by_location
+    /**url : http://domain/xproject/api/posts/get_post_list_by_location
     *header
     * @token  string has
     *
@@ -200,7 +200,7 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
-    /*url : http://domain/xproject/api/posts/get_my_posts_post
+    /**url : http://domain/xproject/api/posts/get_my_posts_post
      *header
      * @token  string has
      *
@@ -260,7 +260,7 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
-    /*url : http://domain/xproject/api/posts/get_newest_post_by_time
+    /**url : http://domain/xproject/api/posts/get_newest_post_by_time
      * @method: POST
      *header
      * @token  string has
@@ -309,20 +309,22 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
-    /*url : http://domain/xproject/api/posts/search
-     * @method: POST
-     *header
-     * @token  string has
-     *
-     *@param
-     * @lat   string
-     * @lng   string
-     * @key   string       allow null
-     * @page  int          allow null
-     * @row_per_page  int  allow null
-     *
-     *@response  object
-     * */
+
+
+    /**url : http://domain/xproject/api/posts/search
+    * @method: POST
+    *header
+    * @token  string has
+    *
+    *@param
+    * @lat   string
+    * @lng   string
+    * @key   string       allow null
+    * @page  int          allow null
+    * @row_per_page  int  allow null
+    *
+    *@response  object
+    * */
 
     function search_post(){
         $status = API_FAILURE;
@@ -365,6 +367,54 @@ class Posts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+
+    /**url : http://domain/xproject/api/posts/delete
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @post_id   int
+     *
+     *@response  object
+     * */
+
+    function delete_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'post_id', 'label'=>'lang:post_id', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'post_id' => $this->form_validation->error('post_id')
+            );
+        } else {
+            $listPost = null; //$this->post->searchPost();
+            $message = '';
+            $status = API_SUCCESS;
+            $results = $listPost;
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
+
 
 }
 
