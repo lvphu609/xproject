@@ -485,6 +485,7 @@ class Posts extends Rest_Controller
             $isDelete = $this->post->deletePostById($this->input->post('id'),$this->input->post('account_id'));
             if($isDelete) {
                 $status = API_SUCCESS;
+                $message = API_SUCCESS;
             }
         }
 
@@ -496,6 +497,17 @@ class Posts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+    /**url : http://domain/xproject/api/posts/get_post_by_id
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @id   int
+     * @account_id int
+     *@response  object
+     * */
 
     function get_post_by_id_post(){
         $status = 'failure';
@@ -533,6 +545,10 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
+    /**
+     * send notify for all province -> 10Km
+     * */
+
     function send_notify_provinces($message,$record){
         //push notify for province
         $message_to_send = array(
@@ -557,6 +573,10 @@ class Posts extends Rest_Controller
             }
         }
     }
+
+    /**
+     * send notify for user created post when province picked your post
+     * */
 
     function send_notify_users($record){
         $pickerInfo = $this->account->getAccountInfoById($record['account_id']);
