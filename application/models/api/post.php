@@ -5,21 +5,44 @@ class Post extends CI_Model {
     function __construct()
     {
         parent::__construct();
+        $this->load->model('api/common_model');
     }
 
-    function createPost($data)
+    function createPost($data, $post_id = null)
     {
-        $temp = array(
-            'created_at' => getCurrentDate()
-        );
+        try {
+            //create post
+            if (empty($post_id)) {
+                $temp = array(
+                    'created_at' => getCurrentDate()
+                );
 
-        $recordData = array_merge($data,$temp);
+                $recordData = array_merge($data, $temp);
 
-        $isInsert = $this->db->insert('posts', $recordData);
-        if ($isInsert)
-            return TRUE;
-        else
-            return FALSE;
+                $isInsert = $this->db->insert('posts', $recordData);
+
+                if ($isInsert) {
+                    return true;
+                }
+            } //update posts
+            else {
+                $temp = array(
+                    'updated_at' => getCurrentDate()
+                );
+
+                $recordData = array_merge($data, $temp);
+
+                $isUpdate = $this->db->update('posts', $recordData, array('id' => $post_id,'created_by' => $recordData['created_by']));
+
+                if ($isUpdate) {
+                    return true;
+                }
+            }
+        }catch (ErrorException $e){
+            return false;
+        }
+        return false;
+
     }
     /*
      * The post is important
@@ -30,14 +53,18 @@ class Post extends CI_Model {
             'location_lng' => $input['location_lng'],
             'created_by' => $account['id'],
             'created_at' => getCurrentDate(),
-            'is_emergency' => 1
+            'is_emergency' => 1,
+            'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'],$input['location_lng'])
         );
-
-        $isInsert = $this->db->insert('posts', $record);
-        if ($isInsert)
-            return TRUE;
-        else
-            return FALSE;
+        try {
+            $isInsert = $this->db->insert('posts', $record);
+            if ($isInsert)
+                return TRUE;
+            else
+                return FALSE;
+        }catch (ErrorException $e){
+            return false;
+        }
     }
 
     /*
@@ -48,30 +75,33 @@ class Post extends CI_Model {
     function getPostByLocation($location, $RADIUS = 10.0){
         $LAT_HERE = $location['location_lat'];
         $LONG_HERE = $location['location_lng'];
-
-        $query = $this->db->query("
-            SELECT *,
-                p.distance_unit
-                         * DEGREES(ACOS(COS(RADIANS(p.latpoint))
-                         * COS(RADIANS(z.location_lat))
-                         * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
-                         + SIN(RADIANS(p.latpoint))
-                         * SIN(RADIANS(z.location_lat)))) AS distance_in_km
-              FROM posts AS z
-              JOIN (
-                SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
-                $RADIUS  AS radius,      111.045 AS distance_unit
-                ) AS p ON 1=1
-              WHERE z.location_lat
-              BETWEEN p.latpoint  - (p.radius / p.distance_unit)
-              AND p.latpoint  + (p.radius / p.distance_unit)
-              AND z.location_lng
-              BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-              AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-              ORDER BY distance_in_km
-        ");
-        $result = $query->result_array();
-        return $result;
+        try {
+            $query = $this->db->query("
+                SELECT *,
+                    p.distance_unit
+                             * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                             * COS(RADIANS(z.location_lat))
+                             * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
+                             + SIN(RADIANS(p.latpoint))
+                             * SIN(RADIANS(z.location_lat)))) AS distance_in_km
+                  FROM posts AS z
+                  JOIN (
+                    SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
+                    $RADIUS  AS radius,      111.045 AS distance_unit
+                    ) AS p ON 1=1
+                  WHERE z.location_lat
+                  BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+                  AND p.latpoint  + (p.radius / p.distance_unit)
+                  AND z.location_lng
+                  BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  ORDER BY distance_in_km
+            ");
+            $result = $query->result_array();
+            return $result;
+        }catch (ErrorException $e){
+            return null;
+        }
     }
 
     /*
@@ -79,11 +109,289 @@ class Post extends CI_Model {
     *
     * */
 
-    function getMyPosts($account_id)
+    function getMyPosts($account_id,$page = null,$numberPerPage = null)
     {
-        $query = $this->db->get_where('posts',array('created_by' => $account_id));
-        return $query->result_array();
+        $this->load->model('file_model');
+        $this->db->select('
+            po.*
+        ');
+        $this->db->from('posts as po');
+        $this->db->join('type_posts as pot','pot.id = po.type_id', 'left');
+        $this->db->where('po.created_by',$account_id);
+        $this->db->order_by('po.is_emergency','DESC');
+        $this->db->order_by('po.created_at','DESC');
+
+        if ($page !== null)
+        {
+            $begin = ($page - 1)*$numberPerPage;
+            $this->db->limit($numberPerPage, $begin);
+        }
+        $query = $this->db->get();
+
+        if($query->num_rows() > 0 ){
+            $result = $query->result_array();
+            if(count($result)>0){
+                $arrTemp = array();
+                foreach($result as $key => $type){
+                    if(!empty($type['type_id'])) {
+                        $type['post_type'] = $this->getTypePostById($type['type_id']);
+                    }else{
+                        $type['post_type'] = null;
+                    }
+                    array_push($arrTemp,$type);
+                }
+                return $arrTemp;
+            }
+            return $result;
+        }
     }
 
+    function countAllPost($account_id){
+        try{
+            $this->db->where('created_by', $account_id);
+            $this->db->from('posts');
+            return $this->db->count_all_results();
+        }catch (ErrorException $e){
+            return null;
+        }
+    }
+
+    function getTypePostById($id){
+        $this->db->select('id, name, description, avatar');
+        $this->db->from('type_posts');
+        $this->db->where('id',$id);
+        $query = $this->db->get();
+
+        if($query->num_rows() > 0 ){
+            $result = $query->result_array();
+            if(count($result)>0){
+                $arrTemp = array();
+                foreach($result as $key => $type){
+                    $type['avatar'] = $this->file_model->getLinkFileById($type['avatar'],'resized');
+                    array_push($arrTemp,$type);
+                }
+                return $arrTemp[0];
+            }
+
+            return $result;
+        }
+        return array();
+    }
+
+    function getTypePostEmergency(){
+        $this->db->select('id, name, description, avatar');
+
+        return array(
+            'id' => null,
+            'name' => 'Emergency',
+            'description' => 'Emergency',
+            'avatar' => null
+        );
+    }
+
+    function getNewestMyPosts($input){
+        try{
+            $account_id = $input['account_id'];
+            $created_at = $input['created_at'];
+
+            $this->load->model('file_model');
+            $this->db->select('
+                po.id,
+                po.type_id,
+                po.content,
+                po.location_lat,
+                po.location_lng,
+                po.is_emergency,
+                po.created_at,
+                po.updated_at,
+                po.location_name
+            ');
+            $this->db->from('posts as po');
+            $this->db->join('type_posts as pot','pot.id = po.type_id', 'left');
+            $this->db->where('po.created_by',$account_id);
+            $this->db->where('po.created_at >',$created_at);
+            $this->db->where('po.is_delete',NULL);
+            $this->db->order_by('po.is_emergency','DESC');
+            $this->db->order_by('po.created_at','DESC');
+
+            $query = $this->db->get();
+
+            if($query->num_rows() > 0 ){
+                $result = $query->result_array();
+                if(count($result)>0){
+                    $arrTemp = array();
+                    foreach($result as $key => $type){
+                        if(!empty($type['type_id'])) {
+                            $type['post_type'] = $this->getTypePostById($type['type_id']);
+                        }else{
+                            $type['post_type'] = null;
+                        }
+                        array_push($arrTemp,$type);
+                    }
+                    return $arrTemp;
+                }
+                return $result;
+            }
+        }catch (ErrorException $e){
+            return null;
+        }
+    }
+
+    function searchPost(){
+        try {
+            $input = $this->input->post();
+            $LAT_HERE = $input['location_lat'];
+            $LONG_HERE = $input['location_lng'];
+            $RADIUS = 10.0;
+
+            //paging
+            $limit = "";
+            $query_newest = "";
+            $numberPerPage = DEFIND_PER_PAGE_DEFAULT;
+
+            if ($this->input->post('row_per_page')) {
+                $numberPerPage = $this->input->post('row_per_page');
+            }
+
+            if (!empty($input['page'])) {
+                $begin = ($input['page'] - 1) * $numberPerPage;
+                $limit = "LIMIT $numberPerPage OFFSET  $begin";
+            }
+
+            //get newest posts > created_at
+            if(!empty($input['created_at'])){
+                $created_at = $input['created_at'];
+                $query_newest = "AND z.created_at > '$created_at' ";
+                $limit = "";
+            }
+
+            $query = $this->db->query("
+                SELECT z.id, z.type_id, z.content, z.is_emergency,
+                      z.created_by, z.location_lat, z.location_lng,  z.created_at, x.name,
+                    p.distance_unit
+                             * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                             * COS(RADIANS(z.location_lat))
+                             * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
+                             + SIN(RADIANS(p.latpoint))
+                             * SIN(RADIANS(z.location_lat)))) AS distance_in_km
+                  FROM posts AS z
+                  LEFT JOIN type_posts AS x ON x.id = z.type_id
+                  JOIN (
+                        SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
+                        $RADIUS  AS radius,      111.045 AS distance_unit
+                    ) AS p ON 1=1
+                  WHERE z.location_lat
+                        BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+                                AND p.latpoint  + (p.radius / p.distance_unit)
+                  AND z.location_lng
+                        BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                                AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  AND z.is_delete IS NULL
+                  ".$query_newest."
+                  AND x.name LIKE '%" . $input['query'] . "%'
+                  ORDER BY distance_in_km, z.is_emergency, z.created_at DESC
+                  " . $limit . "
+                ");
+
+            $result = $query->result_array();
+            if (count($result) > 0) {
+                $arrTemp = array();
+                foreach ($result as $key => $type) {
+                    if (!empty($type['type_id'])) {
+                        $type['post_type'] = $this->getTypePostById($type['type_id']);
+                    } else {
+                        $type['post_type'] = null;
+                    }
+                    array_push($arrTemp, $type);
+                }
+                return $arrTemp;
+            }
+            return $result;
+        }
+        catch(Exception $e){
+            return array();
+        }
+    }
+
+    function postSearchTotalPage(){
+        try {
+            $input = $this->input->post();
+            $LAT_HERE = $input['location_lat'];
+            $LONG_HERE = $input['location_lng'];
+            $RADIUS = 10.0;
+
+            $row_per_page = DEFIND_PER_PAGE_DEFAULT;
+
+            if ($this->input->post('row_per_page')) {
+                $row_per_page = $this->input->post('row_per_page');
+            }
+
+            $query = $this->db->query("
+                SELECT z.id, z.type_id, z.content, z.is_emergency, z.created_by, z.location_lat, z.location_lng, x.name,
+                    p.distance_unit
+                             * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                             * COS(RADIANS(z.location_lat))
+                             * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
+                             + SIN(RADIANS(p.latpoint))
+                             * SIN(RADIANS(z.location_lat)))) AS distance_in_km
+                  FROM posts AS z
+                  LEFT JOIN type_posts AS x ON x.id = z.type_id
+                  JOIN (
+                        SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
+                        $RADIUS  AS radius,      111.045 AS distance_unit
+                    ) AS p ON 1=1
+                  WHERE z.location_lat
+                        BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+                                AND p.latpoint  + (p.radius / p.distance_unit)
+                  AND z.location_lng
+                        BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                                AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  AND z.is_delete IS NULL
+                  AND x.name LIKE '%" . $input['query'] . "%'
+
+                  ORDER BY distance_in z.is_emergency,ncy, z.created_at DESC
+                ");
+
+            $result = $query->result_array();
+            return ceil(count($result) / $row_per_page);
+        }
+        catch(ErrorException $e){
+            return null;
+        }
+    }
+
+    function deletePostById($id,$account_id){
+        try {
+            $isDelete = $this->db->update('posts', array('is_delete' => 1), array('id' => $id, 'created_by' => $account_id));
+            if ($isDelete) {
+                return true;
+            }
+            return false;
+        }catch(ErrorException $e){
+            return null;
+        }
+    }
+
+    function getPostIdForPushNotify($array){
+        try{
+        $this->db->select('id');
+        $this->db->where($array);
+        $query = $this->db->get('posts');
+        $result = $query->result_array();
+        return $result[0]['id'];
+        }catch(ErrorException $e){
+            return null;
+        }
+    }
+
+    function getPostById($id)
+    {
+        try{
+            $query = $this->db->get_where('posts',array('id'=>$id));
+            return $query->result_array();
+        }catch(ErrorException $e){
+            return null;
+        }
+    }
 
 }

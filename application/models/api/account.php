@@ -5,7 +5,7 @@ class Account extends CI_Model {
     function __construct()
     {
         parent::__construct();
-        $this->load->database();
+        $this->load->model('file_model');
     }
 
     //logout
@@ -20,18 +20,45 @@ class Account extends CI_Model {
     }
 
     
-    function createAccount($data){
-    	$temp = array(
-    		'created_at' => getCurrentDate()
-    	);
+    function createAccount($data,$account_id = null){
+         try {
+             //create account
+             if (empty($account_id)) {
+                 $temp = array(
+                     'created_at' => getCurrentDate()
+                 );
 
-    	$recordData = array_merge($data,$temp);
+                 $recordData = array_merge($data, $temp);
 
-    	$isInsert = $this->db->insert('accounts',$recordData);
-		
-		if($isInsert){
-			return true;
-		}
+                 $isInsert = $this->db->insert('accounts', $recordData);
+
+                 if ($isInsert) {
+                     return true;
+                 }
+             } //update account
+             else {
+                 $temp = array(
+                     'updated_at' => getCurrentDate()
+                 );
+
+                 $recordData = array_merge($data, $temp);
+
+                 //delete file avatar
+                 if (!empty($recordData['avatar'])) {
+                     $account = $this->getAccountById($account_id);
+
+                     $this->file_model->deleteFileById($account['avatar']);
+                 }
+
+                 $isUpdate = $this->db->update('accounts', $recordData, array('id' => $account_id));
+
+                 if ($isUpdate) {
+                     return true;
+                 }
+             }
+         }catch (ErrorException $e){
+            return false;
+        }
 		return false;
     }
 
@@ -44,7 +71,7 @@ class Account extends CI_Model {
         if($query->num_rows()==1){
             $result = $query->result_array();
 
-            $access_token = md5(uniqid().time().md5(trim($input['username'])));
+            $access_token = md5(uniqid().time().md5($result[0]['email']));
             $isCreateToken = $this->db->insert('tokens',array(
                 'access_token' => $access_token,
                 'email' => $result[0]['email'],
@@ -155,5 +182,81 @@ class Account extends CI_Model {
         $result = $query->result_array();
         return $result[0];
     }
- 
+
+    function checkEmailUniqueToUpdateAccount($account_id,$email){
+        $this->db->select('*');
+        $this->db->from('accounts');
+        $this->db->where(array(
+            'email' => $email,
+            'id <>' => $account_id
+        ));
+        $query = $this->db->get();
+        return $query->num_rows() === 0;
+    }
+
+    function getAccountInfoById($id){
+        $this->db->select(
+            'id, username, email, full_name,
+            date_of_birth, gender, identity_card_id,
+            phone_number, blood_group_id, blood_group_rh_id,
+            avatar, address, updated_at,
+            contact_name, contact_phone'
+        );
+        $this->db->from('accounts');
+        $this->db->where('id',$id);
+        $query = $this->db->get();
+        $result = $query->result_array();
+        if(count($result)>0){
+            $account = $result[0];
+            $account['avatar'] = $this->file_model->getLinkFileById($account['avatar']);
+            return $account;
+        }
+        return false;
+    }
+
+    function changePassword($newPass,$account_id){
+        $isUpdate = $this->db->update('accounts',array('password' => $newPass),array('id' => $account_id));
+        if($isUpdate){
+            return true;
+        }
+        return true;
+    }
+
+    /*
+     *     $this->db->select("DATE_FORMAT( date, '%d.%m.%Y' ) as date_human",  FALSE );
+    $this->db->select("DATE_FORMAT( date, '%H:%i') as time_human",      FALSE );*/
+
+    function getAccountIdByLocation($location, $RADIUS = 10.0){
+        $LAT_HERE = $location['location_lat'];
+        $LONG_HERE = $location['location_lng'];
+        try {
+            $query = $this->db->query("
+                SELECT  created_by,
+                    p.distance_unit
+                             * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                             * COS(RADIANS(z.location_lat))
+                             * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
+                             + SIN(RADIANS(p.latpoint))
+                             * SIN(RADIANS(z.location_lat)))) AS distance_in_km
+                  FROM gcm_users AS z
+                  JOIN (
+                    SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
+                    $RADIUS  AS radius,      111.045 AS distance_unit
+                    ) AS p ON 1=1
+                  WHERE z.location_lat
+                  BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+                  AND p.latpoint  + (p.radius / p.distance_unit)
+                  AND z.location_lng
+                  BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  AND z.type_id = 2
+                  ORDER BY distance_in_km
+            ");
+            $result = $query->result_array();
+            return $result;
+        }catch (ErrorException $e){
+            return null;
+        }
+    }
+
 }
