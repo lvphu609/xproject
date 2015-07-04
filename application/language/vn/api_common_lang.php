@@ -37,3 +37,4 @@ $lang['location_lng'] = 'kinh độ';
 $lang['account_type'] = 'loại tài khoản';
 $lang['account_type_int'] = '%s phải là số nguyên';
 $lang['account_id'] = 'id người dùng';
+

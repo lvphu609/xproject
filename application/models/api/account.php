@@ -155,5 +155,5 @@ class Account extends CI_Model {
         $result = $query->result_array();
         return $result[0];
     }
-
+ 
 }

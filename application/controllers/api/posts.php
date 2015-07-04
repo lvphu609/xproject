@@ -242,6 +242,7 @@ class Posts extends Rest_Controller
             'validation' => $validation
         );
         $this->response($data, HEADER_SUCCESS);
+        
     }
 
 }
