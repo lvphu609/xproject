@@ -335,7 +335,7 @@ class Post extends CI_Model {
                   AND z.is_delete IS NULL
                   AND x.name LIKE '%" . $input['query'] . "%'
 
-                  ORDER BY distance_in_km, z.is_emergency, z.created_at DESC
+                  ORDER BY distance_in z.is_emergency,ncy, z.created_at DESC
                 ");
 
             $result = $query->result_array();

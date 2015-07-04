@@ -9,7 +9,7 @@ class Ad_home extends MX_Controller {
         $this->load->library('session');
         $this->info_user   = $this->session->userdata('user_login');
         if(!$this->info_user){
-            redirect(base_url('admin/ad_login'));
+            redirect(base_url('admin/login'));
         }else{
             $user_session=$this->info_user;
             $isActive = $this->tsms_common_model->checkUserActive($user_session['id']);
