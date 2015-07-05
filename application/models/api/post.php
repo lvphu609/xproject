@@ -254,7 +254,7 @@ class Post extends CI_Model {
 
             $query = $this->db->query("
                 SELECT z.id, z.type_id, z.content, z.is_emergency,
-                      z.created_by, z.location_lat, z.location_lng,  z.created_at, x.name,
+                      z.created_by, z.location_lat, z.location_lng, z.location_name,  z.created_at, x.name,
                     p.distance_unit
                              * DEGREES(ACOS(COS(RADIANS(p.latpoint))
                              * COS(RADIANS(z.location_lat))
