@@ -225,4 +225,37 @@ class Account extends CI_Model {
     /*
      *     $this->db->select("DATE_FORMAT( date, '%d.%m.%Y' ) as date_human",  FALSE );
     $this->db->select("DATE_FORMAT( date, '%H:%i') as time_human",      FALSE );*/
+
+    function getAccountIdByLocation($location, $RADIUS = 10.0){
+        $LAT_HERE = $location['location_lat'];
+        $LONG_HERE = $location['location_lng'];
+        try {
+            $query = $this->db->query("
+                SELECT  created_by,
+                    p.distance_unit
+                             * DEGREES(ACOS(COS(RADIANS(p.latpoint))
+                             * COS(RADIANS(z.location_lat))
+                             * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
+                             + SIN(RADIANS(p.latpoint))
+                             * SIN(RADIANS(z.location_lat)))) AS distance_in_km
+                  FROM gcm_users AS z
+                  JOIN (
+                    SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
+                    $RADIUS  AS radius,      111.045 AS distance_unit
+                    ) AS p ON 1=1
+                  WHERE z.location_lat
+                  BETWEEN p.latpoint  - (p.radius / p.distance_unit)
+                  AND p.latpoint  + (p.radius / p.distance_unit)
+                  AND z.location_lng
+                  BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
+                  AND z.type_id = 2
+                  ORDER BY distance_in_km
+            ");
+            $result = $query->result_array();
+            return $result;
+        }catch (ErrorException $e){
+            return null;
+        }
+    }
 }
