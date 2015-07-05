@@ -48,7 +48,9 @@ class Config_model extends CI_Model {
 
     function getListTypePost(){
         $this->db->select('id, name, description, avatar');
-        $query = $this->db->get('type_posts');
+        $this->db->from('type_posts');
+        $this->db->where('id <>',1); //not get emergency
+        $query = $this->db->get();
         if($query->num_rows() > 0 ){
             $result = $query->result_array();
             if(count($result)>0){

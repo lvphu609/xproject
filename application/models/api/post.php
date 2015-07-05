@@ -54,6 +54,7 @@ class Post extends CI_Model {
             'created_by' => $account['id'],
             'created_at' => getCurrentDate(),
             'is_emergency' => 1,
+            'type_id' => 1,
             'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'],$input['location_lng'])
         );
 
