@@ -355,4 +355,30 @@ class Post extends CI_Model {
         return false;
     }
 
+    function getPostIdForPushNotify($array){
+        try{
+            $this->db->select('id');
+            $this->db->where($array);
+            $query = $this->db->get('posts');
+            $result = $query->result_array();
+            return $result[0]['id'];
+        }catch(ErrorException $e){
+            return null;
+        }
+    }
+
+    function getPostInfoById($id)
+    {
+        try{
+            $query = $this->db->query("
+            SELECT p.created_at AS created_at, a.full_name AS full_name, t.name AS type_post_name
+            FROM posts AS p, accounts AS a, type_posts AS t
+            WHERE p.created_by = a.id AND p.type_id = t.id AND p.id =".$id
+            );
+            return $query->result_array();
+        }catch(ErrorException $e){
+            return null;
+        }
+    }
+
 }

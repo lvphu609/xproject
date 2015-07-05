@@ -97,6 +97,18 @@ class Posts extends Rest_Controller
                 if ($this->post->createPost($record)) {
                     $status = 'success';
                     $message = 'insert post successfully!';
+
+                    //push notify for province
+                    /*$message_to_send = array(
+                        'title' => 'Accident',
+                        'content' => $input['content'],
+                        'location_lat' => $input['location_lat'],
+                        'location_lng' => $input['location_lng'],
+                        'created_by' => $account['id'],
+                        'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng']),
+                        'id' => $this->post->getPostIdForPushNotify($record)
+                    );
+                    $this->send_notify_provinces($message_to_send,$record);*/
                 }
             }
         }
@@ -130,6 +142,24 @@ class Posts extends Rest_Controller
                 if ($isUpdate) {
                     $status = 'success';
                     $message = 'Update post successfully.';
+
+                    //push notify for province
+                    /*$account = $this->account_info;
+                    if (empty($input['picked_by'])) {
+                        $message_to_send = array(
+                            'title' => 'Accident modify',
+                            'content' => $input['content'],
+                            'location_lat' => $input['location_lat'],
+                            'location_lng' => $input['location_lng'],
+                            'created_by' => $account['id'],
+                            'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng']),
+                            'id' => $this->post->getPostIdForPushNotify($record)
+                        );
+                        $this->send_notify_provinces($message_to_send,$record);
+                    } else {
+                        //push notify for user create post
+                        //$this->send_notify_users($record);
+                    }*/
                 }
             }
         }
@@ -454,6 +484,7 @@ class Posts extends Rest_Controller
             $isDelete = $this->post->deletePostById($this->input->post('id'),$this->input->post('account_id'));
             if($isDelete) {
                 $status = API_SUCCESS;
+                $message = API_SUCCESS;
             }
         }
 
@@ -466,6 +497,102 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
+
+    /**url : http://domain/xproject/api/posts/get_post_info_by_id
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @id   int
+     *@response  object
+     * */
+
+    function get_post_info_by_id_post(){
+        $status = 'failure';
+        $message = 'error';
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'id', 'label'=>'lang:post_id', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == TRUE) {
+            $message = 'validation';
+            $validation = array(
+                'id' => $this->form_validation->error('id')
+            );
+        } else {
+            $input = $this->input->get();
+            $infoPost = $this->post->getPostInfoById($input['id']);
+            $message = '';
+            $status = 'success';
+            $results = $infoPost;
+        }
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+        var_dump($data); die();
+        $this->response($data, HEADER_SUCCESS);
+    }
+
+    /**
+     * send notify for all province -> 10Km
+     * */
+
+    function send_notify_provinces($message,$record){
+        //push notify for province
+        $message_to_send = array(
+            'title' => $message['title'],
+            'content' => $message['content'],
+            'location_lat' => $message['location_lat'],
+            'location_lng' => $message['location_lng'],
+            'created_by' => $message['id'],
+            'location_name' => $this->common_model->getLocationNameByLatLng($message['location_lat'], $message['location_lng']),
+            'id' => $this->post->getPostIdForPushNotify($record)
+        );
+        $account_array = $this->account->getAccountIdByLocation($record, 10);
+        //var_dump($account_array);die();
+        $regId_array = array();
+        if (count($account_array) > 0) {
+            for ($i = 0; $i < count($account_array); $i++) {
+                array_push($regId_array, $this->notify->getRegId($account_array[$i]['created_by']));
+            }
+            //var_dump($regId_array); die();
+            for ($i = 0; $i < count($account_array); $i++) {
+                $this->notify->sendPushNotificationToGCM(array($regId_array[$i]), $message_to_send);
+            }
+        }
+    }
+
+    /**
+     * send notify for user created post when province picked your post
+     * */
+
+    function send_notify_users($record){
+        $pickerInfo = $this->account->getAccountInfoById($record['account_id']);
+        //var_dump($pickerInfo['full_name']); die();
+        $message_to_send = array(
+            'title' => 'My post was picked!',
+            'location_name' => $pickerInfo['full_name'].' has picked your post!',
+            'location_lat' => $record['location_lat'],
+            'location_lng' => $record['location_lng'],
+            'created_by' => $record['account_id'],
+            'id' => $record['id']
+        );
+        //var_dump($account_array);die();
+        $regId_array = array($this->notify->getRegId($record['account_id']));
+        $this->notify->sendPushNotificationToGCM($regId_array, $message_to_send);
+    }
 }
 
 

@@ -40,3 +40,4 @@ $lang['account_id'] = 'Id người dùng';
 $lang['created_at'] = 'Ngày tạo';
 $lang['check_email_unique'] = 'Địa chỉ email đã tồn tại.';
 $lang['key_search'] = 'Từ khóa tìm kiếm';
+$lang['post_id'] = 'Id bài post';
