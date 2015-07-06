@@ -472,5 +472,28 @@ class Post extends CI_Model {
         }
     }
 
+    function destroy($id){
+        try {
+            $data = array(
+                'status' => 0,
+                'picked_by' => null,
+                'picked_at' => null,
+                'completed_at' => null
+            );
+            $isUpdate = $this->db->update('posts', $data, array('id' => $id));
+            if ($isUpdate) {
+                return true;
+            } else {
+                return false;
+            }
+        }catch (ErrorException $e){
+            return false;
+        }
+    }
+
+    function complete($id){
+
+    }
+
 
 }
