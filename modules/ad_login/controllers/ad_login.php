@@ -7,7 +7,6 @@ class Ad_login extends MX_Controller
         parent::__construct();
         $this->info_user = $this->session->userdata('user_login');
         $this->load->helper(array('form'));
-        $this->lang->load('admin_login','vn');
         $this->load->library('form_validation');
         $this->load->model('ad_login/ad_login_model');
     }

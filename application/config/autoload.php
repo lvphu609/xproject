@@ -96,7 +96,7 @@ $autoload['config'] = array('images');
 |
 */
 
-$autoload['language'] = array();
+$autoload['language'] = array('admin_common','admin_home','admin_login');
 
 
 /*

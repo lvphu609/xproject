@@ -48,7 +48,7 @@
                     <a href="#"><i class="fa fa-cog fa-fw"></i> <?php echo $this->lang->line('menu_text_config'); ?><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="panels-wells.html"><i class="fa fa-list-alt fa-fw"></i> <?php echo $this->lang->line('menu_text_post_types'); ?></a>
+                            <a href="<?php echo base_url('admin/config/post_types'); ?>"><i class="fa fa-list-alt fa-fw"></i> <?php echo $this->lang->line('menu_text_post_types'); ?></a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->

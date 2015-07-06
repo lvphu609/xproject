@@ -53,6 +53,7 @@ $route['admin'] = "ad_home/ad_home";
 $route['admin/login'] = "ad_login/ad_login";
 $route['admin/auth'] = "ad_login/ad_login/check_login";
 $route['admin/logout'] = "ad_login/ad_login/logout";
+$route['admin/config/post_types'] = "ad_config/ad_config/get_post_type_list";
 
 
 

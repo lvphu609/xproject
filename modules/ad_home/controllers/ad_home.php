@@ -8,10 +8,8 @@ class Ad_home extends MX_Controller {
         if(!$this->info_user){
             redirect(base_url('admin/login'));
         }
-
         $model = array('ad_home_model');
         $this->load->models($model);
-        $this->lang->load('admin_home','vn');
     }
 
     public function index()
