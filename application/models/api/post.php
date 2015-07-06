@@ -113,7 +113,7 @@ class Post extends CI_Model {
         $this->db->from('posts as po');
         $this->db->join('type_posts as pot','pot.id = po.type_id', 'left');
         $this->db->where('po.created_by',$account_id);
-        $this->db->order_by('po.is_emergency','DESC');
+        $this->db->where('po.is_delete',NULL);
         $this->db->order_by('po.created_at','DESC');
 
         if ($page !== null)
@@ -192,6 +192,7 @@ class Post extends CI_Model {
             po.location_lat,
             po.location_lng,
             po.is_emergency,
+            po.created_by,
             po.created_at,
             po.updated_at,
             po.location_name
@@ -224,7 +225,7 @@ class Post extends CI_Model {
         }
     }
 
-    function searchPost(){
+    function searchPost($account){
         try {
             $input = $this->input->post();
             $LAT_HERE = $input['location_lat'];
@@ -274,6 +275,7 @@ class Post extends CI_Model {
                         BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                                 AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                   AND z.is_delete IS NULL
+                  AND z.created_by <> ".$account['id']."
                   ".$query_newest."
                   AND x.name LIKE '%" . $input['query'] . "%'
                   ORDER BY distance_in_km, z.created_at DESC
@@ -300,7 +302,7 @@ class Post extends CI_Model {
         }
     }
 
-    function postSearchTotalPage(){
+    function postSearchTotalPage($account){
         try {
             $input = $this->input->post();
             $LAT_HERE = $input['location_lat'];
@@ -334,6 +336,7 @@ class Post extends CI_Model {
                         BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                                 AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                   AND z.is_delete IS NULL
+                  AND z.created_by <> ".$account['id']."
                   AND x.name LIKE '%" . $input['query'] . "%'
 
                   ORDER BY distance_in_km, z.created_at DESC

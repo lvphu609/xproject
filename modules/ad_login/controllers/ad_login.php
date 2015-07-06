@@ -5,12 +5,13 @@ class Ad_login extends MX_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->lang->load('admin_login','vn');
     }
 
     function index(){
 
         $data = array(
-            'header_title' =>
+            'header_title' => $this->lang->line('header_title'),
             'js_file_module' => array(
                 'ad_login/assets/js/mod_login.js'
             ),

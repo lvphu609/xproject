@@ -1,0 +1,19 @@
+.btn-login{
+   /* border-radius: 0px;*/
+    background-color: #08ae9e;
+}
+.btn-login:hover{
+    /*background-color: #08ae9e;*/
+    background-color: #0AA697;
+    border-color: #0B9B8D;
+}
+.btn-login:active,.btn-login:focus{
+    background-color: #08ae9e !important;
+}
+
+
+.panel-default>.panel-heading{
+    background-color: #08ae9e;
+    color: #FFFFFF;
+    font-weight: bold;
+}

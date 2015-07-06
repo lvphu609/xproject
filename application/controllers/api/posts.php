@@ -428,7 +428,7 @@ class Posts extends Rest_Controller
                 'location_lng' => $this->form_validation->error('location_lng')
             );
         } else {
-            $listPost = $this->post->searchPost();
+            $listPost = $this->post->searchPost($this->account_info);
             $message = '';
             $status = API_SUCCESS;
             $results = $listPost;
@@ -442,7 +442,7 @@ class Posts extends Rest_Controller
             API_PAGINATION => array(
                 API_PAGE => $this->input->post('page'),
                 API_ROW_PER_PAGE => count($results),
-                API_TOTAL_PAGE => $this->post->postSearchTotalPage()
+                API_TOTAL_PAGE => $this->post->postSearchTotalPage($this->account_info)
             )
         );
         $this->response($data, HEADER_SUCCESS);
