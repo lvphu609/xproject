@@ -389,21 +389,20 @@ class Post extends CI_Model {
             $this->db->join('type_posts as pot','pot.id = p.type_id', 'left');
             $query = $this->db->get();
 
+
             if($query->num_rows() > 0 ){
-                $result = $query->result_array();
+                $result = $query->result_object();
                 if(count($result)>0){
                     $arrTemp = array();
-                    foreach($result as $key => $type){
-                        if(!empty($type['type_id'])) {
-                            $type['post_type'] = $this->getTypePostById($type['type_id']);
+
+                        if(!empty($result[0] -> type_id)) {
+                            $result[0] -> post_type = $this->getTypePostById($result[0] -> type_id);
                         }else{
-                            $type['post_type'] = null;
+                            $result[0] -> post_type = null;
                         }
-                        array_push($arrTemp,$type);
-                    }
-                    return $arrTemp;
+                    return $result[0];
                 }
-                return $result;
+                return null;
             }
         }catch(ErrorException $e){
             return null;
