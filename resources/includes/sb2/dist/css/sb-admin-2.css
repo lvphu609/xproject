@@ -352,3 +352,22 @@ table.dataTable thead .sorting:after {
 .panel-yellow a:hover {
     color: #df8a13;
 }
+
+.navbar-static-top{
+    background: #08ae9e;
+}
+
+.navbar-brand{
+    color: #FFFFFF !important;
+}
+
+a.user-profile{
+    color: #FFFFFF ;
+}
+
+.nav>li>a.user-profile:focus, .nav>li>a.user-profile:hover,
+.nav .open>a.user-profile, .nav .open>a.user-profile:focus,
+.nav .open>a.user-profile:hover {
+    text-decoration: none;
+    background-color: #099083;
+}

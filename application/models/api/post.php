@@ -454,4 +454,23 @@ class Post extends CI_Model {
     }
 
 
+    function pick($post_id,$account){
+        try{
+            $data = array(
+                'picked_at' => getCurrentDate(),
+                'picked_by' => $account['id'],
+                'status' => 1
+            );
+            $isUpdate = $this->db->update('posts',$data,array('id' => $post_id));
+            if($isUpdate){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (ErrorException $e){
+            return false;
+        }
+    }
+
+
 }

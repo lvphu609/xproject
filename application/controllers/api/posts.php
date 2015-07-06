@@ -637,6 +637,51 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
+    /**url : http://domain/xproject/api/posts/pick
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @post_id             string
+     *
+     *@response  object
+     * */
+    function pick_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'post_id', 'label'=>'lang:post_id', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'post_id' => $this->form_validation->error('post_id')
+            );
+        } else {
+            $pickStatus = $this->post->pick($this->input->post('post_id'),$this->account_info);
+            if($pickStatus){
+                $message = '';
+                $status = API_SUCCESS;
+            }
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
 }
 
 
