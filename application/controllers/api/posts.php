@@ -616,13 +616,13 @@ class Posts extends Rest_Controller
         $this->form_validation->set_rules($rules);
 
         /*Check if the form passed its validation */
-        if ($this->form_validation->run() == TRUE) {
+        if ($this->form_validation->run() == FALSE) {
             $message = API_VALIDATION;
             $validation = array(
                 'id' => $this->form_validation->error('id')
             );
         } else {
-            $postInfo = $this->post->getPostDetailById($this->input->get('id'));
+            $postInfo = $this->post->getPostDetailById($this->input->post('id'));
             $status = API_SUCCESS;
             $message = API_SUCCESS;
             $results = $postInfo;
