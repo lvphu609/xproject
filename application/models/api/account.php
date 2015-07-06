@@ -82,7 +82,8 @@ class Account extends CI_Model {
             if($isCreateToken){
                 return array(
                     'access_token' => $access_token,
-                    'account_id' => $result[0]['id']
+                    'account_id' => $result[0]['id'],
+                    'account_type' => $result[0]['account_type']
                 );
             }
         }
@@ -231,14 +232,14 @@ class Account extends CI_Model {
         $LONG_HERE = $location['location_lng'];
         try {
             $query = $this->db->query("
-                SELECT  created_by,
+                SELECT  id,
                     p.distance_unit
                              * DEGREES(ACOS(COS(RADIANS(p.latpoint))
                              * COS(RADIANS(z.location_lat))
                              * COS(RADIANS(p.longpoint) - RADIANS(z.location_lng))
                              + SIN(RADIANS(p.latpoint))
                              * SIN(RADIANS(z.location_lat)))) AS distance_in_km
-                  FROM gcm_users AS z
+                  FROM accounts AS z
                   JOIN (
                     SELECT  $LAT_HERE  AS latpoint,  $LONG_HERE AS longpoint,
                     $RADIUS  AS radius,      111.045 AS distance_unit
@@ -249,7 +250,7 @@ class Account extends CI_Model {
                   AND z.location_lng
                   BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                   AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
-                  AND z.type_id = 2
+                  AND z.account_type = 2
                   ORDER BY distance_in_km
             ");
             $result = $query->result_array();
