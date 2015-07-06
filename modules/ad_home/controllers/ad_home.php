@@ -16,7 +16,7 @@ class Ad_home extends MX_Controller {
 
     public function index()
     {
-        echo "hello";
+        
     }
 
 
