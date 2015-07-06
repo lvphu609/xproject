@@ -593,6 +593,52 @@ class Posts extends Rest_Controller
         $regId_array = array($this->notify->getRegId($record['account_id']));
         $this->notify->sendPushNotificationToGCM($regId_array, $message_to_send);
     }
+
+    /**url : http://domain/xproject/api/posts/get_post_detail_by_id
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @id   int
+     *@response  object
+     * */
+
+    function get_post_detail_by_id_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'id', 'label'=>'lang:id', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == TRUE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'id' => $this->form_validation->error('id')
+            );
+        } else {
+            $postInfo = $this->post->getPostDetailById($this->input->get('id'));
+            $status = API_SUCCESS;
+            $message = API_SUCCESS;
+            $results = $postInfo;
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
+
 }
 
 

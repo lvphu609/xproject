@@ -380,4 +380,46 @@ class Post extends CI_Model {
         }
     }
 
+    function getPostDetailById($id)
+    {
+        try{
+            $this->db->select('p.id, p.type_id, p.content, p.location_lat, p.location_lng, p.is_emergency, p.created_at, p.location_name, p.created_by, p.picked_by');
+            $this->db->from('posts as p');
+            $this->db->where('p.id',$id);
+            $this->db->join('type_posts as pot','pot.id = p.type_id', 'left');
+            $query = $this->db->get();
+
+
+            if($query->num_rows() > 0 ){
+                $result = $query->result_object();
+                if(count($result)>0){
+                    $arrTemp = array();
+
+                    if(!empty($result[0] -> type_id)) {
+                        $result[0] -> post_type = $this->getTypePostById($result[0] -> type_id);
+                    }else{
+                        $result[0] -> post_type = null;
+                    }
+
+                    if(!empty($result[0] -> created_by)){
+                        $result[0] -> account_normal = $this->account->getAccountInfoById($result[0] -> created_by);
+                    }else{
+                        $result[0] -> account_normal = null;
+                    }
+
+                    if(!empty($result[0] -> picked_by)){
+                        $result[0] -> provider_account = $this->account->getAccountInfoById($result[0] -> picked_by);
+                    }else{
+                        $result[0] -> provider_account = null;
+                    }
+                    return $result[0];
+                }
+                return null;
+            }
+        }catch(ErrorException $e){
+            return null;
+        }
+    }
+
+
 }
