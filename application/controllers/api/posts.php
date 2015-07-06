@@ -130,12 +130,13 @@ class Posts extends Rest_Controller
                     'location_lng' => $this->form_validation->error('location_lng')
                 );
             } else {
+                $account = $this->account_info;
                 $record = array(
                     'content' => $input['content'],
                     'location_lat' => $input['location_lat'],
                     'location_lng' => $input['location_lng'],
                     'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng']),
-                    'created_by' => $input['account_id']
+                    'created_by' => $account['id']
                 );
 
                 $isUpdate = $this->post->createPost($record,$input['id']);
