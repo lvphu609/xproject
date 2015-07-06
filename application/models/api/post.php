@@ -356,11 +356,11 @@ class Post extends CI_Model {
 
     function getPostIdForPushNotify($array){
         try{
-            $this->db->select('id');
+            $this->db->select('*');
             $this->db->where($array);
             $query = $this->db->get('posts');
-            $result = $query->result_array();
-            return $result[0]['id'];
+            $result = $query->result_object();
+            return $result;
         }catch(ErrorException $e){
             return null;
         }
@@ -402,9 +402,9 @@ class Post extends CI_Model {
                     }
 
                     if(!empty($result[0] -> created_by)){
-                        $result[0] -> account_normal = $this->account->getAccountInfoById($result[0] -> created_by);
+                        $result[0] -> normal_account = $this->account->getAccountInfoById($result[0] -> created_by);
                     }else{
-                        $result[0] -> account_normal = null;
+                        $result[0] -> normal_account = null;
                     }
 
                     if(!empty($result[0] -> picked_by)){
