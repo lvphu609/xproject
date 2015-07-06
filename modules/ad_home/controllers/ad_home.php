@@ -11,12 +11,26 @@ class Ad_home extends MX_Controller {
 
         $model = array('ad_home_model');
         $this->load->models($model);
-
+        $this->lang->load('admin_home','vn');
     }
 
     public function index()
     {
-        
+        $data = array(
+            'header_title' => $this->lang->line('header_title'),
+            'js_file_module' => array(
+                'ad_login/assets/js/mod_login.js'
+            ),
+            'css_file_module' => array(
+                'ad_login/assets/css/style.css'
+            )
+        );
+
+        $this->load->view('templates/admin/header',$data);
+        $this->load->view('templates/admin/container');
+        $this->load->view('templates/admin/menu');
+        $this->load->view('home_view');
+        $this->load->view('templates/admin/footer');
     }
 
 
