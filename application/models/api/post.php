@@ -388,7 +388,7 @@ class Post extends CI_Model {
             $query = $this->db->get();
             return $query->result_array();*/
 
-            $this->db->select('p.id, p.type_id, p.content, p.location_lat, p.location_lng, p.is_emergency, p.created_at, p.location_name');
+            $this->db->select('*');
             $this->db->from('posts as p');
             $this->db->where('p.id',$id);
             $this->db->join('type_posts as pot','pot.id = p.type_id', 'left');
@@ -417,7 +417,7 @@ class Post extends CI_Model {
     function getPostDetailById($id)
     {
         try{
-            $this->db->select('p.id, p.type_id, p.content, p.location_lat, p.location_lng, p.is_emergency, p.created_at, p.location_name, p.created_by, p.picked_by');
+            $this->db->select('*');
             $this->db->from('posts as p');
             $this->db->where('p.id',$id);
             $this->db->join('type_posts as pot','pot.id = p.type_id', 'left');
