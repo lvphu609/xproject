@@ -14,7 +14,8 @@ class Post extends CI_Model {
             //create post
             if (empty($post_id)) {
                 $temp = array(
-                    'created_at' => getCurrentDate()
+                    'created_at' => getCurrentDate(),
+                    'status' => 0
                 );
 
                 $recordData = array_merge($data, $temp);
@@ -256,6 +257,7 @@ class Post extends CI_Model {
             $query = $this->db->query("
                 SELECT z.id, z.type_id, z.content, z.is_emergency,
                       z.created_by, z.location_lat, z.location_lng, z.location_name,  z.created_at, x.name,
+                      z.update_at, z.is_delete, z.picked_by, z.picked_at, z.completed_at, z.status,
                     p.distance_unit
                              * DEGREES(ACOS(COS(RADIANS(p.latpoint))
                              * COS(RADIANS(z.location_lat))
@@ -492,7 +494,20 @@ class Post extends CI_Model {
     }
 
     function complete($id){
-
+        try{
+            $data = array(
+                'status' => 2,
+                'completed_at' => getCurrentDate()
+            );
+            $isUpdate = $this->db->update('posts', $data, array('id' => $id));
+            if ($isUpdate) {
+                return true;
+            } else {
+                return false;
+            }
+        }catch (ErrorException $e){
+            return false;
+        }
     }
 
 

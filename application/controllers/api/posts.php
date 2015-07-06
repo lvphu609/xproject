@@ -643,7 +643,7 @@ class Posts extends Rest_Controller
      * @token  string has
      *
      *@param
-     * @post_id             string
+     * @id             string
      *
      *@response  object
      * */
@@ -689,7 +689,7 @@ class Posts extends Rest_Controller
      * @token  string has
      *
      *@param
-     * @post_id             string
+     * @id             string
      *
      *@response  object
      * */
@@ -732,6 +732,17 @@ class Posts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+    /**url : http://domain/xproject/api/posts/complete
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @id   string
+     *
+     *@response  object
+     * */
 
     function complete_post(){
         $status = API_FAILURE;
