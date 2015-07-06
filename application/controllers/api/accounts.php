@@ -80,7 +80,7 @@ class Accounts extends Rest_Controller
                 array('field' => 'blood_group_rh_id', 'label' => 'lang:blood_group_rh_id', 'rules' => 'required'),
                 array('field' => 'avatar', 'label' => 'lang:avatar', 'rules' => 'required'),
                 array('field' => 'account_type', 'label' => 'lang:account_type', 'rules' => 'required|integer'),
-                array('field' => 'android_id', 'label' => 'lang:android_id', 'rules' => 'required')
+                /*array('field' => 'android_id', 'label' => 'lang:android_id', 'rules' => 'required')*/
             );
 
             /* if (empty($_FILES['avatar']['name']))
@@ -108,7 +108,7 @@ class Accounts extends Rest_Controller
                     'blood_group_rh_id' => $this->form_validation->error('blood_group_rh_id'),
                     'avatar' => $this->form_validation->error('avatar'),
                     'account_type' => $this->form_validation->error('account_type'),
-                    'android_id' => $this->form_validation->error('android_id')
+                    /*'android_id' => $this->form_validation->error('android_id')*/
                 );
             } //validate success
             else {
@@ -132,7 +132,7 @@ class Accounts extends Rest_Controller
                     'contact_name' => $dataInput['contact_name'],
                     'contact_phone' => $dataInput['contact_phone'],
                     'account_type' => $dataInput['account_type'],
-                    'android_id' => $dataInput['android_id']
+                    /*'android_id' => $dataInput['android_id']*/
                 );
                 //save record account
                 $isInsert = $this->account->createAccount($accountRecord);

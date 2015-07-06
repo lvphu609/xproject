@@ -509,39 +509,37 @@ class Posts extends Rest_Controller
      * */
 
     function get_post_info_by_id_post(){
-        $status = 'failure';
-        $message = 'error';
+        $status = API_FAILURE;
+        $message = API_ERROR;
         $results = null;
         $validation = null;
 
         /*Set the form validation rules*/
         $rules = array(
-            array('field'=>'id', 'label'=>'lang:post_id', 'rules'=>'required')
+            array('field'=>'id', 'label'=>'lang:id', 'rules'=>'required')
         );
 
         $this->form_validation->set_rules($rules);
 
         /*Check if the form passed its validation */
-        if ($this->form_validation->run() == TRUE) {
-            $message = 'validation';
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
             $validation = array(
                 'id' => $this->form_validation->error('id')
             );
         } else {
-            $input = $this->input->get();
-            $infoPost = $this->post->getPostInfoById($input['id']);
-            $message = '';
-            $status = 'success';
-            $results = $infoPost;
+            $postInfo = $this->post->getPostInfoById($this->input->post('id'));
+            $status = API_SUCCESS;
+            $message = API_SUCCESS;
+            $results = $postInfo;
         }
 
         $data = array(
-            'status' => $status,
-            'message' => $message,
-            'results' => $results,
-            'validation' => $validation
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
         );
-        var_dump($data); die();
         $this->response($data, HEADER_SUCCESS);
     }
 
@@ -561,7 +559,6 @@ class Posts extends Rest_Controller
             'id' => $this->post->getPostIdForPushNotify($record)
         );
         $account_array = $this->account->getAccountIdByLocation($record, 10);
-        //var_dump($account_array);die();
         $regId_array = array();
         if (count($account_array) > 0) {
             for ($i = 0; $i < count($account_array); $i++) {
