@@ -215,13 +215,24 @@ class Account extends CI_Model {
         return false;
     }
 
-    function changePassword($newPass,$account_id){
-        $isUpdate = $this->db->update('accounts',array('password' => $newPass),array('id' => $account_id));
-        if($isUpdate){
-            return true;
+    function changePassword($oldPass,$newPass,$account_id){
+        //check old pass
+        $query = $this->db->get_where('accounts',array('password' => $oldPass, 'id' => $account_id));
+        $data = array(
+            'old_password' => false,
+            'update' => false
+        );
+        if($query->num_rows()==1) {
+            $data['old_password'] = true;
+            $isUpdate = $this->db->update('accounts', array('password' => $newPass), array('id' => $account_id));
+            if ($isUpdate) {
+                return $data['update'] = true;
+            }
         }
-        return true;
+        return $data;
     }
+
+
 
     /*
      *     $this->db->select("DATE_FORMAT( date, '%d.%m.%Y' ) as date_human",  FALSE );

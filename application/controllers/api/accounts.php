@@ -601,9 +601,14 @@ class Accounts extends Rest_Controller
                 'confirm_password' => $this->form_validation->error('confirm_password')
             );
         } else {
-            $isUpdate = $this->account->changePassword($this->input->post('password'),$this->input->post('account_id'));
-            if($isUpdate) {
-                $status = API_SUCCESS;
+            $isUpdate = $this->account->changePassword($this->input->post('password'),$this->input->post('confirm_password'),$this->input->post('account_id'));
+
+            if(!$isUpdate['old_password']){
+                $message = $this->lang->line('old_password_is_wrong');
+            }else{
+                if($isUpdate['update']) {
+                    $status = API_SUCCESS;
+                }
             }
         }
 

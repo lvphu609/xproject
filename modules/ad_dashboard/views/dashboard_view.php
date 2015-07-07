@@ -18,7 +18,7 @@ $dot_icon = base_url('resources/img/icon/pagedot_green2x.png');
                 <div class="inner das-inner">
                     <div class="col-lg-12">
                         <img class="sub-menu-item-icon" src="<?php echo $dot_icon; ?>">
-                        <a class="das-link addNewTsmsData " href="#">Loại yêu cầu.</a>
+                        <a class="das-link addNewTsmsData " href="<?php echo base_url('admin/config/post_types'); ?>">Loại yêu cầu.</a>
                     </div>
                 </div>
                 <div class="icon">
