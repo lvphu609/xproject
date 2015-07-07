@@ -518,4 +518,93 @@ class Post extends CI_Model {
         }
     }
 
+    function getPostsOfProvider($account_id,$page = null,$numberPerPage = null)
+    {
+        $this->load->model('file_model');
+
+        $this->db->select('
+            po.*
+        ');
+        $this->db->from('posts as po');
+        $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
+        $this->db->where('po.created_by', $account_id);
+        $this->db->where('po.is_delete', NULL);
+        $this->db->or_where('po.picked_by',$account_id);
+        $completed = $this->input->post('completed');
+        if(!empty($completed) AND $completed == 1){
+            $this->db->where('po.status',2);
+        }else{
+            $this->db->where('po.status < 2');
+        }
+        $this->db->order_by('po.created_at', 'DESC');
+
+
+        if ($page !== null)
+        {
+            $begin = ($page - 1)*$numberPerPage;
+            $this->db->limit($numberPerPage, $begin);
+        }
+        $query = $this->db->get();
+
+        if($query->num_rows() > 0 ){
+            $result = $query->result_array();
+            if(count($result)>0){
+                $arrTemp = array();
+                foreach($result as $key => $type){
+                    if(!empty($type['type_id'])) {
+                        $type['post_type'] = $this->getTypePostById($type['type_id']);
+                    }else{
+                        $type['post_type'] = null;
+                    }
+                    array_push($arrTemp,$type);
+                }
+                return $arrTemp;
+            }
+            return $result;
+        }
+    }
+    function getNewestProviderPosts($input){
+        $account_id = $input['account_id'];
+        $created_at = $input['created_at'];
+
+        $this->load->model('file_model');
+        $this->db->select('
+            po.id,
+            po.type_id,
+            po.content,
+            po.location_lat,
+            po.location_lng,
+            po.is_emergency,
+            po.created_by,
+            po.created_at,
+            po.updated_at,
+            po.location_name
+        ');
+        $this->db->from('posts as po');
+        $this->db->join('type_posts as pot','pot.id = po.type_id', 'left');
+        $this->db->where('po.picked_by',$account_id);
+        $this->db->where('po.created_at >',$created_at);
+        $this->db->where('po.is_delete',NULL);
+        $this->db->order_by('po.is_emergency','DESC');
+        $this->db->order_by('po.created_at','DESC');
+
+        $query = $this->db->get();
+
+        if($query->num_rows() > 0 ){
+            $result = $query->result_array();
+            if(count($result)>0){
+                $arrTemp = array();
+                foreach($result as $key => $type){
+                    if(!empty($type['type_id'])) {
+                        $type['post_type'] = $this->getTypePostById($type['type_id']);
+                    }else{
+                        $type['post_type'] = null;
+                    }
+                    array_push($arrTemp,$type);
+                }
+                return $arrTemp;
+            }
+            return $result;
+        }
+    }
 }

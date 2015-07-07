@@ -783,6 +783,115 @@ class Posts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+    /**url : http://domain/xproject/api/posts/get_posts_of_provider
+     *header
+     * @token  string has
+     *
+     *@param
+     * @account_id   string
+     * @page   int
+     * @row_per_page  int
+     *
+     *@response  object
+     * */
+
+    function get_posts_of_provider_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'account_id', 'label'=>'lang:account_id', 'rules'=>'required'),
+            array('field'=>'page', 'label'=>'lang:page', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = 'validation';
+            $validation = array(
+                'account_id' => $this->form_validation->error('account_id'),
+                'page' => $this->form_validation->error('page')
+            );
+        } else {
+            $row_per_page = DEFIND_PER_PAGE_DEFAULT;
+
+            if($this->input->post('row_per_page')){
+                $row_per_page = $this->input->post('row_per_page');
+            }
+
+            $listPost = $this->post->getPostsOfProvider($this->input->post('account_id'),$this->input->post('page'),$row_per_page);
+            $message = '';
+            $status = API_SUCCESS;
+            $results = $listPost;
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation,
+            API_PAGINATION => array(
+                API_PAGE => $this->input->post('page'),
+                API_ROW_PER_PAGE => count($results),
+                API_TOTAL_PAGE => ceil($this->post->countAllPost($this->input->post('account_id'))/$row_per_page)
+            )
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
+
+    /**url : http://domain/xproject/api/posts/get_provider_post_newest_by_time
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @account_id   string
+     * @created_at   date time
+     *
+     *@response  object
+     * */
+
+    function get_provider_post_newest_by_time_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'account_id', 'label'=>'lang:account_id', 'rules'=>'required'),
+            array('field'=>'created_at', 'label'=>'lang:created_at', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'account_id' => $this->form_validation->error('account_id'),
+                'created_at' => $this->form_validation->error('created_at')
+            );
+        } else {
+            $listPost = $this->post->getNewestProviderPosts($this->input->post());
+            $message = '';
+            $status = API_SUCCESS;
+            $results = $listPost;
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
 }
 
 
