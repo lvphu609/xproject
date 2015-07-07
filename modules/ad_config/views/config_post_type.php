@@ -48,8 +48,8 @@
                                         <td>
                                             <img src="<?php echo $row['avatar_link']; ?>" width="50" height="50">
                                         </td>
-                                        <td class="text-center">
-                                                <a title="<?php echo $this->lang->line('post_type_btn_edit_title'); ?>" class="btn btn-success btn-xs" href="<?php echo base_url().'index.php/admin/article_edit?art='.$row['id'] ?>">
+                                        <td>
+                                                <a title="<?php echo $this->lang->line('post_type_btn_edit_title'); ?>" class="btn btn-success btn-xs" href="<?php echo base_url('admin/config/post_types/'.$row['id'].'/edit'); ?>">
                                                     <span class="glyphicon glyphicon-edit"></span>
                                                 </a>
                                             <?php if($row['id'] != 1){ ?>
@@ -83,13 +83,13 @@
             <div class="modal-header fontbold">Thông báo</div>
             <div class="modal-body">
                 <i class="glyphicon warning glyphicon-warning-sign"></i>&nbsp;<?php echo $this->lang->line('delete_message_confirm'); ?>
-                <label class="text-name-replace">asd</label>
+                <label class="text-name-replace"></label>
             </div>
             <div class="col-lg-12 messageAlert"></div>
             <div class="clear"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-danger btnConfirmDelete">Xóa</button>
-                <button type="button" class="btn btn-sm btn-default btnCancelDelete" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-sm btn-danger btnConfirmDelete"><?php echo $this->lang->line('btn_delete'); ?></button>
+                <button type="button" class="btn btn-sm btn-default btnCancelDelete" data-dismiss="modal"><?php echo $this->lang->line('btn_cancel'); ?></button>
             </div>
         </div>
     </div>

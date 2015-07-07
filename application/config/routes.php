@@ -55,6 +55,10 @@ $route['admin/auth'] = "ad_login/ad_login/check_login";
 $route['admin/logout'] = "ad_login/ad_login/logout";
 $route['admin/config/post_types'] = "ad_config/ad_config/config_post_types";
 $route['admin/config/post_types/create'] = "ad_config/ad_config/create_post_type";
+$route['admin/config/post_types/:num/edit'] = "ad_config/ad_config/edit_post_type";
+$route['admin/config/post_types/store'] = "ad_config/ad_config/store_post_type";
+$route['admin/config/post_types/update'] = "ad_config/ad_config/update_post_type";
+
 
 
 
