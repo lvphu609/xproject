@@ -3,9 +3,9 @@
     <div class="row">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <form method="GET" active="<?php echo base_url(); ?>index.php/article_list">
+                    <form method="GET">
                         <div class="input-group custom-search-form pull-left col-lg-4 col-md-6 col-sm-9 col-xs-12">
-                            <input value="<?php echo !empty($search) ? $search: ''; ?>" type="text" class="form-control" placeholder="Search..." name="search">
+                            <input value="<?php echo !empty($search) ? $search: ''; ?>" type="text" class="form-control" placeholder="<?php echo $this->lang->line('placeholder_text_search'); ?>" name="search">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="submit">
                                     <i class="fa fa-search"></i>
@@ -15,7 +15,7 @@
                     </form>
                     <div class="pull-right col-lg-1 col-md-1 col-sm-3 col-xs-3">
                         <a href="<?php echo base_url(); ?>index.php/admin/article_create">
-                            <button title="Thêm bài viết" type="button" class="btn btn-success btn-sm col-xs-12 button-add-article">
+                            <button title="<?php echo $this->lang->line('post_type_add_text'); ?>" type="button" class="btn btn-success btn-sm col-xs-12 button-add">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </a>
@@ -33,9 +33,10 @@
                         <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                             <tr>
-                                <th>Tên loại yêu cầu</th>
-                                <th>Mô tả</th>
-                                <th>Sửa/Xóa</th>
+                                <th><?php echo $this->lang->line('post_type_name'); ?></th>
+                                <th><?php echo $this->lang->line('post_type_description'); ?></th>
+                                <th><?php echo $this->lang->line('post_type_avatar'); ?></th>
+                                <th><?php echo $this->lang->line('text_edit_delete'); ?></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -44,13 +45,18 @@
                                     <tr class="art-<?php echo $row['id']; ?>">
                                         <td><?php echo $row['name']; ?></td>
                                         <td><?php echo $row['description']; ?></td>
-                                        <td class="text-center">
-                                            <a title="Sửa bài viết" class="btn btn-success btn-xs" href="<?php echo base_url().'index.php/admin/article_edit?art='.$row['id'] ?>">
-                                                <span class="glyphicon glyphicon-edit"></span>
-                                            </a>
-                                            <button title="Xóa bài viết" type="button" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-xs buttonDelete">
-                                                <span class="glyphicon glyphicon-trash "></span>
-                                            </button>
+                                        <td>
+                                            <img src="<?php echo $row['avatar_link']; ?>" width="50" height="50">
+                                        </td>
+                                        <td>
+                                                <a title="<?php echo $this->lang->line('post_type_btn_edit_title'); ?>" class="btn btn-success btn-xs" href="<?php echo base_url().'index.php/admin/article_edit?art='.$row['id'] ?>">
+                                                    <span class="glyphicon glyphicon-edit"></span>
+                                                </a>
+                                            <?php if($row['id'] != 1){ ?>
+                                                <button title="<?php echo $this->lang->line('post_type_btn_delete_title'); ?>" type="button" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-xs buttonDelete">
+                                                    <span class="glyphicon glyphicon-trash "></span>
+                                                </button>
+                                            <?php } ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -71,7 +77,7 @@
     <!-- /.row -->
 
 
-<div class="modal fade" id="modalDeleteItemArticle" tabindex="-3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="modalDeleteItem" tabindex="-3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header fontbold">Thông báo</div>
@@ -81,8 +87,8 @@
             <div class="col-lg-12 messageAlert"></div>
             <div class="clear"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-danger btnConfirmDeleteArticle">Xóa</button>
-                <button type="button" class="btn btn-sm btn-default btnCancelDeleteArticle" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-sm btn-danger btnConfirmDelete">Xóa</button>
+                <button type="button" class="btn btn-sm btn-default btnCancelDelete" data-dismiss="modal">Hủy</button>
             </div>
         </div>
     </div>
