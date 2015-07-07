@@ -109,3 +109,6 @@ define('API_TOTAL_PAGE','total_page');
 define('API_SUCCESS','success');
 define('API_FAILURE','failure');
 define('API_ERROR','error');
+
+//admin page
+define('DEFIND_ADMIN_PER_PAGE_DEFAULT',10);

@@ -33,7 +33,7 @@ class Ad_config extends MX_Controller
         $this->load->library('my_paging');
         $config['base_url'] = base_url('admin/config/post_types?search='.$search.'&');
         $config['total_rows'] = $this->ad_config_model->countRecord('type_posts',$search);
-        $config['per_page'] = 10;
+        $config['per_page'] = DEFIND_ADMIN_PER_PAGE_DEFAULT;
         $config['cur_page'] =$page;
         $this->my_paging->initialize($config);
         $pagination = $this->my_paging->create_links();
@@ -48,7 +48,7 @@ class Ad_config extends MX_Controller
             'css_file_module' => array(
                 'ad_config/assets/css/style.css'
             ),
-            'post_type_list' => $this->ad_config_model->postTypeList(10,$page,$search),
+            'post_type_list' => $this->ad_config_model->postTypeList(DEFIND_ADMIN_PER_PAGE_DEFAULT,$page,$search),
             'pagination' => $pagination,
             'search' => $search
         );
