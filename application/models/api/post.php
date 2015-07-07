@@ -108,14 +108,22 @@ class Post extends CI_Model {
     function getMyPosts($account_id,$page = null,$numberPerPage = null)
     {
         $this->load->model('file_model');
+
         $this->db->select('
             po.*
         ');
         $this->db->from('posts as po');
-        $this->db->join('type_posts as pot','pot.id = po.type_id', 'left');
-        $this->db->where('po.created_by',$account_id);
-        $this->db->where('po.is_delete',NULL);
-        $this->db->order_by('po.created_at','DESC');
+        $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
+        $this->db->where('po.created_by', $account_id);
+        $this->db->where('po.is_delete', NULL);
+        $completed = $this->input->post('completed');
+        if(!empty($completed) AND $completed == 'true'){
+            $this->db->where('po.status',2);
+        }else{
+            $this->db->where('po.status < 2');
+        }
+        $this->db->order_by('po.created_at', 'DESC');
+
 
         if ($page !== null)
         {
@@ -509,6 +517,5 @@ class Post extends CI_Model {
             return false;
         }
     }
-
 
 }
