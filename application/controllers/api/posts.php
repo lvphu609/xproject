@@ -892,6 +892,57 @@ class Posts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+    /**url : http://domain/xproject/api/posts/picks
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @arr_post_id             json
+     *
+     *@response  object
+     * */
+    function picks_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+        $json = $this->input->post('arr_post_id');
+        if(!empty($json)){
+            $array_post_id = json_decode($json,true);
+            //var_dump($array_post_id); die();
+            $pickStatus = $this->post->picks($array_post_id,$this->account_info);
+            if(is_array($pickStatus)){
+                $message = '';
+                $status = API_FAILURE;
+                $results = $pickStatus;
+            }else{
+                if($pickStatus == true){
+                    $message='';
+                    $status = API_SUCCESS;
+                }
+                else{
+                    $message='';
+                    $status = API_ERROR;
+                }
+            }
+        }else{
+            $message = '';
+            $status = API_FAILURE;
+            $validation = 'Find not found json post_id.';
+        }
+
+
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
 }
 
 
