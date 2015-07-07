@@ -117,7 +117,7 @@ class Post extends CI_Model {
         $this->db->where('po.created_by', $account_id);
         $this->db->where('po.is_delete', NULL);
         $completed = $this->input->post('completed');
-        if(!empty($completed) AND $completed == 'true'){
+        if(!empty($completed) AND $completed == 1){
             $this->db->where('po.status',2);
         }else{
             $this->db->where('po.status < 2');
