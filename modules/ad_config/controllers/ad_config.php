@@ -17,10 +17,10 @@ class Ad_config extends MX_Controller
             'header_title' => $this->lang->line('header_title'),
             'page_header' => $this->lang->line('page_title_post_type'),
             'js_file_module' => array(
-                'ad_login/assets/js/mod_login.js'
+                'ad_config/assets/js/mod_config.js'
             ),
             'css_file_module' => array(
-                'ad_login/assets/css/style.css'
+                'ad_config/assets/css/style.css'
             )
         );
 

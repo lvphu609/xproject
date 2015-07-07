@@ -18,30 +18,31 @@ $dot_icon = base_url('resources/img/icon/pagedot_green2x.png');
                 <div class="inner das-inner">
                     <div class="col-lg-12">
                         <img class="sub-menu-item-icon" src="<?php echo $dot_icon; ?>">
-                        <a class="color_white addNewTsmsData " href="#">Loại yêu cầu.</a>
+                        <a class="das-link addNewTsmsData " href="#">Loại yêu cầu.</a>
                     </div>
                 </div>
                 <div class="icon">
                     <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_check_white.png'); ?>">
                 </div>
-                <a  href="#" class="small-box-footer fontbold">
+                <a  href="#" class="small-box-footer das-title">
                     CẤU HÌNH  <i class="fa fa-arrow-circle-right"></i>
                 </a>
             </div>
         </div><!-- ./col -->
 
+        <?php /*
         <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
             <div class="small-box bg-green">
                 <div class="inner das-inner">
                     <div class="col-lg-12">
                         <img class="sub-menu-item-icon" src="<?php echo $dot_icon; ?>">
-                        <a class="color_white addNewTsmsData " href="#">Loại yêu cầu.</a>
+                        <a class="das-link addNewTsmsData " href="#">Loại yêu cầu.</a>
                     </div>
                 </div>
                 <div class="icon">
-                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_check_white.png'); ?>">
+                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_site_white.png'); ?>">
                 </div>
-                <a  href="#" class="small-box-footer fontbold">
+                <a  href="#" class="small-box-footer das-title">
                     CẤU HÌNH  <i class="fa fa-arrow-circle-right"></i>
                 </a>
             </div>
@@ -52,13 +53,13 @@ $dot_icon = base_url('resources/img/icon/pagedot_green2x.png');
                 <div class="inner das-inner">
                     <div class="col-lg-12">
                         <img class="sub-menu-item-icon" src="<?php echo $dot_icon; ?>">
-                        <a class="color_white addNewTsmsData " href="#">Loại yêu cầu.</a>
+                        <a class="das-link addNewTsmsData " href="#">Loại yêu cầu.</a>
                     </div>
                 </div>
                 <div class="icon">
-                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_check_white.png'); ?>">
+                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_employee_white.png'); ?>">
                 </div>
-                <a  href="#" class="small-box-footer fontbold">
+                <a  href="#" class="small-box-footer das-title">
                     CẤU HÌNH  <i class="fa fa-arrow-circle-right"></i>
                 </a>
             </div>
@@ -69,13 +70,13 @@ $dot_icon = base_url('resources/img/icon/pagedot_green2x.png');
                 <div class="inner das-inner">
                     <div class="col-lg-12">
                         <img class="sub-menu-item-icon" src="<?php echo $dot_icon; ?>">
-                        <a class="color_white addNewTsmsData " href="#">Loại yêu cầu.</a>
+                        <a class="das-link addNewTsmsData " href="#">Loại yêu cầu.</a>
                     </div>
                 </div>
                 <div class="icon">
-                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_check_white.png'); ?>">
+                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_user_white.png'); ?>">
                 </div>
-                <a  href="#" class="small-box-footer fontbold">
+                <a  href="#" class="small-box-footer das-title">
                     CẤU HÌNH  <i class="fa fa-arrow-circle-right"></i>
                 </a>
             </div>
@@ -86,13 +87,13 @@ $dot_icon = base_url('resources/img/icon/pagedot_green2x.png');
                 <div class="inner das-inner">
                     <div class="col-lg-12">
                         <img class="sub-menu-item-icon" src="<?php echo $dot_icon; ?>">
-                        <a class="color_white addNewTsmsData " href="#">Loại yêu cầu.</a>
+                        <a class="das-link addNewTsmsData " href="#">Loại yêu cầu.</a>
                     </div>
                 </div>
                 <div class="icon">
-                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_check_white.png'); ?>">
+                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_category_white.png'); ?>">
                 </div>
-                <a  href="#" class="small-box-footer fontbold">
+                <a  href="#" class="small-box-footer das-title">
                     CẤU HÌNH  <i class="fa fa-arrow-circle-right"></i>
                 </a>
             </div>
@@ -103,18 +104,18 @@ $dot_icon = base_url('resources/img/icon/pagedot_green2x.png');
                 <div class="inner das-inner">
                     <div class="col-lg-12">
                         <img class="sub-menu-item-icon" src="<?php echo $dot_icon; ?>">
-                        <a class="color_white addNewTsmsData " href="#">Loại yêu cầu.</a>
+                        <a class="das-link addNewTsmsData " href="#">Loại yêu cầu.</a>
                     </div>
                 </div>
                 <div class="icon">
-                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_check_white.png'); ?>">
+                    <img class="icon-bottom" src="<?php echo base_url('resources/img/icon/icn_useravatar_white.png'); ?>">
                 </div>
-                <a  href="#" class="small-box-footer fontbold">
+                <a  href="#" class="small-box-footer das-title">
                     CẤU HÌNH  <i class="fa fa-arrow-circle-right"></i>
                 </a>
             </div>
         </div><!-- ./col -->
-
+        */ ?>
     </div>
 </div>
 

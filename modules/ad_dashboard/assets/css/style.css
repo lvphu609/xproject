@@ -265,3 +265,16 @@
 #dashboard .icon-bottom{
     opacity: 0.3;
 }
+
+.sub-menu-item-icon{
+    width: 10px;
+    height: 10px;
+}
+
+.das-link, .das-link:hover{
+    color: #FFFFFF;
+}
+
+.das-title{
+    font-weight: bold;
+}
