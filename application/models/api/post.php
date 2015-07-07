@@ -599,4 +599,28 @@ class Post extends CI_Model {
             return null;
         }
     }
+
+    function picks($array_post_id,$account){
+        try {
+            $data = array(
+                'picked_at' => getCurrentDate(),
+                'picked_by' => $account['id'],
+                'status' => 1
+            );
+            $error = array();
+            for ($i = 0; $i < count($array_post_id); $i++) {
+                    $isUpdate = $this->db->update('posts', $data, array('id' => (int)$array_post_id[$i]));
+                    if ($isUpdate == false) {
+                        array_push($error, $array_post_id[$i]);
+                    }
+            }
+            if(count($error)>1){
+                return $error;
+            }else{
+                return true;
+            }
+        }catch (ErrorException $e){
+            return false;
+        }
+    }
 }
