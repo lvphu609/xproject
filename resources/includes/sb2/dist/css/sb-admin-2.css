@@ -371,3 +371,7 @@ a.user-profile{
     text-decoration: none;
     background-color: #099083;
 }
+
+.clear{
+    clear: both;
+}

@@ -565,8 +565,10 @@ class Accounts extends Rest_Controller
      * @method POST
      * param
      *
-     * @account_id        int
-     * @password        string md5
+     *
+     * @id        int
+     * @old_password        string md5
+     * @new_password        string md5
      * @confirm_password        string md5
      *
      * header
@@ -585,9 +587,10 @@ class Accounts extends Rest_Controller
 
         /*Set the form validation rules*/
         $rules = array(
-            array('field'=>'account_id', 'label'=>'lang:account_id', 'rules'=>'required'),
-            array('field' => 'password', 'label' => 'lang:password', 'rules' => 'required'),
-            array('field' => 'confirm_password', 'label' => 'lang:confirm_password', 'rules' => 'required|matches[password]')
+            array('field'=>'id', 'label'=>'lang:id', 'rules'=>'required'),
+            array('field' => 'old_password', 'label' => 'lang:old_password', 'rules' => 'required'),
+            array('field' => 'new_password', 'label' => 'lang:new_password', 'rules' => 'required'),
+            array('field' => 'confirm_password', 'label' => 'lang:confirm_password', 'rules' => 'required|matches[new_password]')
         );
 
         $this->form_validation->set_rules($rules);
@@ -596,12 +599,13 @@ class Accounts extends Rest_Controller
         if ($this->form_validation->run() == FALSE) {
             $message = API_VALIDATION;
             $validation = array(
-                'account_id' => $this->form_validation->error('account_id'),
-                'password' => $this->form_validation->error('password'),
+                'id' => $this->form_validation->error('id'),
+                'old_password' => $this->form_validation->error('old_password'),
+                'new_password' => $this->form_validation->error('new_password'),
                 'confirm_password' => $this->form_validation->error('confirm_password')
             );
         } else {
-            $isUpdate = $this->account->changePassword($this->input->post('password'),$this->input->post('confirm_password'),$this->input->post('account_id'));
+            $isUpdate = $this->account->changePassword($this->input->post('old_password'),$this->input->post('new_password'),$this->input->post('id'));
 
             if(!$isUpdate['old_password']){
                 $message = $this->lang->line('old_password_is_wrong');

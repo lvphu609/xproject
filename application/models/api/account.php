@@ -226,7 +226,7 @@ class Account extends CI_Model {
             $data['old_password'] = true;
             $isUpdate = $this->db->update('accounts', array('password' => $newPass), array('id' => $account_id));
             if ($isUpdate) {
-                return $data['update'] = true;
+                $data['update'] = true;
             }
         }
         return $data;
