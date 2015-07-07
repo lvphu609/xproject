@@ -1,4 +1,5 @@
-
+            </div>
+            <!--end page-wraper-->
         </div>
         <!--end container-->
 

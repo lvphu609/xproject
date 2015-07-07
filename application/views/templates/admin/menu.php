@@ -7,7 +7,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="index.html">X-Project</a>
+        <a class="navbar-brand" href="<?php echo base_url('admin'); ?>">X-Project</a>
     </div>
     <!-- /.navbar-header -->
 
@@ -42,7 +42,7 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="#"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                    <a href="<?php echo base_url('admin'); ?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-cog fa-fw"></i> <?php echo $this->lang->line('menu_text_config'); ?><span class="fa arrow"></span></a>
@@ -62,3 +62,11 @@
     </div>
     <!-- /.navbar-static-side -->
 </nav>
+
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"><?php echo !empty($page_header) ? $page_header : ''; ?></h1>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>

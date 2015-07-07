@@ -12,8 +12,23 @@ class Ad_config extends MX_Controller
         $this->load->model('ad_config/ad_config_model');
     }
 
-    function get_post_type_list(){
-        echo 'get_post_type_list';
+    function config_post_types(){
+        $data = array(
+            'header_title' => $this->lang->line('header_title'),
+            'page_header' => $this->lang->line('page_title_post_type'),
+            'js_file_module' => array(
+                'ad_login/assets/js/mod_login.js'
+            ),
+            'css_file_module' => array(
+                'ad_login/assets/css/style.css'
+            )
+        );
+
+        $this->load->view('templates/admin/header',$data);
+        $this->load->view('templates/admin/container');
+        $this->load->view('templates/admin/menu');
+        $this->load->view('config_post_type');
+        $this->load->view('templates/admin/footer');
     }
 }
 

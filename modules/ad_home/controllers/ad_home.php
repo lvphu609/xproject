@@ -16,6 +16,7 @@ class Ad_home extends MX_Controller {
     {
         $data = array(
             'header_title' => $this->lang->line('header_title'),
+            'page_header' => $this->lang->line('page_title_dashboard'),
             'js_file_module' => array(
                 'ad_login/assets/js/mod_login.js'
             ),
