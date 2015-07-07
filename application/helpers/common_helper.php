@@ -43,4 +43,16 @@ if ( ! function_exists('getGender'))
 }
 
 
+if ( ! function_exists('my_lang'))
+{
+    function my_lang($line, $args = array())
+    {
+        $CI =& get_instance();
+        $lang = $CI->lang->line($line);
+        // $lang = '%s %s were %s';// this would be the language line
+        return vsprintf($lang, $args);
+    }
+}
+
+
 ?>

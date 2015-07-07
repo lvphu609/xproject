@@ -14,7 +14,7 @@
                         </div>
                     </form>
                     <div class="pull-right col-lg-1 col-md-1 col-sm-3 col-xs-3">
-                        <a href="<?php echo base_url(); ?>index.php/admin/article_create">
+                        <a href="<?php echo base_url('admin/config/post_types/create'); ?>">
                             <button title="<?php echo $this->lang->line('post_type_add_text'); ?>" type="button" class="btn btn-success btn-sm col-xs-12 button-add">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
@@ -48,7 +48,7 @@
                                         <td>
                                             <img src="<?php echo $row['avatar_link']; ?>" width="50" height="50">
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                                 <a title="<?php echo $this->lang->line('post_type_btn_edit_title'); ?>" class="btn btn-success btn-xs" href="<?php echo base_url().'index.php/admin/article_edit?art='.$row['id'] ?>">
                                                     <span class="glyphicon glyphicon-edit"></span>
                                                 </a>
@@ -82,7 +82,8 @@
         <div class="modal-content">
             <div class="modal-header fontbold">Thông báo</div>
             <div class="modal-body">
-                <i class="glyphicon warning glyphicon-warning-sign"></i>&nbsp;Bạn có muốn xóa bài viết đang chọn!
+                <i class="glyphicon warning glyphicon-warning-sign"></i>&nbsp;<?php echo $this->lang->line('delete_message_confirm'); ?>
+                <label class="text-name-replace">asd</label>
             </div>
             <div class="col-lg-12 messageAlert"></div>
             <div class="clear"></div>

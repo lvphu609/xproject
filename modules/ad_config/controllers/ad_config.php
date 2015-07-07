@@ -59,6 +59,11 @@ class Ad_config extends MX_Controller
         $this->load->view('config_post_type',$data);
         $this->load->view('templates/admin/footer');
     }
+
+    function create_post_type(){
+
+    }
+
 }
 
 
