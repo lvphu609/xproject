@@ -47,9 +47,9 @@ class Notify extends CI_Model {
 //        $sql = "SELECT gcm_regid FROM gcm_users WHERE created_by IN ?";
 //        $query = $this->db->query($sql, array(array($account_id)));
         $this->db->where('created_by',$account_id);
-        $query = $this->db->get('gcm_users');
+        $query = $this->db->get('accounts');
         $result = $query->result_array();
-        return $result[0]['gcm_regid'];
+        return $result[0]['android_id'];
     }
 
 

@@ -425,7 +425,7 @@ class Post extends CI_Model {
     function getPostDetailById($id)
     {
         try{
-            $this->db->select('*');
+            $this->db->select('p.*');
             $this->db->from('posts as p');
             $this->db->where('p.id',$id);
             $this->db->join('type_posts as pot','pot.id = p.type_id', 'left');
