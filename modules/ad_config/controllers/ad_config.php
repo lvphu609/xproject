@@ -110,8 +110,7 @@ class Ad_config extends MX_Controller
         }
     }
 
-    function edit_post_type(){
-
+    function edit_post_type($id){
         $data = array(
             'header_title' => $this->lang->line('config_header_title'),
             'page_header' => $this->lang->line('page_title_post_type_create'),
@@ -125,7 +124,7 @@ class Ad_config extends MX_Controller
             'js_file' => array(
                 'js/jquery.cropit.js'
             ),
-            'post_type' => 1
+            'post_type' => $this->ad_config_model->getPostTypeById($id)
         );
 
         $this->load->view('templates/admin/header',$data);
@@ -136,7 +135,27 @@ class Ad_config extends MX_Controller
     }
 
     function update_post_type(){
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'name', 'label'=>'lang:post_type_name', 'rules'=>'trim|required'),
+            array('field'=>'description', 'label'=>'lang:post_type_description', 'rules'=>'trim|required'),
+            array('field'=>'avatar', 'label'=>'lang:avatar', 'rules'=>'trim|required')
+        );
+        $this->form_validation->set_rules($rules);
 
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $id = $this->input->post('id');
+            $this->edit_post_type($id);
+        }
+        else{
+            $isCreate = $this->ad_config_model->createPostType();
+            if($isCreate){
+                redirect(base_url('admin/config/post_types'));
+            }else{
+                //$this->create_post_type();
+            }
+        }
     }
 
 }
