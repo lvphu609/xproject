@@ -68,7 +68,11 @@ class Ad_config extends MX_Controller
                 'ad_config/assets/js/mod_config.js'
             ),
             'css_file_module' => array(
-                'ad_config/assets/css/style.css'
+                'ad_config/assets/css/style.css',
+                'ad_config/assets/css/config_post_type.css',
+            ),
+            'js_file' => array(
+                'js/jquery.cropit.js'
             )
         );
 

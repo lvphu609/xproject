@@ -57,8 +57,16 @@ var postTypesPageList = {
         });
 
     },
+    imageCrop: function(){
+        $('.image-editor').cropit();
+
+        $('.export').click(function() {
+            var imageData = $('.image-editor').cropit('export');
+        });
+    },
     setup: function(){
         this.delete();
+        this.imageCrop();
     },
     run: function(){
         this.setup();
