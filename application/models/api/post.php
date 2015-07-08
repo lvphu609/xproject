@@ -6,6 +6,7 @@ class Post extends CI_Model {
     {
         parent::__construct();
         $this->load->model('api/common_model');
+        $this->load->model('api/account');
     }
 
     function createPost($data, $post_id = null)
@@ -114,28 +115,27 @@ class Post extends CI_Model {
         ');
         $this->db->from('posts as po');
         $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
-        $this->db->where('po.created_by', $account_id);
-        $this->db->where('po.is_delete', NULL);
-        /*$completed = $this->input->post('completed');
-        $status = $this->input->post('status');
-        if(!empty($completed) && $completed == 1){
-            $this->db->where('po.status',2);
+
+        //check account type
+        $accountInfo = $this->account->getAccountById($account_id);
+        if($accountInfo['account_type'] != 2){
+            $this->db->where('po.created_by', $account_id);
         }else{
-            //var_dump($status);die();
-            if(($status == 0 || $status == 1 || $status == 2) && is_numeric($status)){
-                $this->db->where('po.status', $status);
-            } else{
-                $this->db->where('po.status < 2');
-            }
-        }*/
+            $this->db->where('(po.created_by = '.$account_id.' OR po.picked_by = '.$account_id.')');
+        }
+
+        $this->db->where('po.is_delete', NULL);
+
         $status = $this->input->post('status');
         if(empty($status)){
             $this->db->where('po.status < 2');
         }else{
             $this->db->where('po.status', $status);
         }
-        $this->db->order_by('po.created_at', 'DESC');
 
+
+
+        $this->db->order_by('po.created_at', 'DESC');
 
         if ($page !== null)
         {
@@ -211,7 +211,15 @@ class Post extends CI_Model {
         ');
             $this->db->from('posts as po');
             $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
-            $this->db->where('po.created_by', $account_id);
+
+            //check account type
+            $accountInfo = $this->account->getAccountById($account_id);
+            if($accountInfo['account_type'] != 2){
+                $this->db->where('po.created_by', $account_id);
+            }else{
+                $this->db->where('(po.created_by = '.$account_id.' OR po.picked_by = '.$account_id.')');
+            }
+
             $this->db->where('po.created_at >', $created_at);
 
             $status = $this->input->post('status');
