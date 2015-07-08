@@ -108,7 +108,9 @@ class Post extends CI_Model {
 
     function getMyPosts($account_id,$page = null,$numberPerPage = null)
     {
+
         $this->load->model('file_model');
+        $accountInfo = $this->account->getAccountById($account_id);
 
         $this->db->select('
             po.*
@@ -117,7 +119,6 @@ class Post extends CI_Model {
         $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
 
         //check account type
-        $accountInfo = $this->account->getAccountById($account_id);
         if($accountInfo['account_type'] != 2){
             $this->db->where('po.created_by', $account_id);
         }else{
@@ -132,8 +133,6 @@ class Post extends CI_Model {
         }else{
             $this->db->where('po.status', $status);
         }
-
-
 
         $this->db->order_by('po.created_at', 'DESC');
 
@@ -206,14 +205,15 @@ class Post extends CI_Model {
         $created_at = $input['created_at'];
         try {
             $this->load->model('file_model');
+            $accountInfo = $this->account->getAccountById($account_id);
+
             $this->db->select('
-            po.*
-        ');
+                po.*
+            ');
             $this->db->from('posts as po');
             $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
 
             //check account type
-            $accountInfo = $this->account->getAccountById($account_id);
             if($accountInfo['account_type'] != 2){
                 $this->db->where('po.created_by', $account_id);
             }else{
@@ -308,6 +308,7 @@ class Post extends CI_Model {
                                 AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                   AND z.is_delete IS NULL
                   AND z.created_by <> ".$account['id']."
+                  AND z.status <> 2
                   ".$query_newest."
                   AND x.name LIKE '%" . $input['query'] . "%'
                   ORDER BY distance_in_km, z.created_at DESC
@@ -369,6 +370,7 @@ class Post extends CI_Model {
                                 AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                   AND z.is_delete IS NULL
                   AND z.created_by <> ".$account['id']."
+                  AND z.status <> 2
                   AND x.name LIKE '%" . $input['query'] . "%'
 
                   ORDER BY distance_in_km, z.created_at DESC
