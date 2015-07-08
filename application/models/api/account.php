@@ -270,4 +270,30 @@ class Account extends CI_Model {
             return null;
         }
     }
+
+    function storeLocationById($account_id,$location){
+        try{
+            $location_lat = $location['location_lat'];
+            $location_lng = $location['location_lng'];
+            $data =array(
+                'location_lat' => $location_lat,
+                'location_lng' => $location_lng
+            );
+            $isUpdate = $this->db->update('accounts', $data, array('id' => (int)$account_id));
+            if($isUpdate){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (ErrorException $e){
+            return false;
+        }
+    }
+
+    function getLocationById($account_id){
+        $this->db->select('id,location_lat,location_lng');
+        $this->db->where('id', (int)$account_id);
+        $query = $this->db->get('accounts');
+        return $query->result_object();
+    }
 }
