@@ -116,9 +116,9 @@ class File_model extends CI_Model {
     }
 
     function saveImage($directory,$base64img){
-        $base64img = str_replace('data:image/jpeg;base64,', '', $base64img);
+        $base64img = preg_replace('#^data:image/[^;]+;base64,#', '', $base64img);
         $data = base64_decode($base64img);
-        $file_name = uniqid().'.jpg';
+        $file_name = uniqid().'.png';
         $file = $directory . '/'.$file_name;
         file_put_contents($file, $data);
         return array(

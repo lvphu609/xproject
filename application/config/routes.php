@@ -62,3 +62,4 @@ $route['admin/config/post_types/update'] = "ad_config/ad_config/update_post_type
 
 
 
+

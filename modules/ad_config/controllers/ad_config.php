@@ -6,6 +6,9 @@ class Ad_config extends MX_Controller
     {
         parent::__construct();
         $this->info_user = $this->session->userdata('user_login');
+        if(!$this->info_user){
+            redirect(base_url('admin/login'));
+        }
 
         $this->load->helper(array('form'));
         $this->load->library('form_validation');
@@ -86,21 +89,50 @@ class Ad_config extends MX_Controller
     function edit_post_type(){
         $data = array(
             'header_title' => $this->lang->line('config_header_title'),
-            'page_header' => $this->lang->line('page_title_post_type_edit'),
+            'page_header' => $this->lang->line('page_title_post_type_create'),
             'js_file_module' => array(
                 'ad_config/assets/js/mod_config.js'
             ),
             'css_file_module' => array(
-                'ad_config/assets/css/style.css'
+                'ad_config/assets/css/style.css',
+                'ad_config/assets/css/config_post_type.css',
+            ),
+            'js_file' => array(
+                'js/jquery.cropit.js'
             )
         );
 
         $this->load->view('templates/admin/header',$data);
         $this->load->view('templates/admin/container');
         $this->load->view('templates/admin/menu');
-        $this->load->view('config_post_type_edit',$data);
+        $this->load->view('config_post_type_create',$data);
         $this->load->view('templates/admin/footer');
     }
+
+    function store_post_type(){
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'name', 'label'=>'lang:post_type_name', 'rules'=>'trim|required'),
+            array('field'=>'description', 'label'=>'lang:post_type_description', 'rules'=>'trim|required'),
+            array('field'=>'avatar', 'label'=>'lang:avatar', 'rules'=>'trim|required')
+        );
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $this->create_post_type();
+        }
+        else{
+            $isCreate = $this->ad_config_model->createPostType();
+            if($isCreate){
+                redirect(base_url('admin/config/post_types'));
+            }else{
+                $this->create_post_type();
+            }
+        }
+    }
+
+
 
 }
 

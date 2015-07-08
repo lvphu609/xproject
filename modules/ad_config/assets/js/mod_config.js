@@ -78,6 +78,7 @@ var postTypesPageList = {
             var imageData = $('.image-editor').cropit('export');
             $('#img_base64').val(imageData);
             $('.avatar-post-type').attr('src',imageData);
+            $('.avatar-post-type').parent().removeClass('has-error');
             $('#myModal').modal('hide');
         });
     },

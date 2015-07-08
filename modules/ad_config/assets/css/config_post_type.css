@@ -51,3 +51,7 @@ input {
     background-color:transparent;
     color:transparent;
 }
+
+.has-error .avatar-post-type{
+    border: 1px solid red;
+}
