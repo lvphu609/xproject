@@ -616,4 +616,101 @@ class Accounts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
+    /**url : http://domain/xproject/api/accounts/store_location_by_id
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @location_lat             string
+     * @location_lng             string
+     *
+     *@response  object
+     * */
+    function store_location_by_id_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'location_lat', 'label'=>'lang:location_lat', 'rules'=>'required'),
+            array('field'=>'location_lng', 'label'=>'lang:location_lng', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'location_lat' => $this->form_validation->error('location_lat'),
+                'location_lng' => $this->form_validation->error('location_lng')
+            );
+        } else {
+            $this->checkToken();
+            $account = $this->account_info;
+            $result = $this->account->storeLocationById($account['id'],$this->input->post());
+            if($result){
+                $message = '';
+                $status = API_SUCCESS;
+            }
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
+
+    /**url : http://domain/xproject/api/accounts/get_location_by_id
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     *@param
+     * @account_id             string
+     *
+     *@response  object
+     * */
+    function get_location_by_id_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'account_id', 'label'=>'lang:account_id', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'account_id' => $this->form_validation->error('account_id')
+            );
+        } else {
+            $result = $this->account->getLocationById($this->input->post('account_id'));
+            if($result){
+                $message = '';
+                $status = API_SUCCESS;
+                $results = $result;
+            }
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
 }
