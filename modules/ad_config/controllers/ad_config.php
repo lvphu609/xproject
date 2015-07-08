@@ -86,28 +86,6 @@ class Ad_config extends MX_Controller
         $this->load->view('templates/admin/footer');
     }
 
-    function edit_post_type(){
-        $data = array(
-            'header_title' => $this->lang->line('config_header_title'),
-            'page_header' => $this->lang->line('page_title_post_type_create'),
-            'js_file_module' => array(
-                'ad_config/assets/js/mod_config.js'
-            ),
-            'css_file_module' => array(
-                'ad_config/assets/css/style.css',
-                'ad_config/assets/css/config_post_type.css',
-            ),
-            'js_file' => array(
-                'js/jquery.cropit.js'
-            )
-        );
-
-        $this->load->view('templates/admin/header',$data);
-        $this->load->view('templates/admin/container');
-        $this->load->view('templates/admin/menu');
-        $this->load->view('config_post_type_create',$data);
-        $this->load->view('templates/admin/footer');
-    }
 
     function store_post_type(){
         /*Set the form validation rules*/
@@ -132,7 +110,34 @@ class Ad_config extends MX_Controller
         }
     }
 
+    function edit_post_type(){
 
+        $data = array(
+            'header_title' => $this->lang->line('config_header_title'),
+            'page_header' => $this->lang->line('page_title_post_type_create'),
+            'js_file_module' => array(
+                'ad_config/assets/js/mod_config.js'
+            ),
+            'css_file_module' => array(
+                'ad_config/assets/css/style.css',
+                'ad_config/assets/css/config_post_type.css',
+            ),
+            'js_file' => array(
+                'js/jquery.cropit.js'
+            ),
+            'post_type' => 1
+        );
+
+        $this->load->view('templates/admin/header',$data);
+        $this->load->view('templates/admin/container');
+        $this->load->view('templates/admin/menu');
+        $this->load->view('config_post_type_edit',$data);
+        $this->load->view('templates/admin/footer');
+    }
+
+    function update_post_type(){
+
+    }
 
 }
 

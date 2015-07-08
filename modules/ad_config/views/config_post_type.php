@@ -49,7 +49,7 @@
                                             <img src="<?php echo $row['avatar_link']; ?>" width="50" height="50">
                                         </td>
                                         <td>
-                                                <a title="<?php echo $this->lang->line('post_type_btn_edit_title'); ?>" class="btn btn-success btn-xs" href="<?php echo base_url('admin/config/post_types/'.$row['id'].'/edit'); ?>">
+                                                <a title="<?php echo $this->lang->line('post_type_btn_edit_title'); ?>" class="btn btn-success btn-xs" href="<?php echo base_url('admin/config/post_types/edit/'.$row['id']); ?>">
                                                     <span class="glyphicon glyphicon-edit"></span>
                                                 </a>
                                             <?php if($row['id'] != 1){ ?>
