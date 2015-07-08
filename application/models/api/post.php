@@ -117,10 +117,16 @@ class Post extends CI_Model {
         $this->db->where('po.created_by', $account_id);
         $this->db->where('po.is_delete', NULL);
         $completed = $this->input->post('completed');
-        if(!empty($completed) AND $completed == 1){
+        $status = $this->input->post('status');
+        if(!empty($completed) && $completed == 1){
             $this->db->where('po.status',2);
         }else{
-            $this->db->where('po.status < 2');
+            //var_dump($status);die();
+            if(($status == 0 || $status == 1 || $status == 2) && is_numeric($status)){
+                $this->db->where('po.status', $status);
+            } else{
+                $this->db->where('po.status < 2');
+            }
         }
         $this->db->order_by('po.created_at', 'DESC');
 
@@ -192,7 +198,7 @@ class Post extends CI_Model {
     function getNewestMyPosts($input){
         $account_id = $input['account_id'];
         $created_at = $input['created_at'];
-
+        $status = $input['status'];
         try {
             $this->load->model('file_model');
             $this->db->select('
@@ -202,6 +208,7 @@ class Post extends CI_Model {
             $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
             $this->db->where('po.created_by', $account_id);
             $this->db->where('po.created_at >', $created_at);
+            $this->db->where('po.status',$status);
             $this->db->where('po.is_delete', NULL);
             $this->db->order_by('po.is_emergency', 'DESC');
             $this->db->order_by('po.created_at', 'DESC');
@@ -522,14 +529,19 @@ class Post extends CI_Model {
         ');
             $this->db->from('posts as po');
             $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
-            $this->db->where('po.created_by', $account_id);
+            $this->db->where('(po.created_by = '.$account_id.' OR po.picked_by = '.$account_id.')');
             $this->db->where('po.is_delete', NULL);
-            $this->db->or_where('po.picked_by', $account_id);
+            //$this->db->or_where('po.picked_by', $account_id);
             $completed = $this->input->post('completed');
+            $status = $this->input->post('status');
             if (!empty($completed) AND $completed == 1) {
                 $this->db->where('po.status', 2);
             } else {
-                $this->db->where('po.status < 2');
+                if(($status == 0 || $status == 1 || $status == 2) && is_numeric($status)){
+                    $this->db->where('po.status', $status);
+                } else{
+                    $this->db->where('po.status < 2');
+                }
             }
             $this->db->order_by('po.created_at', 'DESC');
 
@@ -563,6 +575,7 @@ class Post extends CI_Model {
     function getNewestProviderPosts($input){
         $account_id = $input['account_id'];
         $created_at = $input['created_at'];
+        $status = $input['status'];
         try {
             $this->load->model('file_model');
             $this->db->select('
@@ -570,10 +583,11 @@ class Post extends CI_Model {
         ');
             $this->db->from('posts as po');
             $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
-            $this->db->where('po.picked_by', $account_id);
-            $this->db->or_where('po.created_by',$account_id);
+            $this->db->where('(po.picked_by = '.$account_id.' OR po.created_by = '.$account_id.')');
+            //$this->db->or_where('po.created_by',$account_id);
             $this->db->where('po.created_at >', $created_at);
             $this->db->where('po.is_delete', NULL);
+            $this->db->where('po.status',$status);
             $this->db->order_by('po.is_emergency', 'DESC');
             $this->db->order_by('po.created_at', 'DESC');
 

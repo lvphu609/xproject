@@ -282,6 +282,8 @@ class Posts extends Rest_Controller
      * @account_id   string
      * @page   int
      * @row_per_page  int
+     * @completed int
+     * @status int
      *
      *@response  object
      * */
@@ -342,6 +344,7 @@ class Posts extends Rest_Controller
      *@param
      * @account_id   string
      * @created_at   date time
+     * @status int
      *
      *@response  object
      * */
@@ -792,6 +795,8 @@ class Posts extends Rest_Controller
      * @account_id   string
      * @page   int
      * @row_per_page  int
+     * @completed int
+     * @status int
      *
      *@response  object
      * */
@@ -852,6 +857,7 @@ class Posts extends Rest_Controller
      *@param
      * @account_id   string
      * @created_at   date time
+     * @status int
      *
      *@response  object
      * */
