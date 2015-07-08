@@ -7,7 +7,7 @@
                 <div class="row btn-create-article">
                     <div class="col-lg-12">
                         <div class="pull-right">
-                            <button type="submit" form="form-category" data-toggle="tooltip" title="Lưu" class="btn btn-primary btn-save-data-article" data-original-title="Save"><i class="fa fa-save"></i></button>
+                            <button type="submit" form="form-category" data-toggle="tooltip" title="Lưu" class="btn btn-primary btn-save-post-type" data-original-title="Save"><i class="fa fa-save"></i></button>
                             <a href="<?php echo base_url('admin/config/post_types'); ?>" data-toggle="tooltip" title="Hủy" class="btn btn-default" data-original-title="Cancel"><i class="fa fa-reply"></i></a>
                         </div>
                     </div>
@@ -17,13 +17,6 @@
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
-            <form id="formPostType" method="post"
-                <?php  if(empty($article)): ?>
-                  action="<?php echo base_url(); ?>index.php/admin/article_store" xmlns="http://www.w3.org/1999/html">
-                <?php else: ?>
-                    action="<?php echo base_url(); ?>index.php/admin/article_update">
-                <?php endif; ?>
-
                 <div class="row input-form-item">
                     <div class="col-lg-12">
                         <div class="form-group title-article">
@@ -55,6 +48,8 @@
                             <label for="input_title" class="col-sm-2 control-label"> Hình ảnh:</label>
                             <div class="col-sm-10">
                                 <img class="avatar-post-type" src="" data-toggle="modal" data-target="#myModal" width="100" height="100">
+                                <input type="hidden" id="img_url" value="<?php ?>">
+                                <input type="hidden" id="img_base64" name="img64" value="">
                             </div>
                         </div>
                     </div>
@@ -62,7 +57,6 @@
                 <?php if(!empty($article)): ?>
                     <input name="article-id" type="hidden" value="<?php echo $article['id']; ?>">
                 <?php endif; ?>
-            </form>
         </div>
         <!-- /.panel-body -->
     </div>
@@ -81,10 +75,16 @@
             </div>
             <div class="modal-body">
                 <div class="image-editor">
-                    <input type="file" class="cropit-image-input">
                     <div class="cropit-image-preview"></div>
                     <input type="range" class="cropit-image-zoom-input">
+                    <div class="input-file-custom">
+                        <a class="btn btn-success form-control" href="javascript:;">
+                            Chọn hình...
+                            <input class="cropit-image-input" id="inputId" type="file" name="file_source" size="40" onchange="$(&quot;#upload-file-info&quot;).html($(this).val());">
+                        </a>
+                    </div>
                 </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>

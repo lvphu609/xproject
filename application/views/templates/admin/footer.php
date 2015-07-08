@@ -6,8 +6,6 @@
         <!-- jQuery -->
         <script src="<?php echo base_url('resources/includes/sb2/bower_components/jquery/dist/jquery.min.js'); ?>"></script>
 
-            <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-
         <!-- Bootstrap Core JavaScript -->
         <script src="<?php echo base_url('resources/includes/sb2/bower_components/bootstrap/dist/js/bootstrap.min.js'); ?>"></script>
 
@@ -30,6 +28,7 @@
                     echo '<script type="text/javascript" src="'.base_url("modules/".$file).'"></script>';
         }
         ?>
+
 
     </body>
 </html>

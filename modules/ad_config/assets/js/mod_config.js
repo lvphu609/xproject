@@ -5,6 +5,11 @@ $(document).ready(function(){
 
 var postTypesPageList = {
     popupModelDelete:  $('#modalDeleteItem'),
+    handel: function(){
+        $(document).on('click','.btn-save-post-type',function(){
+            $('#frm_post_type').submit();
+        });
+    },
     delete: function(){
         var that = this;
 
@@ -58,15 +63,28 @@ var postTypesPageList = {
 
     },
     imageCrop: function(){
-        $('.image-editor').cropit();
+        $(document).on('click','.avatar-post-type', function () {
+            var $imageUrl = $('#img_url').val();
+            $('.image-editor').cropit({
+                imageState: {
+                    src: $imageUrl
+                },
+                imageBackground: true,
+                imageBackgroundBorderWidth: 15
+            });
+        });
 
         $('.export').click(function() {
             var imageData = $('.image-editor').cropit('export');
+            $('#img_base64').val(imageData);
+            $('.avatar-post-type').attr('src',imageData);
+            $('#myModal').modal('hide');
         });
     },
     setup: function(){
         this.delete();
         this.imageCrop();
+        this.handel();
     },
     run: function(){
         this.setup();
