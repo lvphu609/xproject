@@ -206,7 +206,7 @@ class Post extends CI_Model {
 
     function getNewestMyPosts($input){
         $account_id = $input['account_id'];
-        $created_at = $input['created_at'];
+        $date_time = $input['date_time'];
         try {
             $this->load->model('file_model');
             $accountInfo = $this->account->getAccountById($account_id);
@@ -224,7 +224,7 @@ class Post extends CI_Model {
                 $this->db->where('(po.created_by = '.$account_id.' OR po.picked_by = '.$account_id.')');
             }
 
-            $this->db->where('po.created_at >', $created_at);
+            $this->db->where('(po.created_at > '.$date_time.' OR po.updated_at > '.$date_time.')');
 
             $status = $this->input->post('status');
             if(empty($status)){
