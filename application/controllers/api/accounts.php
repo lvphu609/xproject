@@ -256,7 +256,7 @@ class Accounts extends Rest_Controller
      *
      *@response  object
      * */
-    function login_post()
+   /* function login_post()
     {
         //initialize
         $status = 'success';
@@ -264,7 +264,7 @@ class Accounts extends Rest_Controller
         $results = null;
         $validation = null;
 
-        /*Set the form validation rules*/
+       // Set the form validation rules
         $rules = array(
             array('field'=>'username', 'label'=>'lang:username', 'rules'=>'trim|required'),
             array('field'=>'password', 'label'=>'lang:password', 'rules'=>'trim|required'),
@@ -273,7 +273,7 @@ class Accounts extends Rest_Controller
 
         $this->form_validation->set_rules($rules);
        
-        /*Check if the form passed its validation */
+        //Check if the form passed its validation
         if ($this->form_validation->run() == FALSE) {
             $status = 'failure';
             $message = "error";
@@ -305,7 +305,65 @@ class Accounts extends Rest_Controller
 
         $this->response($data, HEADER_SUCCESS);
         
+    }*/
+
+    /**url : http://domain/xproject/api/accounts/login
+     *@param
+     *  @username   string
+     *  @password   string md5
+     *
+     *@response  object
+     * */
+    function login_post()
+    {
+        //initialize
+        $status = 'success';
+        $message = '';
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'username', 'label'=>'lang:username', 'rules'=>'trim|required'),
+            array('field'=>'password', 'label'=>'lang:password', 'rules'=>'trim|required'),
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $status = 'failure';
+            $message = "error";
+            $validation = array(
+                'username' => $this->form_validation->error('username'),
+                'password' => $this->form_validation->error('password')
+            );
+        }
+        //validate success
+        else{
+
+            $checkLogin = $this->account->checkAccount($this->input->post());
+
+            if($checkLogin == false){
+                $status = 'failure';
+                $message = $this->lang->line('login_failure');
+            }else{
+                $results = $checkLogin;
+            }
+        }
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+
+        $this->response($data, HEADER_SUCCESS);
+
     }
+
+
 
     /*url : http://domain/xproject/api/accounts/logout
      * @method POST

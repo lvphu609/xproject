@@ -67,7 +67,7 @@ class Account extends CI_Model {
 		return false;
     }
 
-    function checkAccount(){
+    /*function checkAccount(){
         $input = $this->input->post();
         $query = $this->db->get_where('accounts',array(
             'username' => trim($input['username']),
@@ -97,6 +97,34 @@ class Account extends CI_Model {
             $isUpdate = $this->db->update('accounts', array('reg_id' => $input['reg_id']), array('id' => $result[0]['id']));
 
             if($isCreateToken == true && $isUpdate == true){
+                return array(
+                    'access_token' => $access_token,
+                    'account_id' => $result[0]['id'],
+                    'account_type' => $result[0]['account_type']
+                );
+            }
+        }
+        return false;
+    }*/
+
+    function checkAccount($input){
+        $query = $this->db->get_where('accounts',array(
+            'username' => trim($input['username']),
+            'password' => trim($input['password'])
+        ));
+
+        if($query->num_rows()==1){
+            $result = $query->result_array();
+
+            $access_token = md5(uniqid().time().md5($result[0]['email']));
+            $isCreateToken = $this->db->insert('tokens',array(
+                'access_token' => $access_token,
+                'email' => $result[0]['email'],
+                'account_id' => $result[0]['id'],
+                'access_token' => $access_token,
+                'access_token_start_at' => getCurrentDate()
+            ));
+            if($isCreateToken){
                 return array(
                     'access_token' => $access_token,
                     'account_id' => $result[0]['id'],
