@@ -42,7 +42,7 @@
                             <tbody>
                             <?php if(count($post_type_list)>0): ?>
                                 <?php foreach($post_type_list as $key => $row): ?>
-                                    <tr class="art-<?php echo $row['id']; ?>">
+                                    <tr class="post-type-<?php echo $row['id']; ?>">
                                         <td><?php echo $row['name']; ?></td>
                                         <td><?php echo $row['description']; ?></td>
                                         <td>
@@ -53,7 +53,7 @@
                                                     <span class="glyphicon glyphicon-edit"></span>
                                                 </a>
                                             <?php if($row['id'] != 1){ ?>
-                                                <button title="<?php echo $this->lang->line('post_type_btn_delete_title'); ?>" type="button" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-xs buttonDelete">
+                                                <button title="<?php echo $this->lang->line('post_type_btn_delete_title'); ?>" type="button" data-id="<?php echo $row['id']; ?>" class="btn btn-danger btn-xs button-delete-post-type">
                                                     <span class="glyphicon glyphicon-trash "></span>
                                                 </button>
                                             <?php } ?>
@@ -80,15 +80,15 @@
 <div class="modal fade" id="modalDeleteItem" tabindex="-3" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
-            <div class="modal-header fontbold">Thông báo</div>
-            <div class="modal-body">
+            <div class="modal-header fontbold"><?php echo $this->lang->line('message_text_confirm'); ?></div>
+            <div class="modal-body text-center">
                 <i class="glyphicon warning glyphicon-warning-sign"></i>&nbsp;<?php echo $this->lang->line('delete_message_confirm'); ?>
-                <label class="text-name-replace"></label>
+                <label class="text-name-replace"></label> ?
             </div>
             <div class="col-lg-12 messageAlert"></div>
             <div class="clear"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-danger btnConfirmDelete"><?php echo $this->lang->line('btn_delete'); ?></button>
+                <button type="button" class="btn btn-sm btn-danger btn-delete-confirm"><?php echo $this->lang->line('btn_delete'); ?></button>
                 <button type="button" class="btn btn-sm btn-default btnCancelDelete" data-dismiss="modal"><?php echo $this->lang->line('btn_cancel'); ?></button>
             </div>
         </div>

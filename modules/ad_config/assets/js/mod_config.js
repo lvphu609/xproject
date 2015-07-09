@@ -13,20 +13,24 @@ var postTypesPageList = {
     delete: function(){
         var that = this;
 
-        $(document).on('click','.buttonDelete',function(){
+        $(document).on('click','.button-delete-post-type',function(){
             var id = $(this).attr('data-id');
 
-            that.popupModelDelete.find('.messageAlert').html('');
+            var $postTypeName = $('.post-type-' + id).children().html();
 
-            that.popupModelDelete.find('.btnConfirmDelete').attr('data-id',id);
+            that.popupModelDelete.find('.text-name-replace').html($postTypeName);
+
+            that.popupModelDelete.find('.message-alert').html('');
+
+            that.popupModelDelete.find('.btn-delete-confirm').attr('data-id',id);
 
             that.popupModelDelete.modal('show');
         });
 
-        $(document).on('click','.btnConfirmDelete',function(){
-            loadPageProcess.run(true);
+        $(document).on('click','.btn-delete-confirm',function(){
+            adminScript.loading.show();
             var id = $(this).attr('data-id');
-            var url = $('#hidUrl').val() + 'del_article';
+            var url = $('#hidUrl').val() + 'post_types/delete';
 
             var data = {
                 id: id
@@ -38,11 +42,11 @@ var postTypesPageList = {
                 dataType: 'json',
                 statusCode: {
                     404: function () {
-                        loadPageProcess.run(false);
+                        adminScript.loading.hide();
                         console.log("page not found");
                     },
                     500: function (data) {
-                        loadPageProcess.run(false);
+                        adminScript.loading.hide();
                         console.log(data);
                     }
                 }
@@ -50,14 +54,13 @@ var postTypesPageList = {
 
             ajax.done(function (data) {
                 if(data.status == "success"){
-                    $('.art-' + id).remove();
+                    $('.post-type-' + id).remove();
                     that.popupModelDelete.modal('hide');
                 }
                 else{
-                    that.popupModelDelete.find('.messageAlert').html(data.message);
+                    that.popupModelDelete.find('.message-alert').html(data.message);
                 }
-
-                loadPageProcess.run(false);
+                adminScript.loading.hide();
             });
         });
 

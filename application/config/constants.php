@@ -112,3 +112,9 @@ define('API_ERROR','error');
 
 //admin page
 define('DEFIND_ADMIN_PER_PAGE_DEFAULT',10);
+define('WEB_ADMIM_STATUS','status');
+define('WEB_ADMIM_MESSAGE','message');
+define('WEB_ADMIM_RESULTS','results');
+define('WEB_ADMIM_SUCCESS','success');
+define('WEB_ADMIM_FAILURE','failure');
+define('WEB_ADMIM_ERROR','error');

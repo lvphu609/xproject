@@ -58,6 +58,7 @@ $route['admin/config/post_types/create'] = "ad_config/ad_config/create_post_type
 $route['admin/config/post_types/edit/(:any)'] = "ad_config/ad_config/edit_post_type/$1";
 $route['admin/config/post_types/store'] = "ad_config/ad_config/store_post_type";
 $route['admin/config/post_types/update'] = "ad_config/ad_config/update_post_type";
+$route['admin/config/post_types/delete'] = "ad_config/ad_config/delete_post_type";
 
 
 

@@ -34,3 +34,33 @@ $(function() {
         element.addClass('active');
     }
 });
+
+
+$(document).ready(function(){
+    adminScript.run();
+});
+
+var adminScript = {
+    init: function() {
+        this.document = $(document);
+        this.loading.hide();
+    },
+    loading: {
+        show: function() {
+            $('#loading').show();
+        },
+        hide: function() {
+            $('#loading').hide();
+        }
+    },
+    handle: function(){
+
+    },
+    setup: function(){
+        this.init();
+        this.handle();
+    },
+    run: function(){
+        this.setup();
+    }
+}

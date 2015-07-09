@@ -159,6 +159,28 @@ class Ad_config extends MX_Controller
         }
     }
 
+    public function delete_post_type(){
+        $id = $this->input->post('id');
+        $isDelete = $this->ad_config_model->delPostType($id);
+        $message = "";
+        $status = WEB_ADMIM_FAILURE;
+        if(!is_array($isDelete)){
+            $status = WEB_ADMIM_SUCCESS;
+        }else{
+            $message ='<div class="alert alert-warning" role="alert">
+                        <strong>Cảnh báo!</strong>Loại yêu cầu <strong>'. $isDelete['title'] .'</strong> đang được sử dụng.
+                    </div>';
+        }
+
+        $result = array(
+            WEB_ADMIM_STATUS => $status,
+            WEB_ADMIM_RESULTS => $id,
+            WEB_ADMIM_MESSAGE => $message
+        );
+        header('Content-Type: application/x-json; charset=utf-8');
+        echo (json_encode($result));
+    }
+
 }
 
 

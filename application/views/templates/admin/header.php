@@ -41,4 +41,6 @@
 </head>
 
 <body>
+    <div id="loading" class="loading"></div>
+    <input type="hidden" id="hidUrl" val="<?php echo base_url() ?>">
 
