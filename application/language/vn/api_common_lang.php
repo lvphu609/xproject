@@ -1,5 +1,5 @@
 <?php
-$lang['username'] = 'Tên đăng nhập';
+$lang['username1'] = 'Tên đăng nhập';
 $lang['is_required'] = '%s không được để trống.';
 $lang['password'] = 'Mật khẩu';
 $lang['confirm_password'] = 'Xác nhận mật khẩu';
@@ -42,3 +42,4 @@ $lang['check_email_unique'] = 'Địa chỉ email đã tồn tại.';
 $lang['key_search'] = 'Từ khóa tìm kiếm';
 $lang['post_id'] = 'Id bài post';
 $lang['old_password_is_wrong'] = 'Bạn nhập sai mật khẩu cũ';
+$lang['reg_id'] = 'RegId của thiết bị';

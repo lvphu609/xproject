@@ -28,16 +28,20 @@ class Post extends CI_Model {
                 }
             } //update posts
             else {
-                $temp = array(
-                    'updated_at' => getCurrentDate()
-                );
+                if($this->checkStatus($post_id,0)) {
+                    $temp = array(
+                        'updated_at' => getCurrentDate()
+                    );
 
-                $recordData = array_merge($data, $temp);
+                    $recordData = array_merge($data, $temp);
 
-                $isUpdate = $this->db->update('posts', $recordData, array('id' => $post_id,'created_by' => $recordData['created_by']));
+                    $isUpdate = $this->db->update('posts', $recordData, array('id' => $post_id, 'created_by' => $recordData['created_by']));
 
-                if ($isUpdate) {
-                    return true;
+                    if ($isUpdate) {
+                        return true;
+                    }
+                }else{
+                    return false;
                 }
             }
         }catch (ErrorException $e){
@@ -394,11 +398,11 @@ class Post extends CI_Model {
 
     function getPostIdForPushNotify($array){
         try{
-            $this->db->select('*');
+            $this->db->select('id');
             $this->db->where($array);
             $query = $this->db->get('posts');
-            $result = $query->result_object();
-            return $result;
+            $result = $query->result_array();
+            return $result[0]['id'];
         }catch(ErrorException $e){
             return null;
         }
@@ -660,6 +664,21 @@ class Post extends CI_Model {
             }
         }catch (ErrorException $e){
             return false;
+        }
+    }
+
+    function checkStatus($post_id,$status){
+        try{
+            $this->db->where('id', $post_id);
+            $this->db->where('status', $status);
+            $query = $this->db->get('posts');
+            if($query->num_rows() > 0){
+                return true;
+            }else{
+                return false;
+            }
+        }catch (ErrorException $e){
+            return null;
         }
     }
 }

@@ -8,7 +8,7 @@ class Posts extends Rest_Controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('api/post','api/common_model'));
+        $this->load->model(array('api/post','api/common_model','api/notify'));
         $this->load->helper(array('form', 'url'));
 
         /*validation--------------*/
@@ -56,6 +56,7 @@ class Posts extends Rest_Controller
     * */
     function create_post()
     {
+
         $status = 'failure';
         $message = 'insert error';
         $results = null;
@@ -95,20 +96,12 @@ class Posts extends Rest_Controller
                     'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng'])
                 );
                 if ($this->post->createPost($record)) {
+                //if(1==1){
                     $status = 'success';
                     $message = 'insert post successfully!';
 
-                    //push notify for province
-                    /*$message_to_send = array(
-                        'title' => 'Accident',
-                        'content' => $input['content'],
-                        'location_lat' => $input['location_lat'],
-                        'location_lng' => $input['location_lng'],
-                        'created_by' => $account['id'],
-                        'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng']),
-                        'id' => $this->post->getPostIdForPushNotify($record)
-                    );
-                    $this->send_notify_provinces($message_to_send,$record);*/
+                    //push notify for province when user create post
+                    $this->notify->send_notify_provinces($record);
                 }
             }
         }
@@ -144,23 +137,14 @@ class Posts extends Rest_Controller
                     $status = 'success';
                     $message = 'Update post successfully.';
 
-                    //push notify for province
-                    /*$account = $this->account_info;
-                    if (empty($input['picked_by'])) {
-                        $message_to_send = array(
-                            'title' => 'Accident modify',
-                            'content' => $input['content'],
-                            'location_lat' => $input['location_lat'],
-                            'location_lng' => $input['location_lng'],
-                            'created_by' => $account['id'],
-                            'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng']),
-                            'id' => $this->post->getPostIdForPushNotify($record)
-                        );
-                        $this->send_notify_provinces($message_to_send,$record);
-                    } else {
-                        //push notify for user create post
-                        //$this->send_notify_users($record);
-                    }*/
+                    //push notify for province when user update my post
+                    $data_send = array(
+                        'id' => $input['id']
+                    );
+                    $this->notify->send_notify_provinces($data_send);
+                } else{
+                    $status = 'failure';
+                    $message = 'update error';
                 }
             }
         }
@@ -371,7 +355,8 @@ class Posts extends Rest_Controller
                 'created_at' => $this->form_validation->error('created_at')
             );
         } else {
-            $listPost = $this->post->getNewestMyPosts($this->input->post());
+            $input = $this->input->post();
+            $listPost = $this->post->getNewestMyPosts($input);
             $message = '';
             $status = API_SUCCESS;
             $results = $listPost;
@@ -485,7 +470,8 @@ class Posts extends Rest_Controller
                 'account_id' => $this->form_validation->error('account_id')
             );
         } else {
-            $isDelete = $this->post->deletePostById($this->input->post('id'),$this->input->post('account_id'));
+            $input = $this->input->post();
+            $isDelete = $this->post->deletePostById($input['id'],$input['account_id']);
             if($isDelete) {
                 $status = API_SUCCESS;
                 $message = API_SUCCESS;
@@ -532,7 +518,8 @@ class Posts extends Rest_Controller
                 'id' => $this->form_validation->error('id')
             );
         } else {
-            $postInfo = $this->post->getPostInfoById($this->input->post('id'));
+            $input = $this->input->post();
+            $postInfo = $this->post->getPostInfoById($input['id']);
             $status = API_SUCCESS;
             $message = API_SUCCESS;
             $results = $postInfo;
@@ -547,53 +534,6 @@ class Posts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
-    /**
-     * send notify for all province -> 10Km
-     * */
-
-    function send_notify_provinces($message,$record){
-        //push notify for province
-        $message_to_send = array(
-            'title' => $message['title'],
-            'content' => $message['content'],
-            'location_lat' => $message['location_lat'],
-            'location_lng' => $message['location_lng'],
-            'created_by' => $message['id'],
-            'location_name' => $this->common_model->getLocationNameByLatLng($message['location_lat'], $message['location_lng']),
-            'id' => $this->post->getPostIdForPushNotify($record)
-        );
-        $account_array = $this->account->getAccountIdByLocation($record, 10);
-        $regId_array = array();
-        if (count($account_array) > 0) {
-            for ($i = 0; $i < count($account_array); $i++) {
-                array_push($regId_array, $this->notify->getRegId($account_array[$i]['created_by']));
-            }
-            //var_dump($regId_array); die();
-            for ($i = 0; $i < count($account_array); $i++) {
-                $this->notify->sendPushNotificationToGCM(array($regId_array[$i]), $message_to_send);
-            }
-        }
-    }
-
-    /**
-     * send notify for user created post when province picked your post
-     * */
-
-    function send_notify_users($record){
-        $pickerInfo = $this->account->getAccountInfoById($record['account_id']);
-        //var_dump($pickerInfo['full_name']); die();
-        $message_to_send = array(
-            'title' => 'My post was picked!',
-            'location_name' => $pickerInfo['full_name'].' has picked your post!',
-            'location_lat' => $record['location_lat'],
-            'location_lng' => $record['location_lng'],
-            'created_by' => $record['account_id'],
-            'id' => $record['id']
-        );
-        //var_dump($account_array);die();
-        $regId_array = array($this->notify->getRegId($record['account_id']));
-        $this->notify->sendPushNotificationToGCM($regId_array, $message_to_send);
-    }
 
     /**url : http://domain/xproject/api/posts/get_post_detail_by_id
      * @method: POST
@@ -625,7 +565,8 @@ class Posts extends Rest_Controller
                 'id' => $this->form_validation->error('id')
             );
         } else {
-            $postInfo = $this->post->getPostDetailById($this->input->post('id'));
+            $input = $this->input->post();
+            $postInfo = $this->post->getPostDetailById($input['id']);
             $status = API_SUCCESS;
             $message = API_SUCCESS;
             $results = $postInfo;
@@ -670,10 +611,14 @@ class Posts extends Rest_Controller
                 'id' => $this->form_validation->error('id')
             );
         } else {
-            $pickStatus = $this->post->pick($this->input->post('id'),$this->account_info);
+            $input = $this->input->post('id');
+            $pickStatus = $this->post->pick($input,$this->account_info);
             if($pickStatus){
                 $message = '';
                 $status = API_SUCCESS;
+
+                //push notify for user create this post
+                //$this->notify->
             }
         }
 
@@ -717,9 +662,10 @@ class Posts extends Rest_Controller
             );
         } else {
             $account = $this->account_info;
-            $post_info = $this->post->getPostDetailById($this->input->post('id'));
+            $input = $this->input->post();
+            $post_info = $this->post->getPostDetailById($input['id']);
             if($account['id'] == $post_info->created_by || $account['id'] == $post_info->picked_by){
-                $destroyStatus = $this->post->destroy($this->input->post('id'));
+                $destroyStatus = $this->post->destroy($input['id']);
                 if($destroyStatus){
                     $message = '';
                     $status = API_SUCCESS;
@@ -768,9 +714,10 @@ class Posts extends Rest_Controller
             );
         } else {
             $account = $this->account_info;
-            $post_info = $this->post->getPostDetailById($this->input->post('id'));
+            $input = $this->input->post();
+            $post_info = $this->post->getPostDetailById($input['id']);
             if($account['id'] == $post_info->created_by){
-                $completeStatus = $this->post->complete($this->input->post('id'));
+                $completeStatus = $this->post->complete($input['id']);
                 if($completeStatus){
                     $message = '';
                     $status = API_SUCCESS;
@@ -823,13 +770,14 @@ class Posts extends Rest_Controller
                 'page' => $this->form_validation->error('page')
             );
         } else {
+
             $row_per_page = DEFIND_PER_PAGE_DEFAULT;
 
             if($this->input->post('row_per_page')){
                 $row_per_page = $this->input->post('row_per_page');
             }
-
-            $listPost = $this->post->getPostsOfProvider($this->input->post('account_id'),$this->input->post('page'),$row_per_page);
+            $input = $this->input->post();
+            $listPost = $this->post->getPostsOfProvider($input['account_id'],$input['page'],$row_per_page);
             $message = '';
             $status = API_SUCCESS;
             $results = $listPost;
@@ -841,9 +789,9 @@ class Posts extends Rest_Controller
             API_RESULTS => $results,
             API_VALIDATION => $validation,
             API_PAGINATION => array(
-                API_PAGE => $this->input->post('page'),
+                API_PAGE => $input['page'],
                 API_ROW_PER_PAGE => count($results),
-                API_TOTAL_PAGE => ceil($this->post->countAllPost($this->input->post('account_id'))/$row_per_page)
+                API_TOTAL_PAGE => ceil($this->post->countAllPost($input['account_id'])/$row_per_page)
             )
         );
         $this->response($data, HEADER_SUCCESS);
@@ -884,7 +832,8 @@ class Posts extends Rest_Controller
                 'created_at' => $this->form_validation->error('created_at')
             );
         } else {
-            $listPost = $this->post->getNewestProviderPosts($this->input->post());
+            $input = $this->input->post();
+            $listPost = $this->post->getNewestProviderPosts($input);
             $message = '';
             $status = API_SUCCESS;
             $results = $listPost;

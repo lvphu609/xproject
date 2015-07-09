@@ -5,15 +5,20 @@ class Account extends CI_Model {
     function __construct()
     {
         parent::__construct();
-        $this->load->model('file_model');
+        $this->load->model(array('file_model'));
     }
 
     //logout
     function logout_account($access_token)
     {
         $query = $this->db->get_where('tokens',array('access_token' => $access_token));
+        $result = $query->result_array();
         if($query->num_rows()==1){
-            if($this->db->delete('tokens', array('access_token' => $access_token)))
+            //delete token when user logout
+            $isDeleteToken = $this->db->delete('tokens', array('access_token' => $access_token));
+            //delete reg_id in account when user logout
+            $isDeleteRegId = $this->db->update('accounts', array('reg_id' => null), array('id' => $result[0]['account_id']));
+            if($isDeleteToken == true && $isDeleteRegId == true)
                 return true;
         }
         return false;
@@ -62,7 +67,8 @@ class Account extends CI_Model {
 		return false;
     }
 
-    function checkAccount($input){
+    function checkAccount(){
+        $input = $this->input->post();
         $query = $this->db->get_where('accounts',array(
             'username' => trim($input['username']),
             'password' => trim($input['password'])
@@ -71,7 +77,14 @@ class Account extends CI_Model {
         if($query->num_rows()==1){
             $result = $query->result_array();
 
+            //check RegId in accounts table is exits
+            if($result[0]['reg_id'] != '' && !empty($result[0]['reg_id'])){
+                //delete access_token of account
+                $this->db->delete('tokens', array('account_id' => $result[0]['id']));
+            }
+
             $access_token = md5(uniqid().time().md5($result[0]['email']));
+            //insert new access_token for account
             $isCreateToken = $this->db->insert('tokens',array(
                 'access_token' => $access_token,
                 'email' => $result[0]['email'],
@@ -79,7 +92,11 @@ class Account extends CI_Model {
                 'access_token' => $access_token,
                 'access_token_start_at' => getCurrentDate()
             ));
-            if($isCreateToken){
+
+            //update reg_id in account
+            $isUpdate = $this->db->update('accounts', array('reg_id' => $input['reg_id']), array('id' => $result[0]['id']));
+
+            if($isCreateToken == true && $isUpdate == true){
                 return array(
                     'access_token' => $access_token,
                     'account_id' => $result[0]['id'],
@@ -239,8 +256,9 @@ class Account extends CI_Model {
     $this->db->select("DATE_FORMAT( date, '%H:%i') as time_human",      FALSE );*/
 
     function getAccountIdByLocation($location, $RADIUS = 10.0){
-        $LAT_HERE = $location['location_lat'];
-        $LONG_HERE = $location['location_lng'];
+        $LAT_HERE = $location->location_lat;
+        $LONG_HERE = $location->location_lng;
+       // $ACCOUNT_ID = $location->account_id;
         try {
             $query = $this->db->query("
                 SELECT  id,
@@ -296,4 +314,17 @@ class Account extends CI_Model {
         $query = $this->db->get('accounts');
         return $query->result_object();
     }
+
+    function storeRegId($account_id,$RegId){
+        $data = array(
+            'reg_id' => $RegId
+        );
+        $isUpdate = $this->db->update('accounts',$data,array('id' => $account_id));
+        if($isUpdate){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
