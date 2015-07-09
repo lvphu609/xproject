@@ -268,6 +268,7 @@ class Accounts extends Rest_Controller
         $rules = array(
             array('field'=>'username', 'label'=>'lang:username', 'rules'=>'trim|required'),
             array('field'=>'password', 'label'=>'lang:password', 'rules'=>'trim|required'),
+            array('field'=>'reg_id', 'label'=>'lang:reg_id', 'rules'=>'required')
         );
 
         $this->form_validation->set_rules($rules);
@@ -278,13 +279,14 @@ class Accounts extends Rest_Controller
             $message = "error";
             $validation = array(
                 'username' => $this->form_validation->error('username'),
-                'password' => $this->form_validation->error('password')
+                'password' => $this->form_validation->error('password'),
+                'reg_id' => $this->form_validation->error('reg_id')
             );
         }
         //validate success
         else{
-            
-            $checkLogin = $this->account->checkAccount($this->input->post());
+
+            $checkLogin = $this->account->checkAccount();
             
             if($checkLogin == false){
                 $status = 'failure';
@@ -481,7 +483,8 @@ class Accounts extends Rest_Controller
         //validate success
         else{
             //check exist forgot_password_code and email
-            $updateToken = $this->account->updateTokenResetPass($this->input->post());
+            $input = $this->input->post();
+            $updateToken = $this->account->updateTokenResetPass($input);
 
             if(!empty($updateToken)){
                 $status = 'failure';
@@ -538,7 +541,8 @@ class Accounts extends Rest_Controller
         //validate success
         else{
             $status = API_SUCCESS;
-            $results = $this->account->getAccountInfoById($this->input->post('id'));
+            $id = $this->input->post('id');
+            $results = $this->account->getAccountInfoById($id);
         }
 
         $data = array(
@@ -605,7 +609,8 @@ class Accounts extends Rest_Controller
                 'confirm_password' => $this->form_validation->error('confirm_password')
             );
         } else {
-            $isUpdate = $this->account->changePassword($this->input->post('old_password'),$this->input->post('new_password'),$this->input->post('id'));
+            $input = $this->input->post();
+            $isUpdate = $this->account->changePassword($input['old_password'],$input['new_password'],$input['id']);
 
             if(!$isUpdate['old_password']){
                 $message = $this->lang->line('old_password_is_wrong');
@@ -660,7 +665,8 @@ class Accounts extends Rest_Controller
         } else {
             $this->checkToken();
             $account = $this->account_info;
-            $result = $this->account->storeLocationById($account['id'],$this->input->post());
+            $input = $this->input->post();
+            $result = $this->account->storeLocationById($account['id'],$input);
             if($result){
                 $message = '';
                 $status = API_SUCCESS;
@@ -706,7 +712,8 @@ class Accounts extends Rest_Controller
                 'account_id' => $this->form_validation->error('account_id')
             );
         } else {
-            $result = $this->account->getLocationById($this->input->post('account_id'));
+            $account_id = $this->input->post('account_id');
+            $result = $this->account->getLocationById($account_id);
             if($result){
                 $message = '';
                 $status = API_SUCCESS;

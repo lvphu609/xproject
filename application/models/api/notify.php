@@ -13,8 +13,12 @@ class Notify extends CI_Model {
     function __construct()
     {
         parent::__construct();
+        $this->load->model(array('api/post','api/account'));
     }
 
+    /**
+     * send notify to GCM
+     * */
     function sendPushNotificationToGCM($registrationIds = array(), $message) {
         $url = 'https://android.googleapis.com/gcm/send';
         $fields = array
@@ -43,15 +47,72 @@ class Notify extends CI_Model {
         return $result->success == 1;
     }
 
-    function getRegId($account_id){
-//        $sql = "SELECT gcm_regid FROM gcm_users WHERE created_by IN ?";
-//        $query = $this->db->query($sql, array(array($account_id)));
-        $this->db->where('created_by',$account_id);
+    /**
+     * get reg_id by account_id
+     * */
+        function getRegId($account_id){
+        $this->db->where('id',$account_id);
         $query = $this->db->get('accounts');
         $result = $query->result_array();
-        return $result[0]['android_id'];
+        return $result[0]['reg_id'];
     }
 
+    /**
+     * send notify for all province -> 10Km
+     * */
+
+    function send_notify_provinces($record){
+        if(($key = array_search('', $record)) !== false) {
+            unset($record[$key]);
+        }
+        $post_id = $this->post->getPostIdForPushNotify($record);
+        $status = 'success';
+        $message = 'insert post successfully!';
+        $results = $this->post->getPostDetailById($post_id);
+        $validation = '';
+        //create object to send to gcm
+        $message_to_send = new stdClass;
+        $message_to_send->status = $status;
+        $message_to_send->message = $message;
+        $message_to_send->results = $results;
+        $message_to_send->validation = $validation;
+        //var_dump($message_to_send); die();
+        $account_array = $this->account->getAccountIdByLocation($message_to_send->results, 10);
+        //var_dump($account_array);die();
+        $regId_array = array();
+        if (count($account_array) > 0) {
+            for ($i = 0; $i < count($account_array); $i++) {
+                array_push($regId_array, $this->getRegId($account_array[$i]['id']));
+            }
+            //var_dump($regId_array); die();
+                $is_send = $this->sendPushNotificationToGCM($regId_array, $message_to_send);
+                if($is_send){
+                    $status = 'success';
+                    $message = 'insert post successfully!';
+                }
+        }
+    }
+
+    /**
+     * send notify for user created post when province picked your post
+     * */
+
+    function send_notify_users($record){
+        $pickerInfo = $this->account->getAccountInfoById($record['created_by']);
+        //var_dump($pickerInfo['full_name']); die();
+        $message_to_send = array(
+            'title' => 'My post was picked!',
+            'location_name' => $pickerInfo['full_name'].' has picked your post!',
+            'location_lat' => $record['location_lat'],
+            'location_lng' => $record['location_lng'],
+            'created_by' => $record['created_by'],
+            'id' => $record['id']
+        );
+        //var_dump($account_array);die();
+        $regId_array = array($this->getRegId($record['created_by']));
+        //var_dump($regId_array);die();
+        $this->sendPushNotificationToGCM($regId_array, $message_to_send);
+    }
 
 
 }
