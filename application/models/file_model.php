@@ -112,6 +112,9 @@ class File_model extends CI_Model {
     		    $this->image_lib->resize();
     	  	}
       	}
+        //remove the folder temp
+        $this->deleteDir('uploads/temp/'.$tempFolder);
+
         return $no;
     }
 
@@ -170,4 +173,101 @@ class File_model extends CI_Model {
         return base_url('file/show/'.$id.'/'.$option);
     }
 
+    function do_update($model, $base64 = false, $fileId){
+
+        if (!file_exists('uploads/'.$model)){
+            mkdir('uploads/'.$model, 0777, true);
+        }
+
+        $tempFolder = uniqid(date("m-d-Y H_i_s"));
+
+        if (!file_exists('uploads/temp/'.$tempFolder)){
+            mkdir('uploads/temp/'.$tempFolder, 0777, true);
+        }
+
+        if(!$base64){
+            //upload file temp -----------------------------------------------------
+            $config = array(
+                'allowed_types'     => 'jpg|jpeg|gif|png', //only accept these file types
+                'max_size'          => 2048, //2MB max
+                'upload_path'       =>  'uploads/temp/'.$tempFolder//upload directory
+            );
+            $this->load->library('upload', $config);
+            $this->upload->do_upload('avatar');
+            $image_data = $this->upload->data();
+            $image_record = array(
+                'file_name' => $image_data['file_name'],
+                'file_type' => $image_data['file_type'],
+                'file_ext' => $image_data['file_ext'],
+                'file_size' => $image_data['file_size'],
+                'image_width' => $image_data['image_width'],
+                'image_height' => $image_data['image_height'],
+                'file_path' => 'uploads/'.$model.'/',
+                'updated_at' => getCurrentDate()
+            );
+
+        }else{
+            $file_rest = $this->saveImage('uploads/temp/'.$tempFolder,$this->input->post('avatar'));
+            $file_path = $file_rest['path'];
+
+            $image_data['full_path'] = $file_path;
+            $imageSize = getimagesize($file_path);
+            $image_record = array(
+                'file_name' =>$file_rest['name'],
+                'file_type' => $imageSize['mime'],
+                'file_ext' => pathinfo($file_path, PATHINFO_EXTENSION),
+                'file_size' => filesize($file_path),
+                'image_width' => $imageSize[0],
+                'image_height' => $imageSize[1],
+                'file_path' => 'uploads/'.$model.'/',
+                'updated_at' => getCurrentDate(),
+            );
+        }
+
+        // save file
+        $isUpdate = $this->db->update('files',$image_record,array('id' => $fileId));
+
+
+        //upload original file-------------------------------------------------
+        if (!file_exists('uploads/'.$model.'/'.$fileId.'/original')){
+            mkdir('uploads/'.$model.'/'.$fileId.'/original', 0777, true);
+        }
+
+        $config = array(
+            'source_image'      => $image_data['full_path'], //path to the uploaded image
+            'new_image'         => 'uploads/'.$model.'/'.$fileId.'/original', //path to
+            'maintain_ratio'    => true,
+            'width'             => null,
+            'height'            => null
+        );
+
+        $this->image_lib->initialize($config);
+        $this->image_lib->resize();
+
+        //upload config-----------------------------------------------------------
+        $upload_config = $this->config->item('images');
+        if(!empty($upload_config[$model])){
+            foreach ($upload_config[$model] as $key => $size) {
+                if (!file_exists('uploads/'.$model.'/'.$fileId.'/'.$key)){
+                    mkdir('uploads/'.$model.'/'.$fileId.'/'.$key, 0777, true);
+                }
+                $this->resized_path = 'uploads/'.$model.'/'.$fileId.'/'.$key;
+
+                //your desired config for the resize() function
+                $config = array(
+                    'source_image'      => $image_data['full_path'], //path to the uploaded image
+                    'new_image'         => $this->resized_path, //path to
+                    'maintain_ratio'    => true,
+                    'width'             => $size['width'],
+                    'height'            => $size['height']
+                );
+
+                $this->image_lib->initialize($config);
+                $this->image_lib->resize();
+            }
+        }
+        //remove the folder temp
+        $this->deleteDir('uploads/temp/'.$tempFolder);
+        return $fileId;
+    }
 }

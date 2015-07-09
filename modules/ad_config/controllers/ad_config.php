@@ -149,11 +149,12 @@ class Ad_config extends MX_Controller
             $this->edit_post_type($id);
         }
         else{
-            $isCreate = $this->ad_config_model->createPostType();
-            if($isCreate){
+            $id = $this->input->post('id');
+            $isUpdate = $this->ad_config_model->updatePostType();
+            if($isUpdate){
                 redirect(base_url('admin/config/post_types'));
             }else{
-                //$this->create_post_type();
+                $this->edit_post_type($id);
             }
         }
     }
