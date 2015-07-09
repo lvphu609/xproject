@@ -85,14 +85,11 @@ class Notify extends CI_Model {
                 array_push($regId_array, $this->getRegId($account_array[$i]['id']));
             }
             //var_dump($regId_array); die();
-            for ($i = 0; $i < count($account_array); $i++) {
-                $is_send = $this->sendPushNotificationToGCM(array($regId_array[$i]), $message_to_send);
+                $is_send = $this->sendPushNotificationToGCM($regId_array, $message_to_send);
                 if($is_send){
                     $status = 'success';
                     $message = 'insert post successfully!';
-                } else{
                 }
-            }
         }
     }
 

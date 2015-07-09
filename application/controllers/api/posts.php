@@ -96,7 +96,6 @@ class Posts extends Rest_Controller
                     'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng'])
                 );
                 if ($this->post->createPost($record)) {
-                //if(1==1){
                     $status = 'success';
                     $message = 'insert post successfully!';
 
