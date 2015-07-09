@@ -224,7 +224,7 @@ class Post extends CI_Model {
                 $this->db->where('(po.created_by = '.$account_id.' OR po.picked_by = '.$account_id.')');
             }
 
-            $this->db->where('(po.created_at > '.$date_time.' OR po.updated_at > '.$date_time.')');
+            $this->db->where("(po.created_at > '$date_time' OR po.updated_at > '$date_time')");
 
             $status = $this->input->post('status');
             if(empty($status)){
@@ -389,7 +389,7 @@ class Post extends CI_Model {
     }
 
     function deletePostById($id,$account_id){
-        $isDelete = $this->db->update('posts',array('is_delete' => 1),array('id' => $id,'created_by' => $account_id));
+        $isDelete = $this->db->update('posts',array('is_delete' => 1, 'updated_at' => getCurrentDate()),array('id' => $id,'created_by' => $account_id));
         if($isDelete){
             return true;
         }
@@ -497,7 +497,8 @@ class Post extends CI_Model {
             $data = array(
                 'picked_at' => getCurrentDate(),
                 'picked_by' => $account['id'],
-                'status' => 1
+                'status' => 1,
+                'updated_at' => getCurrentDate()
             );
             $isUpdate = $this->db->update('posts',$data,array('id' => $post_id));
             if($isUpdate){
@@ -516,7 +517,8 @@ class Post extends CI_Model {
                 'status' => 0,
                 'picked_by' => null,
                 'picked_at' => null,
-                'completed_at' => null
+                'completed_at' => null,
+                'updated_at' => getCurrentDate()
             );
             $isUpdate = $this->db->update('posts', $data, array('id' => $id));
             if ($isUpdate) {
@@ -533,7 +535,8 @@ class Post extends CI_Model {
         try{
             $data = array(
                 'status' => 2,
-                'completed_at' => getCurrentDate()
+                'completed_at' => getCurrentDate(),
+                'updated_at' => getCurrentDate()
             );
             $isUpdate = $this->db->update('posts', $data, array('id' => $id));
             if ($isUpdate) {
@@ -597,7 +600,7 @@ class Post extends CI_Model {
     }
     function getNewestProviderPosts($input){
         $account_id = $input['account_id'];
-        $created_at = $input['created_at'];
+        $date_time = $input['date_time'];
         try {
             $this->load->model('file_model');
             $this->db->select('
@@ -607,7 +610,7 @@ class Post extends CI_Model {
             $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
             $this->db->where('(po.picked_by = '.$account_id.' OR po.created_by = '.$account_id.')');
             //$this->db->or_where('po.created_by',$account_id);
-            $this->db->where('po.created_at >', $created_at);
+            $this->db->where("(po.created_at > '$date_time' OR po.updated_at > '$date_time')");
             $this->db->where('po.is_delete', NULL);
 
             $status = $this->input->post('status');
@@ -648,7 +651,8 @@ class Post extends CI_Model {
             $data = array(
                 'picked_at' => getCurrentDate(),
                 'picked_by' => $account['id'],
-                'status' => 1
+                'status' => 1,
+                'updated_at' => getCurrentDate()
             );
             $error = array();
             for ($i = 0; $i < count($array_post_id); $i++) {
