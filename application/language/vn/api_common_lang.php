@@ -1,5 +1,5 @@
 <?php
-$lang['username1'] = 'Tên đăng nhập';
+$lang['username'] = 'Tên đăng nhập';
 $lang['is_required'] = '%s không được để trống.';
 $lang['password'] = 'Mật khẩu';
 $lang['confirm_password'] = 'Xác nhận mật khẩu';
