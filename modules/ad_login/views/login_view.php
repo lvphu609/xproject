@@ -11,7 +11,8 @@
                             <input class="form-control" placeholder="<?php echo $this->lang->line('username_placeholder'); ?>" name="username" type="username" autofocus value="<?php echo !empty(set_value('username')) ? set_value('username') : ''; ?>">
                         </div>
                         <div class="form-group <?php echo !empty(form_error('password')) ? 'has-error' : '' ?>">
-                            <input class="form-control" placeholder="<?php echo $this->lang->line('password_placeholder'); ?>" name="password" type="password" value="<?php echo !empty(set_value('password')) ? set_value('password') : ''; ?>">
+                            <input class="form-control" placeholder="<?php echo $this->lang->line('password_placeholder'); ?>" id="password" type="password" value="">
+                            <input type="hidden" id="password_md5" name="password">
                         </div>
                         <div class="checkbox">
                             <label>

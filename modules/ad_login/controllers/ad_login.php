@@ -18,7 +18,8 @@ class Ad_login extends MX_Controller
         $data = array(
             'header_title' => $this->lang->line('header_title'),
             'js_file_module' => array(
-                'ad_login/assets/js/mod_login.js'
+                'ad_login/assets/js/mod_login.js',
+                'ad_login/assets/js/jquery.md5.js'
             ),
             'css_file_module' => array(
                 'ad_login/assets/css/style.css'
