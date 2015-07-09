@@ -613,11 +613,12 @@ class Posts extends Rest_Controller
             $input = $this->input->post('id');
             $pickStatus = $this->post->pick($input,$this->account_info);
             if($pickStatus){
+            //if(1==1){
                 $message = '';
                 $status = API_SUCCESS;
 
                 //push notify for user create this post
-                //$this->notify->
+                $this->notify->send_notify_account($input);
             }
         }
 
@@ -668,6 +669,9 @@ class Posts extends Rest_Controller
                 if($destroyStatus){
                     $message = '';
                     $status = API_SUCCESS;
+
+                    //push notify for provider had picked this post
+                    $this->notify->send_notify_account(array($input['id']));
                 }
             }
         }
@@ -720,6 +724,9 @@ class Posts extends Rest_Controller
                 if($completeStatus){
                     $message = '';
                     $status = API_SUCCESS;
+
+                    //push notify for provider had picked this post
+                    $this->notify->send_notify_account(array($input['id']));
                 }
             }
         }
@@ -875,6 +882,8 @@ class Posts extends Rest_Controller
                 if($pickStatus == true){
                     $message='';
                     $status = API_SUCCESS;
+
+                    $this->notify->send_notify_account($array_post_id);
                 }
                 else{
                     $message='';

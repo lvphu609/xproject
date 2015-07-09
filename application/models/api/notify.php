@@ -97,21 +97,24 @@ class Notify extends CI_Model {
      * send notify for user created post when province picked your post
      * */
 
-    function send_notify_users($record){
-        $pickerInfo = $this->account->getAccountInfoById($record['created_by']);
-        //var_dump($pickerInfo['full_name']); die();
-        $message_to_send = array(
-            'title' => 'My post was picked!',
-            'location_name' => $pickerInfo['full_name'].' has picked your post!',
-            'location_lat' => $record['location_lat'],
-            'location_lng' => $record['location_lng'],
-            'created_by' => $record['created_by'],
-            'id' => $record['id']
-        );
-        //var_dump($account_array);die();
-        $regId_array = array($this->getRegId($record['created_by']));
-        //var_dump($regId_array);die();
-        $this->sendPushNotificationToGCM($regId_array, $message_to_send);
+    function send_notify_account($post_id_array){
+        $status = 'success';
+        $message = 'insert post successfully!';
+        $results = null;
+        $validation = '';
+        for($i=0;$i<count($post_id_array);$i++) {
+            $postInfo = $this->post->getPostDetailById($post_id_array[$i]);
+            //var_dump($pickerInfo['full_name']); die();
+            $message_to_send = new stdClass;
+            $message_to_send->status = $status;
+            $message_to_send->message = $message;
+            $message_to_send->results = $postInfo;
+            $message_to_send->validation = $validation;
+            //var_dump($message_to_send);die();
+            $regId_array = $this->getRegId($postInfo->created_by);
+            //var_dump($regId_array);die();
+            $this->sendPushNotificationToGCM(array($regId_array), $message_to_send);
+        }
     }
 
 
