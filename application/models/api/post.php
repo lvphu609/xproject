@@ -498,11 +498,15 @@ class Post extends CI_Model {
                 'status' => 1,
                 'updated_at' => getCurrentDate()
             );
-            $isUpdate = $this->db->update('posts',$data,array('id' => $post_id));
-            if($isUpdate){
-                return true;
-            }else{
+            if($this->checkStatus($post_id,1)){ // check this post hasn't picked
                 return false;
+            }else{
+                $isUpdate = $this->db->update('posts',$data,array('id' => $post_id));
+                if($isUpdate){
+                    return true;
+                }else{
+                    return false;
+                }
             }
         }catch (ErrorException $e){
             return false;
@@ -518,12 +522,17 @@ class Post extends CI_Model {
                 'completed_at' => null,
                 'updated_at' => getCurrentDate()
             );
-            $isUpdate = $this->db->update('posts', $data, array('id' => $id));
-            if ($isUpdate) {
-                return true;
-            } else {
+            if($this->checkStatus($id,2)){  //check status this post hasn't completed
                 return false;
+            }else{
+                $isUpdate = $this->db->update('posts', $data, array('id' => $id));
+                if ($isUpdate) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
+
         }catch (ErrorException $e){
             return false;
         }
@@ -653,11 +662,26 @@ class Post extends CI_Model {
                 'updated_at' => getCurrentDate()
             );
             $error = array();
+            $post_status = null;
             for ($i = 0; $i < count($array_post_id); $i++) {
+                $post_status = $this->checkStatus((int)$array_post_id[$i],1);
+                if($post_status) {
+                    $PostInfo = $this->getPostDetailById($array_post_id[$i]);
+                    $title = $PostInfo->post_type['name'];
+                    $user = $PostInfo->normal_account['full_name'];
+                    $provider = $PostInfo->provider_account['full_name'];
+                    $message = my_lang('message_exits',array($title,$user,$provider));
+                    array_push($error, $message);
+                }else {
                     $isUpdate = $this->db->update('posts', $data, array('id' => (int)$array_post_id[$i]));
                     if ($isUpdate == false) {
-                        array_push($error, $array_post_id[$i]);
+                        $PostInfo = $this->getPostDetailById($array_post_id[$i]);
+                        $title = $PostInfo->post_type['name'];
+                        $user = $PostInfo->normal_account['full_name'];
+                        $message = my_lang('message_error',array($title,$user));
+                        array_push($error, $message);
                     }
+                }
             }
             if(count($error)>1){
                 return $error;
