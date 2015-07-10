@@ -688,7 +688,7 @@ class Accounts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
-    /**url : http://domain/xproject/api/accounts/store_location_by_id
+    /**url : http://domain/xproject/api/accounts/store_location
      * @method: POST
      *header
      * @token  string has
@@ -699,7 +699,7 @@ class Accounts extends Rest_Controller
      *
      *@response  object
      * */
-    function store_location_by_id_post(){
+    function store_location_post(){
         $status = API_FAILURE;
         $message = API_ERROR;
         $results = null;
