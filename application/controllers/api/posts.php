@@ -598,7 +598,9 @@ class Posts extends Rest_Controller
 
         /*Set the form validation rules*/
         $rules = array(
-            array('field'=>'id', 'label'=>'lang:id', 'rules'=>'required')
+            array('field'=>'id', 'label'=>'lang:id', 'rules'=>'required'),
+            array('field'=>'location_lat', 'label'=>'lang:location_lat', 'rules'=>'required'),
+            array('field'=>'location_lng', 'label'=>'lang:location_lng', 'rules'=>'required')
         );
 
         $this->form_validation->set_rules($rules);
@@ -607,11 +609,13 @@ class Posts extends Rest_Controller
         if ($this->form_validation->run() == FALSE) {
             $message = API_VALIDATION;
             $validation = array(
-                'id' => $this->form_validation->error('id')
+                'id' => $this->form_validation->error('id'),
+                'location_lat' => $this->form_validation->error('location_lat'),
+                'location_lng' => $this->form_validation->error('location_lng'),
             );
         } else {
-            $input = $this->input->post('id');
-            $pickStatus = $this->post->pick($input,$this->account_info);
+            $input = $this->input->post();
+            $pickStatus = $this->post->pick($this->account_info);
             if($pickStatus){
             //if(1==1){
                 $message = '';
@@ -619,7 +623,7 @@ class Posts extends Rest_Controller
 
                 //push notify for user create this post
                 try {
-                    $this->notify->send_notify_account(array($input));
+                    $this->notify->send_notify_account(array($input['id']));
                 }catch (ErrorException $e){
                     return null;
                 }
@@ -887,38 +891,48 @@ class Posts extends Rest_Controller
         $message = API_ERROR;
         $results = null;
         $validation = null;
-        $json = $this->input->post('arr_post_id');
-        if(!empty($json)){
-            $array_post_id = json_decode($json,true);
+
+        $rules = array(
+            array('field'=>'location_lat', 'label'=>'lang:location_lat', 'rules'=>'required'),
+            array('field'=>'location_lng', 'label'=>'lang:location_lng', 'rules'=>'required'),
+            array('field'=>'arr_post_id', 'label'=>'lang:arr_post_id', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'location_lat' => $this->form_validation->error('location_lat'),
+                'location_lng' => $this->form_validation->error('location_lng'),
+                'arr_post_id' => $this->form_validation->error('arr_post_id')
+            );
+        } else {
+            $json = $this->input->post('arr_post_id');
+            $array_post_id = json_decode($json, true);
             //var_dump($array_post_id); die();
-            $pickStatus = $this->post->picks($array_post_id,$this->account_info);
-            if(is_array($pickStatus)){
+            $pickStatus = $this->post->picks($array_post_id, $this->account_info);
+            if (is_array($pickStatus)) {
                 $message = $this->lang->line('message_has_pick_someone');
                 $status = API_FAILURE;
                 $results = null;
-                $validation =$pickStatus; // list message posts had been picked
-            }else{
-                if($pickStatus == true){
-                    $message='';
+                $validation = $pickStatus; // list post id update failure
+            } else {
+                if ($pickStatus == true) {
+                    $message = '';
                     $status = API_SUCCESS;
                     try {
                         $this->notify->send_notify_account($array_post_id);
-                    }catch (ErrorException $e){
+                    } catch (ErrorException $e) {
                         return null;
                     }
-                }
-                else{
-                    $message='';
+                } else {
+                    $message = '';
                     $status = API_ERROR;
                 }
             }
-        }else{
-            $message = '';
-            $status = API_FAILURE;
-            $validation = $this->lang->line('json');
         }
-
-
 
         $data = array(
             API_STATUS => $status,
