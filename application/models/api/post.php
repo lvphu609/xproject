@@ -731,35 +731,73 @@ class Post extends CI_Model {
                 'updated_at' => getCurrentDate()
             );
             $error = array();
+            $arr_post_update_success = array();
+
             for ($i = 0; $i < count($array_post_id); $i++) {
                 $check_status_pick = $this->checkStatus((int)$array_post_id[$i],1);
                 $check_status_complete = $this->checkStatus((int)$array_post_id[$i],2);
+
+                //check the post is picked or complete
                 if($check_status_pick || $check_status_complete) {
                     $PostInfo = $this->getPostDetailById($array_post_id[$i]);
                     $title = $PostInfo->post_type['name'];
                     $user = $PostInfo->normal_account['full_name'];
                     $provider = $PostInfo->provider_account['full_name'];
-                    $message = my_lang('message_exits',array($title,$user,$provider));
-                    array_push($error, $message);
+                    //$message = my_lang('message_exits',array($title,$user,$provider));
+                    array_push($error, $array_post_id[$i]);
                 }else {
                     $isUpdatePost = $this->db->update('posts', $data, array('id' => (int)$array_post_id[$i]));
                     if ($isUpdatePost == false) {
                         $PostInfo = $this->getPostDetailById($array_post_id[$i]);
                         $title = $PostInfo->post_type['name'];
                         $user = $PostInfo->normal_account['full_name'];
-                        $message = my_lang('message_error',array($title,$user));
-                        array_push($error, $message);
+                        //$message = my_lang('message_error',array($title,$user));
+                        array_push($error, $array_post_id[$i]);
+                    }else{
+                        array_push($arr_post_update_success,(int)$array_post_id[$i]);
                     }
                 }
             }
-            $isUpdateAccount = $this->db->update('accounts',array('location_lat' => $location_lat, 'location_lng' => $location_lng),array('id' => $account['id']));
-            if(count($error)>1 && $isUpdateAccount){
+
+            //if update some post => update location for account
+           /* if(count($error) < count($array_post_id)){
+                $isUpdateAccount = $this->db->update('accounts',array('location_lat' => $location_lat, 'location_lng' => $location_lng),array('id' => $account['id']));
+            }*/
+
+            if(count($error) != 0){
+                //rollback data update
+                $this->rollbackPostUpdated($arr_post_update_success);
                 return $error;
             }else{
-                return true;
+                $isUpdateAccount = $this->db->update('accounts',array('location_lat' => $location_lat, 'location_lng' => $location_lng),array('id' => $account['id']));
+                if($isUpdateAccount){
+                    return true;
+                }else{
+                    //rollback data post is updated
+                    $this->rollbackPostUpdated($arr_post_update_success);
+                    return false;
+                }
             }
         }catch (ErrorException $e){
             return false;
+        }
+    }
+
+    /*
+     * rollback post picked
+     * */
+    function rollbackPostUpdated($arrPostId){
+        for($i=0; $i<count($arrPostId); $i++) {
+            try {
+                $data = array(
+                    'status' => 0,
+                    'picked_by' => null,
+                    'picked_at' => null,
+                    'completed_at' => null,
+                    'updated_at' => getCurrentDate()
+                );
+                $this->db->update('posts', $data, array('id' => $arrPostId[$i]));
+            }catch (ErrorException $e){}
         }
     }
 
