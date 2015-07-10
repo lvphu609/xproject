@@ -227,9 +227,7 @@ class Post extends CI_Model {
             $this->db->where("(po.created_at > '$date_time' OR po.updated_at > '$date_time')");
 
             $status = $this->input->post('status');
-            if(empty($status)){
-                $this->db->where('po.status < 2');
-            }else{
+            if(!empty($status)){
                 $this->db->where('po.status', $status);
             }
 
