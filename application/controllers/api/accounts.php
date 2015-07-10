@@ -787,4 +787,52 @@ class Accounts extends Rest_Controller
         );
         $this->response($data, HEADER_SUCCESS);
     }
+
+    /**url : http://domain/xproject/api/accounts/store_reg_id
+     * @method: POST
+     *header
+     * @token  string has
+     *
+     * @reg_id
+     *
+     *@response  object
+     * */
+    function store_reg_id_post(){
+        $status = API_FAILURE;
+        $message = API_ERROR;
+        $results = null;
+        $validation = null;
+
+        /*Set the form validation rules*/
+        $rules = array(
+            array('field'=>'reg_id', 'label'=>'lang:reg_id', 'rules'=>'required')
+        );
+
+        $this->form_validation->set_rules($rules);
+
+        /*Check if the form passed its validation */
+        if ($this->form_validation->run() == FALSE) {
+            $message = API_VALIDATION;
+            $validation = array(
+                'reg_id' => $this->form_validation->error('reg_id')
+            );
+        } else {
+            $this->checkToken();
+            $account = $this->account_info;
+            $input = $this->input->post();
+            $result = $this->account->storeRegId($account['id'],$input['reg_id']);
+            if($result){
+                $message = '';
+                $status = API_SUCCESS;
+            }
+        }
+
+        $data = array(
+            API_STATUS => $status,
+            API_MESSAGE => $message,
+            API_RESULTS => $results,
+            API_VALIDATION => $validation
+        );
+        $this->response($data, HEADER_SUCCESS);
+    }
 }
