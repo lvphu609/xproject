@@ -625,7 +625,7 @@ class Posts extends Rest_Controller
                 }
             }else{
                 $status = API_FAILURE;
-                $message = 'This post has picked by someone.';
+                $message = my_lang('message_has_picked');
             }
         }
 
@@ -893,7 +893,7 @@ class Posts extends Rest_Controller
             //var_dump($array_post_id); die();
             $pickStatus = $this->post->picks($array_post_id,$this->account_info);
             if(is_array($pickStatus)){
-                $message = 'Some post had been picked by someone.';
+                $message = my_lang('message_has_pick_someone');
                 $status = API_FAILURE;
                 $results = null;
                 $validation =$pickStatus; // list message posts had been picked
@@ -915,7 +915,7 @@ class Posts extends Rest_Controller
         }else{
             $message = '';
             $status = API_FAILURE;
-            $validation = 'Find not found json post_id.';
+            $validation = my_lang('json');
         }
 
 
