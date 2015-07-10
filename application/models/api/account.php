@@ -106,7 +106,7 @@ class Account extends CI_Model {
         }
         return false;
     }*/
-
+// check account exits in database by username and password
     function checkAccount($input){
         $query = $this->db->get_where('accounts',array(
             'username' => trim($input['username']),
@@ -135,6 +135,7 @@ class Account extends CI_Model {
         return false;
     }
 
+    // send new password by send email when user forgot password
     function get_reset_password_key($email)
     {
         $key_code = uniqid();
@@ -154,6 +155,7 @@ class Account extends CI_Model {
         return null;
     }
 
+    // reset password
     function reset_password($reset_password_key,$password)
     {
         if($reset_password_key != NULL || $reset_password_key != '') {
@@ -172,6 +174,7 @@ class Account extends CI_Model {
         }
     }
 
+    // general html when user forgot password
     function generalHtmlForGotPassword($email){
         $data['code'] = $this->get_reset_password_key($email);
 
@@ -182,6 +185,7 @@ class Account extends CI_Model {
         return $htmlContent;
     }
 
+    // check exist reset password key
     function checkExistRessetPasswordKey($email){
         $this->db->from('tokens');
         $this->db->where('email',$email);
@@ -213,6 +217,7 @@ class Account extends CI_Model {
         return $this->lang->line('token_not_exist');
     }
 
+    // get account information by email
     function getAccountByEmail($email){
         $this->db->from('accounts');
         $this->db->where('email',$email);
@@ -221,6 +226,7 @@ class Account extends CI_Model {
         return $result[0];
     }
 
+    // get account information by account id
     function getAccountById($id){
         $this->db->from('accounts');
         $this->db->where('id',$id);
@@ -229,6 +235,7 @@ class Account extends CI_Model {
         return $result[0];
     }
 
+    //check existed email in database
     function checkEmailUniqueToUpdateAccount($account_id,$email){
         $this->db->select('*');
         $this->db->from('accounts');
@@ -240,6 +247,7 @@ class Account extends CI_Model {
         return $query->num_rows() === 0;
     }
 
+    //get account information by account id
     function getAccountInfoById($id){
         $this->db->select(
             'id, username, email, full_name,
@@ -260,6 +268,7 @@ class Account extends CI_Model {
         return false;
     }
 
+    // change password
     function changePassword($oldPass,$newPass,$account_id){
         //check old pass
         $query = $this->db->get_where('accounts',array('password' => $oldPass, 'id' => $account_id));
@@ -283,6 +292,7 @@ class Account extends CI_Model {
      *     $this->db->select("DATE_FORMAT( date, '%d.%m.%Y' ) as date_human",  FALSE );
     $this->db->select("DATE_FORMAT( date, '%H:%i') as time_human",      FALSE );*/
 
+    // get account id and distance from a post to account's location about 10 Km
     function getAccountIdByLocation($location, $RADIUS = 10.0){
         $LAT_HERE = $location->location_lat;
         $LONG_HERE = $location->location_lng;
@@ -317,6 +327,7 @@ class Account extends CI_Model {
         }
     }
 
+    // store location account
     function storeLocationById($account_id,$location){
         try{
             $location_lat = $location['location_lat'];
@@ -336,6 +347,7 @@ class Account extends CI_Model {
         }
     }
 
+    //get location account
     function getLocationById($account_id){
         $this->db->select('id,location_lat,location_lng');
         $this->db->where('id', (int)$account_id);
@@ -343,6 +355,7 @@ class Account extends CI_Model {
         return $query->result_object();
     }
 
+    //store reg_id of account
     function storeRegId($account_id,$RegId){
         $data = array(
             'reg_id' => $RegId

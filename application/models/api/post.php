@@ -165,6 +165,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* Get number post by account_id
+*
+* */
     function countAllPost($account_id){
         $this->db->where('created_by', $account_id);
         $this->db->from('posts');
@@ -193,6 +197,10 @@ class Post extends CI_Model {
         return array();
     }
 
+/*
+* Get type post important
+*
+* */
     function getTypePostEmergency(){
         $this->db->select('id, name, description, avatar');
 
@@ -204,6 +212,10 @@ class Post extends CI_Model {
         );
     }
 
+/*
+* Get newest my post by account_id
+*
+* */
     function getNewestMyPosts($input){
         $account_id = $input['account_id'];
         $date_time = $input['date_time'];
@@ -258,6 +270,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* Search post by account_id
+*
+* */
     function searchPost($account){
         try {
             $input = $this->input->post();
@@ -337,6 +353,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* get number post search total page by account + location_lat + location_lng + query
+*
+* */
     function postSearchTotalPage($account){
         try {
             $input = $this->input->post();
@@ -386,6 +406,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* Delete post by post_id
+*
+* */
     function deletePostById($id,$account_id){
         $isDelete = $this->db->update('posts',array('is_delete' => 1, 'updated_at' => getCurrentDate()),array('id' => $id,'created_by' => $account_id));
         if($isDelete){
@@ -394,6 +418,10 @@ class Post extends CI_Model {
         return false;
     }
 
+/*
+* get post_id for push notify
+*
+* */
     function getPostIdForPushNotify($array){
         try{
             $this->db->select('id');
@@ -406,6 +434,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* get post information by post_id
+*
+* */
     function getPostInfoById($id)
     {
         try{
@@ -448,6 +480,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* get post detail by post_id
+*
+* */
     function getPostDetailById($id)
     {
         try{
@@ -489,7 +525,10 @@ class Post extends CI_Model {
         }
     }
 
-
+    /*
+    * picked post by post_id and account_id
+    *
+    * */
     function pick($post_id,$account){
         try{
             $data = array(
@@ -498,7 +537,9 @@ class Post extends CI_Model {
                 'status' => 1,
                 'updated_at' => getCurrentDate()
             );
-            if($this->checkStatus($post_id,1)){ // check this post hasn't picked
+            $check_status_pick = $this->checkStatus($post_id,1);
+            $check_status_complete = $this->checkStatus($post_id,2);
+            if($check_status_pick || $check_status_complete){ // check this post hasn't picked
                 return false;
             }else{
                 $isUpdate = $this->db->update('posts',$data,array('id' => $post_id));
@@ -513,6 +554,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* unpicked post by post_id
+*
+* */
     function destroy($id){
         try {
             $data = array(
@@ -522,7 +567,8 @@ class Post extends CI_Model {
                 'completed_at' => null,
                 'updated_at' => getCurrentDate()
             );
-            if($this->checkStatus($id,2)){  //check status this post hasn't completed
+            $check_status_complete = $this->checkStatus($id,2);
+            if($check_status_complete){  //check status this post hasn't completed
                 return false;
             }else{
                 $isUpdate = $this->db->update('posts', $data, array('id' => $id));
@@ -538,6 +584,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* completed post by post_id
+*
+* */
     function complete($id){
         try{
             $data = array(
@@ -556,6 +606,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* get list post of provider by account_id, page and number per page
+*
+* */
     function getPostsOfProvider($account_id,$page = null,$numberPerPage = null)
     {
         $this->load->model('file_model');
@@ -605,6 +659,11 @@ class Post extends CI_Model {
             return null;
         }
     }
+
+/*
+* get newest post for provider by account_id and date_time
+*
+* */
     function getNewestProviderPosts($input){
         $account_id = $input['account_id'];
         $date_time = $input['date_time'];
@@ -653,6 +712,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* picked all posts have checked by array post_id and account_id
+*
+* */
     function picks($array_post_id,$account){
         try {
             $data = array(
@@ -662,10 +725,10 @@ class Post extends CI_Model {
                 'updated_at' => getCurrentDate()
             );
             $error = array();
-            $post_status = null;
             for ($i = 0; $i < count($array_post_id); $i++) {
-                $post_status = $this->checkStatus((int)$array_post_id[$i],1);
-                if($post_status) {
+                $check_status_pick = $this->checkStatus((int)$array_post_id[$i],1);
+                $check_status_complete = $this->checkStatus((int)$array_post_id[$i],2);
+                if($check_status_pick || $check_status_complete) {
                     $PostInfo = $this->getPostDetailById($array_post_id[$i]);
                     $title = $PostInfo->post_type['name'];
                     $user = $PostInfo->normal_account['full_name'];
@@ -693,6 +756,10 @@ class Post extends CI_Model {
         }
     }
 
+/*
+* check status post by post_id and status
+*
+* */
     function checkStatus($post_id,$status){
         try{
             $this->db->where('id', $post_id);
