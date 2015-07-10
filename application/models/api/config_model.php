@@ -50,6 +50,7 @@ class Config_model extends CI_Model {
         $this->db->select('id, name, description, avatar');
         $this->db->from('type_posts');
         $this->db->where('id <>',1); //not get emergency
+        $this->db->where('is_delete',null);
         $query = $this->db->get();
         if($query->num_rows() > 0 ){
             $result = $query->result_array();

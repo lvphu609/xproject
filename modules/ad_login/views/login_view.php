@@ -7,10 +7,10 @@
             <div class="panel-body">
                  <?php echo form_open(base_url('admin/auth'), array('method' => 'post', 'id' => 'frm_login')); ?>
                     <fieldset>
-                        <div class="form-group <?php echo !empty(form_error('username')) ? 'has-error' : '' ?>">
-                            <input class="form-control" placeholder="<?php echo $this->lang->line('username_placeholder'); ?>" name="username" type="username" autofocus value="<?php echo !empty(set_value('username')) ? set_value('username') : ''; ?>">
+                        <div class="form-group <?php // echo !empty(form_error('username')) ? 'has-error' : '' ?>">
+                            <input class="form-control" placeholder="<?php echo $this->lang->line('username_placeholder'); ?>" name="username" type="username" autofocus value="<?php //echo !empty(set_value('username')) ? set_value('username') : ''; ?>">
                         </div>
-                        <div class="form-group <?php echo !empty(form_error('password')) ? 'has-error' : '' ?>">
+                        <div class="form-group <?php // echo !empty(form_error('password')) ? 'has-error' : '' ?>">
                             <input class="form-control" placeholder="<?php echo $this->lang->line('password_placeholder'); ?>" id="password" type="password" value="">
                             <input type="hidden" id="password_md5" name="password">
                         </div>
@@ -19,12 +19,12 @@
                                 <input name="remember" type="checkbox" value="Remember Me"><?php echo $this->lang->line('remember_me'); ?>
                             </label>
                         </div>
-                        <?php if(!empty($error)): ?>
+                        <?php if(!empty($error)){ ?>
                             <div class="alert alert-warning fade in">
                                 <?php echo $this->lang->line('login_failure'); ?>
                                 <button type="button" class="close" data-dismiss="alert">×</button>
                             </div>
-                        <?php endif;?>
+                        <?php } ?>
                         <button type="submit" class="btn btn-lg btn-success btn-block btn-login"><?php echo $this->lang->line('button_login'); ?></button>
                     </fieldset>
                  <?php echo form_close(); ?>

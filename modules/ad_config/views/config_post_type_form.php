@@ -39,13 +39,14 @@
                     <div class="col-lg-12">
                         <div class="form-group">
                             <label for="input_title" class="col-sm-2 control-label">Tên thể loại:</label>
-                            <div class="col-sm-10 <?php echo !empty(form_error('name')) ? 'has-error' : ''; ?>">
+                            <div class="col-sm-10 <?php //echo !empty(form_error('name')) ? 'has-error' : ''; ?>">
                                 <input name="name" type="text" class="form-control" id="input_title" placeholder="Tên thể loại" autofocus value="<?php
-                                    if(!empty(form_error('name')))
+                                    /*if(!empty(form_error('name')))
                                         echo set_value('name');
                                     else{
                                         echo (set_value('name') != "") ? set_value('name') : $name;
-                                    }
+                                    }*/
+                                echo $name;
                                 ?>">
                             </div>
                         </div>
@@ -55,13 +56,14 @@
                     <div class="col-lg-12">
                         <div class="form-group">
                             <label for="input_title" class="col-sm-2 control-label">Mô tả:</label>
-                            <div class="col-sm-10  <?php echo !empty(form_error('description')) ? 'has-error' : ''; ?>">
+                            <div class="col-sm-10  <?php // echo !empty(form_error('description')) ? 'has-error' : ''; ?>">
                                 <textarea rows="4" ="" name="description" id="box-content-article" class="form-control"><?php
-                                    if(!empty(form_error('description')))
+                                    /*if(!empty(form_error('description')))
                                         echo set_value('description');
                                     else{
                                         echo (set_value('description') != "") ? set_value('description') : $description;
-                                    }
+                                    }*/
+                                echo $description;
                                 ?></textarea>
                             </div>
                         </div>
@@ -71,16 +73,17 @@
                     <div class="col-lg-12">
                         <div class="form-group">
                             <label for="input_title" class="col-sm-2 control-label"> Hình ảnh:</label>
-                            <div class="col-sm-10  <?php echo !empty(form_error('avatar')) ? 'has-error' : ''; ?>">
+                            <div class="col-sm-10  <?php //echo !empty(form_error('avatar')) ? 'has-error' : ''; ?>">
                                 <img class="avatar-post-type" src="<?php
-                                    if(!empty(form_error('avatar')))
+                                   /* if(!empty(form_error('avatar')))
                                         echo set_value('avatar');
                                     else{
                                         echo (set_value('avatar') != "") ? set_value('avatar') : $avatar;
-                                    }
+                                    }*/
+                                echo $avatar;
                                 ?>" data-toggle="modal" data-target="#myModal" width="100" height="100">
-                                <input type="hidden" id="img_url" value="<?php echo $avatar; ?><?php echo !empty(set_value('avatar')) ? set_value('avatar') : ''; ?>">
-                                <input type="hidden" id="img_base64" name="avatar" value="<?php echo !empty(set_value('avatar')) ? set_value('avatar') : $base64; ?>">
+                                <input type="hidden" id="img_url" value="<?php echo $avatar; ?><?php //echo !empty(set_value('avatar')) ? set_value('avatar') : ''; ?>">
+                                <input type="hidden" id="img_base64" name="avatar" value="<?php echo $base64;//echo !empty(set_value('avatar')) ? set_value('avatar') : $base64; ?>">
                             </div>
                         </div>
                     </div>
