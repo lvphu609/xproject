@@ -623,6 +623,9 @@ class Posts extends Rest_Controller
                 }catch (ErrorException $e){
                     return null;
                 }
+            }else{
+                $status = API_FAILURE;
+                $message = 'This post has picked by someone.';
             }
         }
 
@@ -680,6 +683,9 @@ class Posts extends Rest_Controller
                     }catch (ErrorException $e){
                         return null;
                     }
+                }else{
+                    $status = API_FAILURE;
+                    $message = 'This post had been completed.';
                 }
             }
         }
@@ -887,9 +893,10 @@ class Posts extends Rest_Controller
             //var_dump($array_post_id); die();
             $pickStatus = $this->post->picks($array_post_id,$this->account_info);
             if(is_array($pickStatus)){
-                $message = '';
+                $message = 'Some post had been picked by someone.';
                 $status = API_FAILURE;
-                $results = $pickStatus;
+                $results = null;
+                $validation =$pickStatus; // list message posts had been picked
             }else{
                 if($pickStatus == true){
                     $message='';

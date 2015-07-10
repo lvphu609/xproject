@@ -43,3 +43,5 @@ $lang['key_search'] = 'Từ khóa tìm kiếm';
 $lang['post_id'] = 'Id bài post';
 $lang['old_password_is_wrong'] = 'Bạn nhập sai mật khẩu cũ';
 $lang['reg_id'] = 'RegId của thiết bị';
+$lang['message_error'] = "Thao tác chọn yêu cầu %s của %s đã xảy ra lỗi.";
+$lang['message_exits'] = "Yêu cầu %s của %s đã được chọn bởi %s.";
