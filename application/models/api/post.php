@@ -529,8 +529,11 @@ class Post extends CI_Model {
     * picked post by post_id and account_id
     *
     * */
-    function pick($post_id,$account){
+    function pick($account){
         try{
+            $post_id = $this->input->post('id');
+            $loaction_lat = $this->input->post('location_lat');
+            $location_lng = $this->input->post('location_lng');
             $data = array(
                 'picked_at' => getCurrentDate(),
                 'picked_by' => $account['id'],
@@ -542,8 +545,9 @@ class Post extends CI_Model {
             if($check_status_pick || $check_status_complete){ // check this post hasn't picked
                 return false;
             }else{
-                $isUpdate = $this->db->update('posts',$data,array('id' => $post_id));
-                if($isUpdate){
+                $isUpdatePost = $this->db->update('posts',$data,array('id' => $post_id));
+                $isUpdateAccount = $this->db->update('accounts',array('location_lat' => $loaction_lat, 'location_lng' => $location_lng),array('id' => $account['id']));
+                if($isUpdatePost && $isUpdateAccount){
                     return true;
                 }else{
                     return false;
@@ -718,6 +722,8 @@ class Post extends CI_Model {
 * */
     function picks($array_post_id,$account){
         try {
+            $location_lat = $this->input->post('location_lat');
+            $location_lng = $this->input->post('location_lng');
             $data = array(
                 'picked_at' => getCurrentDate(),
                 'picked_by' => $account['id'],
@@ -736,8 +742,8 @@ class Post extends CI_Model {
                     $message = my_lang('message_exits',array($title,$user,$provider));
                     array_push($error, $message);
                 }else {
-                    $isUpdate = $this->db->update('posts', $data, array('id' => (int)$array_post_id[$i]));
-                    if ($isUpdate == false) {
+                    $isUpdatePost = $this->db->update('posts', $data, array('id' => (int)$array_post_id[$i]));
+                    if ($isUpdatePost == false) {
                         $PostInfo = $this->getPostDetailById($array_post_id[$i]);
                         $title = $PostInfo->post_type['name'];
                         $user = $PostInfo->normal_account['full_name'];
@@ -746,7 +752,8 @@ class Post extends CI_Model {
                     }
                 }
             }
-            if(count($error)>1){
+            $isUpdateAccount = $this->db->update('accounts',array('location_lat' => $location_lat, 'location_lng' => $location_lng),array('id' => $account['id']));
+            if(count($error)>1 && $isUpdateAccount){
                 return $error;
             }else{
                 return true;
