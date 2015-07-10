@@ -104,13 +104,11 @@ class Notify extends CI_Model {
         $validation = '';
         for($i=0;$i<count($post_id_array);$i++) {
             $postInfo = $this->post->getPostDetailById($post_id_array[$i]);
-            //var_dump($pickerInfo['full_name']); die();
             $message_to_send = new stdClass;
             $message_to_send->status = $status;
             $message_to_send->message = $message;
             $message_to_send->results = $postInfo;
             $message_to_send->validation = $validation;
-            //var_dump($message_to_send);die();
             $regId_array = $this->getRegId($postInfo->created_by);
             //var_dump($regId_array);die();
             $this->sendPushNotificationToGCM(array($regId_array), $message_to_send);
