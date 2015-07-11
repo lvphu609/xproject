@@ -48,3 +48,4 @@ $lang['message_exits'] = "Yêu cầu %s của %s đã được chọn bởi %s."
 $lang['message_has_picked'] = 'Bài yêu cầu đã được chọn';
 $lang['message_has_pick_someone'] = 'Một số yêu cầu đã được chọn';
 $lang['arr_post_id'] = 'Danh sách id yêu cầu';
+$lang['date_time'] = 'Thời gian';
