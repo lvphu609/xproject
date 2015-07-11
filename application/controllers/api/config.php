@@ -138,6 +138,25 @@ class Config extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
+    function get_image_emergency_get(){
+        //initialize
+        $status = 'success';
+        $message = '';
+        $results = null;
+        $validation = null;
+
+        $results = $this->config_model->getImageEmergency();
+
+        $data = array(
+            'status' => $status,
+            'message' => $message,
+            'results' => $results,
+            'validation' => $validation
+        );
+
+        $this->response($data, HEADER_SUCCESS);
+    }
+
     function test_post(){
         $this->load->model('api/notify');
         $this->load->model('api/post');
