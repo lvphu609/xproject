@@ -847,7 +847,7 @@ class Posts extends Rest_Controller
         /*Set the form validation rules*/
         $rules = array(
             array('field'=>'account_id', 'label'=>'lang:account_id', 'rules'=>'required'),
-            array('field'=>'created_at', 'label'=>'lang:created_at', 'rules'=>'required')
+            array('field'=>'date_time', 'label'=>'lang:date_time', 'rules'=>'required')
         );
 
         $this->form_validation->set_rules($rules);
@@ -857,7 +857,7 @@ class Posts extends Rest_Controller
             $message = API_VALIDATION;
             $validation = array(
                 'account_id' => $this->form_validation->error('account_id'),
-                'created_at' => $this->form_validation->error('created_at')
+                'date_time' => $this->form_validation->error('date_time')
             );
         } else {
             $input = $this->input->post();
