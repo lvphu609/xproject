@@ -613,7 +613,6 @@ class Posts extends Rest_Controller
             $input = $this->input->post();
             $pickStatus = $this->post->pick($this->account_info);
             if($pickStatus){
-            //if(1==1){
                 $message = '';
                 $status = API_SUCCESS;
 

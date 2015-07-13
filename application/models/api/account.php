@@ -294,9 +294,10 @@ class Account extends CI_Model {
     $this->db->select("DATE_FORMAT( date, '%H:%i') as time_human",      FALSE );*/
 
     // get account id and distance from a post to account's location about 10 Km
-    function getAccountIdByLocation($location, $RADIUS = 10.0){
-        $LAT_HERE = $location->location_lat;
-        $LONG_HERE = $location->location_lng;
+    function getAccountIdByLocation($post, $RADIUS = 10.0){
+        $LAT_HERE = $post->location_lat;
+        $LONG_HERE = $post->location_lng;
+        $CREATED_BY = $post->created_by;
        // $ACCOUNT_ID = $location->account_id;
         try {
             $query = $this->db->query("
@@ -319,6 +320,7 @@ class Account extends CI_Model {
                   BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                   AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                   AND z.account_type = 2
+                  AND z.id <> $CREATED_BY
                   ORDER BY distance_in_km
             ");
             $result = $query->result_array();

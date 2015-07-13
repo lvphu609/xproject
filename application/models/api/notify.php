@@ -85,7 +85,7 @@ class Notify extends CI_Model {
                     1  //acction create post
                 );
             }
-            $message_to_send->data->results->notify = $this->notification->get_message_notification($message_to_send->data->results->created_by, $message_to_send->data->results);
+            $message_to_send->data->results->notify = $this->notification->get_message_notification($message_to_send->data->results,1,1);
 
             $this->sendPushNotificationToGCM($regId_array, $message_to_send);
         }
@@ -95,20 +95,21 @@ class Notify extends CI_Model {
      * send notify for user created post when province picked your post
      * */
 
-    function send_notify_account($post_id_array){
-        $status = 'success';
-        $message = 'insert post successfully!';
-        $results = null;
-        $validation = '';
-        for($i=0;$i<count($post_id_array);$i++) {
-            $postInfo = $this->post->getPostDetailById($post_id_array[$i]);
-            $message_to_send = new stdClass;
-            $message_to_send->status = $status;
-            $message_to_send->message = $message;
-            $message_to_send->results = $postInfo;
-            $message_to_send->validation = $validation;
+    function send_notify_account($arrPostId){
+        for($i=0; $i<count($arrPostId); $i++) {
+            $postInfo = $this->post->getPostDetailById($arrPostId[$i]);
+            $message_to_send = new stdClass();
+            $message_to_send->data = new stdClass();
+            $message_to_send->data->results = new stdClass();
+
+            $message_to_send->data->status = API_SUCCESS;
+            $message_to_send->data->message = '';
+            $message_to_send->data->results = $postInfo;
+            $message_to_send->data->validation = null;
+
+            $message_to_send->data->results->notify = $this->notification->get_message_notification($postInfo,1,2);
+
             $regId_array = $this->getRegId($postInfo->created_by);
-            //var_dump($regId_array);die();
             $this->sendPushNotificationToGCM(array($regId_array), $message_to_send);
         }
     }

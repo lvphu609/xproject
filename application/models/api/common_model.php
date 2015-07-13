@@ -128,9 +128,11 @@ class Common_model extends CI_Model {
             $server_key = DEFIND_GOOGLE_API_KEY_SERVER;
             $json = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&location_type=ROOFTOP&result_type=street_address&key=$server_key");
             $obj = json_decode($json);
-            $result = $obj->results;
-            if(count($result)>0) {
-                return $result[0]->formatted_address;
+            if(!empty($obj->results)){
+                $result = $obj->results;
+                if(count($result)>0) {
+                    return $result[0]->formatted_address;
+                }
             }
         }
         catch(Exception $e){

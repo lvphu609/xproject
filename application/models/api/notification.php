@@ -83,13 +83,13 @@ class Notification extends CI_Model {
         return null;
     }
 
-    function get_message_notification($account_id, $post_detail){
-        $post_type = $post_detail->post_type;
-        $account = $this->account->getAccountInfoById($account_id);
+    function get_message_notification($postInfo,$type,$action){
+        $post_type = $postInfo->post_type;
+        $account = $this->account->getAccountInfoById($postInfo->created_by);
         if($account){
             $data = new stdClass();
-            $data->title = my_lang('notify_create_post',array($account['full_name'], $post_type['name']));
-            $data->created_at = $post_detail->created_at;
+            $data->title = my_lang('notify_'.get_notify_action(get_notify_type($type),$action),array($account['full_name'], $post_type['name']));
+            $data->created_at = $postInfo->created_at;
             $data->avatar = $post_type['avatar'];
             return $data;
         }
