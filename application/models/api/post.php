@@ -24,7 +24,9 @@ class Post extends CI_Model {
                 $isInsert = $this->db->insert('posts', $recordData);
 
                 if ($isInsert) {
-                    return true;
+                    return $this->db->insert_id();
+                }else{
+                    return false;
                 }
             } //update posts
             else {
@@ -66,7 +68,7 @@ class Post extends CI_Model {
 
         $isInsert = $this->db->insert('posts', $record);
         if ($isInsert)
-            return TRUE;
+            return $this->db->insert_id();
         else
             return FALSE;
     }
@@ -422,7 +424,7 @@ class Post extends CI_Model {
 * get post_id for push notify
 *
 * */
-    function getPostIdForPushNotify($array){
+   /* function getPostIdForPushNotify($array){
         try{
             $this->db->select('id');
             $this->db->where($array);
@@ -432,7 +434,7 @@ class Post extends CI_Model {
         }catch(ErrorException $e){
             return null;
         }
-    }
+    }*/
 
 /*
 * get post information by post_id
@@ -817,6 +819,38 @@ class Post extends CI_Model {
             }
         }catch (ErrorException $e){
             return null;
+        }
+    }
+
+
+    /*
+    * Get post by account_id
+    *
+    * */
+
+    function getPostById($id)
+    {
+
+        $this->load->model('file_model');
+        $this->db->select('
+            po.*
+        ');
+        $this->db->from('posts as po');
+        $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
+        $this->db->where('po.id',$id);
+        $query = $this->db->get();
+
+        if($query->num_rows() > 0 ){
+            $result = $query->result_object();
+            if(count($result)>0){
+                if(!empty($result[0]->type_id)) {
+                    $result[0]->post_type = $this->getTypePostById($result[0]->type_id);
+                }else{
+                    $result[0]->post_type = null;
+                }
+                return $result[0];
+            }
+            return $result;
         }
     }
 }

@@ -95,12 +95,12 @@ class Posts extends Rest_Controller
                     'created_by' => $account['id'],
                     'location_name' => $this->common_model->getLocationNameByLatLng($input['location_lat'], $input['location_lng'])
                 );
-                if ($this->post->createPost($record)) {
+                $isCreate = $this->post->createPost($record);
+                if ($isCreate) {
                     $status = 'success';
                     $message = 'insert post successfully!';
-
                     //push notify for province when user create post
-                    $this->notify->send_notify_provinces($record);
+                    $this->notify->send_notify_provinces($isCreate);
                 }
             }
         }
@@ -135,12 +135,6 @@ class Posts extends Rest_Controller
                 if ($isUpdate) {
                     $status = 'success';
                     $message = 'Update post successfully.';
-
-                    //push notify for province when user update my post
-                    $data_send = array(
-                        'id' => $input['id']
-                    );
-                    $this->notify->send_notify_provinces($data_send);
                 } else{
                     $status = 'failure';
                     $message = 'update error';
@@ -195,6 +189,8 @@ class Posts extends Rest_Controller
             if ($isSavePost) {
                 $status = 'success';
                 $message = '';
+                //push notify for province when user create post
+                $this->notify->send_notify_provinces($isSavePost);
             }
         }
 

@@ -68,10 +68,9 @@ class Config_model extends CI_Model {
         return array();
     }
 
-    function getImageEmergency(){
-        $this->db->select('avatar');
+    function getPostTypeEmergency(){
         $this->db->from('type_posts');
-        $this->db->where('id =',1);
+        $this->db->where('id',1);
         $query = $this->db->get();
         $result = $query->result_array();
         $result[0]['avatar'] = $this->file_model->getLinkFileById( $result[0]['avatar']);

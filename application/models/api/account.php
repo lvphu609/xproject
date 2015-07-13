@@ -255,7 +255,7 @@ class Account extends CI_Model {
             phone_number, blood_group_id, blood_group_rh_id,
             avatar, address, updated_at,
             contact_name, contact_phone,
-            location_lat, location_lng'
+            location_lat, location_lng, reg_id'
         );
         $this->db->from('accounts');
         $this->db->where('id',$id);

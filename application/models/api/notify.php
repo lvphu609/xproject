@@ -13,7 +13,7 @@ class Notify extends CI_Model {
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('api/post','api/account'));
+        $this->load->model(array('api/post','api/account','api/notification',));
     }
 
     /**
@@ -50,7 +50,7 @@ class Notify extends CI_Model {
     /**
      * get reg_id by account_id
      * */
-        function getRegId($account_id){
+    function getRegId($account_id){
         $this->db->where('id',$account_id);
         $query = $this->db->get('accounts');
         $result = $query->result_array();
@@ -61,35 +61,33 @@ class Notify extends CI_Model {
      * send notify for all province -> 10Km
      * */
 
-    function send_notify_provinces($record){
-        if(($key = array_search('', $record)) !== false) {
-            unset($record[$key]);
-        }
-        $post_id = $this->post->getPostIdForPushNotify($record);
-        $status = 'success';
-        $message = 'insert post successfully!';
-        $results = $this->post->getPostDetailById($post_id);
-        $validation = '';
+    function send_notify_provinces($post_id){
         //create object to send to gcm
-        $message_to_send = new stdClass;
-        $message_to_send->status = $status;
-        $message_to_send->message = $message;
-        $message_to_send->results = $results;
-        $message_to_send->validation = $validation;
-        //var_dump($message_to_send); die();
-        $account_array = $this->account->getAccountIdByLocation($message_to_send->results, 10);
-        //var_dump($account_array);die();
+        $message_to_send = new stdClass();
+        $message_to_send->data = new stdClass();
+        $message_to_send->data->results = new stdClass();
+
+        $message_to_send->data->status = API_SUCCESS;
+        $message_to_send->data->message = '';
+        $message_to_send->data->results = $this->post->getPostDetailById($post_id);
+        $message_to_send->data->validation = null;
+
+        $account_array = $this->account->getAccountIdByLocation($message_to_send->data->results, 10);
         $regId_array = array();
         if (count($account_array) > 0) {
             for ($i = 0; $i < count($account_array); $i++) {
                 array_push($regId_array, $this->getRegId($account_array[$i]['id']));
+                $this->notification->save_notification(
+                    $message_to_send->data->results->created_by,
+                    $account_array[$i]['id'],
+                    $post_id,
+                    1,  //type of notification 1 is posts
+                    1  //acction create post
+                );
             }
-            //var_dump($regId_array); die();
-                $is_send = $this->sendPushNotificationToGCM($regId_array, $message_to_send);
-                if($is_send){
-                    $status = 'success';
-                    $message = 'insert post successfully!';
-                }
+            $message_to_send->data->results->notify = $this->notification->get_message_notification($message_to_send->data->results->created_by, $message_to_send->data->results);
+
+            $this->sendPushNotificationToGCM($regId_array, $message_to_send);
         }
     }
 

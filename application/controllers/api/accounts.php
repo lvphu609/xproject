@@ -128,9 +128,9 @@ class Accounts extends Rest_Controller
                     'blood_group_id' => $dataInput['blood_group_id'],
                     'blood_group_rh_id' => $dataInput['blood_group_rh_id'],
                     'avatar' => $file_id,
-                    'address' => $dataInput['address'],
-                    'contact_name' => $dataInput['contact_name'],
-                    'contact_phone' => $dataInput['contact_phone'],
+                    'address' => !empty($dataInput['address']) ? $dataInput['address'] : "",
+                    'contact_name' => !empty($dataInput['contact_name']) ? $dataInput['contact_name'] : "",
+                    'contact_phone' => !empty($dataInput['contact_phone']) ? $dataInput['contact_phone'] : "",
                     'account_type' => $dataInput['account_type'],
                     /*'android_id' => $dataInput['android_id']*/
                 );
@@ -191,9 +191,9 @@ class Accounts extends Rest_Controller
                     'phone_number' => $dataInput['phone_number'],
                     'blood_group_id' => $dataInput['blood_group_id'],
                     'blood_group_rh_id' => $dataInput['blood_group_rh_id'],
-                    'address' => $dataInput['address'],
-                    'contact_name' => $dataInput['contact_name'],
-                    'contact_phone' => $dataInput['contact_phone']
+                    'address' => !empty($dataInput['address']) ? $dataInput['address'] : "",
+                    'contact_name' => !empty($dataInput['contact_name']) ? $dataInput['contact_name'] : "",
+                    'contact_phone' => !empty($dataInput['contact_phone']) ? $dataInput['contact_phone'] : ""
                 );
                 if(!empty($dataInput['avatar'])) {
                     $file_id = $this->file_model->do_upload('accounts', TRUE);
@@ -688,7 +688,7 @@ class Accounts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
-    /**url : http://domain/xproject/api/accounts/store_location
+    /**url : http://domain/xproject/api/accounts/update_location
      * @method: POST
      *header
      * @token  string has
@@ -696,10 +696,11 @@ class Accounts extends Rest_Controller
      *@param
      * @location_lat             string
      * @location_lng             string
+     * @id int
      *
      *@response  object
      * */
-    function store_location_post(){
+    function update_location_post(){
         $status = API_FAILURE;
         $message = API_ERROR;
         $results = null;
@@ -788,7 +789,7 @@ class Accounts extends Rest_Controller
         $this->response($data, HEADER_SUCCESS);
     }
 
-    /**url : http://domain/xproject/api/accounts/store_reg_id
+    /**url : http://domain/xproject/api/accounts/update_reg_id
      * @method: POST
      *header
      * @token  string has
@@ -797,7 +798,7 @@ class Accounts extends Rest_Controller
      *
      *@response  object
      * */
-    function store_reg_id_post(){
+    function update_reg_id_post(){
         $status = API_FAILURE;
         $message = API_ERROR;
         $results = null;

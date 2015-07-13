@@ -100,7 +100,8 @@ $autoload['language'] = array(
     'admin_common',
     'admin_home',
     'admin_login',
-    'admin_config'
+    'admin_config',
+    'notification'
 );
 
 

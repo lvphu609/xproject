@@ -55,4 +55,42 @@ if ( ! function_exists('my_lang'))
 }
 
 
+/**
+ * notify type
+ */
+if ( ! function_exists('get_notify_type'))
+{
+    function get_notify_type($id)
+    {
+        $notify_type = array(
+            1 => 'posts'
+        );
+        return $notify_type[$id];
+    }
+}
+
+/**
+ * acction notify
+*/
+if ( ! function_exists('get_notify_action'))
+{
+    function get_notify_action($notify_type,$id)
+    {
+        //posts action---
+        if ($notify_type == "posts"){
+            $action_post = array(
+                1 => 'request_post',
+                2 => 'pick_post',
+                3 => 'cancel_post',
+                4 => 'complete_post'
+            );
+            return $action_post[$id];
+        }
+        return array();
+    }
+}
+
+
+
+
 ?>
