@@ -618,7 +618,7 @@ class Posts extends Rest_Controller
 
                 //push notify for user create this post
                 try {
-                    $this->notify->send_notify_account(array($input['id']));
+                    $this->notify->send_notify_account(array($input['id']),1,2);
                 }catch (ErrorException $e){
                     return null;
                 }
@@ -740,7 +740,7 @@ class Posts extends Rest_Controller
 
                     //push notify for provider had picked this post
                     try{
-                        $this->notify->send_notify_account(array($input['id']));
+                        $this->notify->send_notify_account(array($input['id']),1,4);
                     }catch (ErrorException $e){
                         return null;
                     }
@@ -906,7 +906,6 @@ class Posts extends Rest_Controller
         } else {
             $json = $this->input->post('arr_post_id');
             $array_post_id = json_decode($json, true);
-            //var_dump($array_post_id); die();
             $pickStatus = $this->post->picks($array_post_id, $this->account_info);
             if (is_array($pickStatus)) {
                 $message = $this->lang->line('message_has_pick_someone');
@@ -918,7 +917,7 @@ class Posts extends Rest_Controller
                     $message = '';
                     $status = API_SUCCESS;
                     try {
-                        $this->notify->send_notify_account($array_post_id);
+                        $this->notify->send_notify_account($array_post_id,1,2);
                     } catch (ErrorException $e) {
                         return null;
                     }

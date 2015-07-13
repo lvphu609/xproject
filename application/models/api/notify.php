@@ -95,7 +95,7 @@ class Notify extends CI_Model {
      * send notify for user created post when province picked your post
      * */
 
-    function send_notify_account($arrPostId){
+    function send_notify_account($arrPostId,$type,$action){
         for($i=0; $i<count($arrPostId); $i++) {
             $postInfo = $this->post->getPostDetailById($arrPostId[$i]);
             $message_to_send = new stdClass();
@@ -107,9 +107,17 @@ class Notify extends CI_Model {
             $message_to_send->data->results = $postInfo;
             $message_to_send->data->validation = null;
 
-            $message_to_send->data->results->notify = $this->notification->get_message_notification($postInfo,1,2);
+            $message_to_send->data->results->notify = $this->notification->get_message_notification($postInfo,$type,$action);
 
             $regId_array = $this->getRegId($postInfo->created_by);
+
+            $this->notification->save_notification(
+                $postInfo->picked_by,
+                $postInfo->created_by,
+                $arrPostId[$i],
+                1,  //type of notification 1 is posts
+                2  //acction create post
+            );
             $this->sendPushNotificationToGCM(array($regId_array), $message_to_send);
         }
     }
