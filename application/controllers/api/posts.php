@@ -678,7 +678,7 @@ class Posts extends Rest_Controller
 
                     //push notify for provider had picked this post
                     try {
-                        $this->notify->send_notify_account(array($input['id']));
+                        $this->notify->send_notify_account(array($input['id']),1,3,$account['id']);
                     }catch (ErrorException $e){
                         return null;
                     }

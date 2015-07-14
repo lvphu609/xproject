@@ -54,7 +54,10 @@ class Notify extends CI_Model {
         $this->db->where('id',$account_id);
         $query = $this->db->get('accounts');
         $result = $query->result_array();
-        return $result[0]['reg_id'];
+        if(count($result) > 0) {
+            return $result[0]['reg_id'];
+        }
+        return "";
     }
 
     /**
@@ -95,7 +98,7 @@ class Notify extends CI_Model {
      * send notify for user created post when province picked your post
      * */
 
-    function send_notify_account($arrPostId,$type,$action){
+    function send_notify_account($arrPostId,$type,$action, $account_id = null){
         for($i=0; $i<count($arrPostId); $i++) {
             $postInfo = $this->post->getPostDetailById($arrPostId[$i]);
             $message_to_send = new stdClass();
@@ -109,6 +112,7 @@ class Notify extends CI_Model {
 
             $message_to_send->data->results->notify = $this->notification->get_message_notification($postInfo,$type,$action);
 
+            //pick post-----------------------------
             if($type == 1 && $action == 2){
                 $regId_array = $this->getRegId($postInfo->created_by);
 
@@ -121,6 +125,7 @@ class Notify extends CI_Model {
                 );
             }
 
+            //complete post----------------------------
             if($type == 1 && $action == 4){
                 $regId_array = $this->getRegId($postInfo->picked_by);
 
@@ -133,6 +138,34 @@ class Notify extends CI_Model {
                 );
             }
 
+            //destroy post-----------------------------
+            if($type == 1 && $action == 3){
+
+                //provider --> user
+                if($postInfo->picked_by == $account_id){
+                    $regId_array = $this->getRegId($postInfo->created_by);
+                    $this->notification->save_notification(
+                        $postInfo->picked_by,
+                        $postInfo->created_by,
+                        $arrPostId[$i],
+                        1,  //type of notification 1 is posts
+                        3  //acction complete post
+                    );
+                }
+
+                //user --> provider
+                if($postInfo->created_by == $account_id){
+                    $regId_array = $this->getRegId($postInfo->picked_by);
+                    $this->notification->save_notification(
+                        $postInfo->created_by,
+                        $postInfo->picked_by,
+                        $arrPostId[$i],
+                        1,  //type of notification 1 is posts
+                        3  //acction complete post
+                    );
+                }
+
+            }
             $this->sendPushNotificationToGCM(array($regId_array), $message_to_send);
         }
     }
