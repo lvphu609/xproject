@@ -88,7 +88,7 @@ class Notify extends CI_Model {
                     1  //acction create post
                 );
             }
-            $message_to_send->data->results->notify = $this->notification->get_message_notification($message_to_send->data->results,1,1);
+            $message_to_send->data->results->notify = $this->notification->get_message_notification($post_id,1,1);
 
             $this->sendPushNotificationToGCM($regId_array, $message_to_send);
         }
@@ -110,7 +110,7 @@ class Notify extends CI_Model {
             $message_to_send->data->results = $postInfo;
             $message_to_send->data->validation = null;
 
-            $message_to_send->data->results->notify = $this->notification->get_message_notification($postInfo,$type,$action);
+            $message_to_send->data->results->notify = $this->notification->get_message_notification($arrPostId[$i],$type,$action);
 
             //pick post-----------------------------
             if($type == 1 && $action == 2){

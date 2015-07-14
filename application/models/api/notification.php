@@ -23,7 +23,8 @@ class Notification extends CI_Model {
         $accountInfo = $this->account->getAccountById($account_id);
 
         $this->db->select('
-            n.*
+            n.*,
+            po.type_id
         ');
         $this->db->from('notifications as n');
 
@@ -32,6 +33,10 @@ class Notification extends CI_Model {
         $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
 
         $this->db->where('n.is_delete', NULL);
+
+        $this->db->where('n.recipient_id', $account_id);
+
+        $this->db->order_by('created_at','DESC');
 
         if ($page !== null)
         {
@@ -45,10 +50,17 @@ class Notification extends CI_Model {
             if(count($result)>0){
                 $arrTemp = array();
                 foreach($result as $key => $type){
+                    //post type
                     if(!empty($type['type_id'])) {
                         $type['post_type'] = $this->post->getTypePostById($type['type_id']);
                     }else{
                         $type['post_type'] = null;
+                    }
+                    //notify
+                    if(!empty($type['record_id']) && !empty($type['type_of_notification']) && !empty($type['action'])){
+                        $type['notify'] = $this->get_message_notification($type['record_id'],$type['type_of_notification'],$type['action']);
+                    }else{
+                        $type['notify'] = null;
                     }
                     array_push($arrTemp,$type);
                 }
@@ -83,7 +95,8 @@ class Notification extends CI_Model {
         return null;
     }
 
-    function get_message_notification($postInfo,$type,$action){
+    function get_message_notification($post_id,$type,$action){
+        $postInfo = $this->post->getPostDetailById($post_id);
         $post_type = $postInfo->post_type;
         $account = $this->account->getAccountInfoById($postInfo->created_by);
         if($account){

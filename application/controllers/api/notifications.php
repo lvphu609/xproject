@@ -28,7 +28,7 @@ class Notifications extends Rest_Controller
     /**
      * get list notifications
      * @method: Post
-     * @link access: http://domain/xproject/api/notifications/get_notifications
+     * @link access: http://domain/xproject/api/notifications/get_my_notifications
      *
      * parram
      * @token   string has
@@ -40,7 +40,7 @@ class Notifications extends Rest_Controller
      *
      * @return array
      */
-    function get_notifications_post(){
+    function get_my_notifications_post(){
         $status = API_FAILURE;
         $message = API_ERROR;
         $results = null;
