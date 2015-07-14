@@ -12,10 +12,10 @@
     border: 1px solid #ccc;
     border-radius: 3px;
     margin-top: 7px;
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 200px;
     cursor: move;
-    margin-left:30%;
+    margin-left:13%;
 }
 
 .cropit-image-background {

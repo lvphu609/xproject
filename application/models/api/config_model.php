@@ -57,12 +57,11 @@ class Config_model extends CI_Model {
             if(count($result)>0){
                 $arrTemp = array();
                 foreach($result as $key => $type){
-                    $type['avatar'] = $this->file_model->getLinkFileById($type['avatar'],'resized');
+                    $type['avatar'] = $this->file_model->getLinkFileById($type['avatar']);
                     array_push($arrTemp,$type);
                 }
                 return $arrTemp;
             }
-
             return $result;
         }
         return array();
@@ -73,7 +72,7 @@ class Config_model extends CI_Model {
         $this->db->where('id',1);
         $query = $this->db->get();
         $result = $query->result_array();
-        $result[0]['avatar'] = $this->file_model->getLinkFileById( $result[0]['avatar']);
+        $result[0]['avatar'] = $this->file_model->getLinkFileById($result[0]['avatar']);
         return $result[0];
     }
 
