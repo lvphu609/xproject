@@ -109,15 +109,30 @@ class Notify extends CI_Model {
 
             $message_to_send->data->results->notify = $this->notification->get_message_notification($postInfo,$type,$action);
 
-            $regId_array = $this->getRegId($postInfo->created_by);
+            if($type == 1 && $action == 2){
+                $regId_array = $this->getRegId($postInfo->created_by);
 
-            $this->notification->save_notification(
-                $postInfo->picked_by,
-                $postInfo->created_by,
-                $arrPostId[$i],
-                1,  //type of notification 1 is posts
-                2  //acction create post
-            );
+                $this->notification->save_notification(
+                    $postInfo->picked_by,
+                    $postInfo->created_by,
+                    $arrPostId[$i],
+                    1,  //type of notification 1 is posts
+                    2  //acction create post
+                );
+            }
+
+            if($type == 1 && $action == 4){
+                $regId_array = $this->getRegId($postInfo->picked_by);
+
+                $this->notification->save_notification(
+                    $postInfo->created_by,
+                    $postInfo->picked_by,
+                    $arrPostId[$i],
+                    1,  //type of notification 1 is posts
+                    4  //acction complete post
+                );
+            }
+
             $this->sendPushNotificationToGCM(array($regId_array), $message_to_send);
         }
     }
