@@ -13,13 +13,12 @@ class Notification extends CI_Model {
     function __construct()
     {
         parent::__construct();
-        $this->load->model(array('api/post','api/account'));
+        $this->load->model(array('api/post','api/account','file_model'));
     }
 
 
     //get my notification
     function getMyNotifications($account_id,$page = null,$numberPerPage = null){
-        $this->load->model('file_model');
         $accountInfo = $this->account->getAccountById($account_id);
 
         $this->db->select('
@@ -104,9 +103,82 @@ class Notification extends CI_Model {
             $data->title = my_lang('notify_'.get_notify_action(get_notify_type($type),$action),array($account['full_name'], $post_type['name']));
             $data->created_at = $postInfo->created_at;
             $data->avatar = $post_type['avatar'];
+            $data->post_id = $post_id;
             return $data;
         }
         return null;
+    }
+
+    function view(){
+        try {
+            $input = $this->input->post();
+            $isUpdate = $this->db->update('notifications',
+                array('read_at' => getCurrentDate()),
+                array(
+                    'id' => $input['id'],
+                    'recipient_id' => $input['account_id'])
+            );
+
+            if ($isUpdate) {
+                return true;
+            }
+            return false;
+        }catch (ErrorException $e){
+            return false;
+        }
+    }
+
+    function getNewestMyNotification(){
+        $input = $this->input->post();
+        $account_id = $input['account_id'];
+        $date_time = $input['date_time'];
+        try {
+            $this->db->select('
+                n.*,
+                po.type_id
+            ');
+            $this->db->from('notifications as n');
+
+            $this->db->where("(n.created_at > '$date_time')");
+
+            $this->db->join('posts as po', 'po.id = n.record_id');
+
+            $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
+
+            $this->db->where('n.is_delete', NULL);
+
+            $this->db->where('n.recipient_id', $account_id);
+
+            $this->db->order_by('n.created_at','DESC');
+
+            $query = $this->db->get();
+
+            if($query->num_rows() > 0 ){
+                $result = $query->result_array();
+                if(count($result)>0){
+                    $arrTemp = array();
+                    foreach($result as $key => $type){
+                        //post type
+                        if(!empty($type['type_id'])) {
+                            $type['post_type'] = $this->post->getTypePostById($type['type_id']);
+                        }else{
+                            $type['post_type'] = null;
+                        }
+                        //notify
+                        if(!empty($type['record_id']) && !empty($type['type_of_notification']) && !empty($type['action'])){
+                            $type['notify'] = $this->get_message_notification($type['record_id'],$type['type_of_notification'],$type['action']);
+                        }else{
+                            $type['notify'] = null;
+                        }
+                        array_push($arrTemp,$type);
+                    }
+                    return $arrTemp;
+                }
+                return $result;
+            }
+        }catch(ErrorException $e){
+            return null;
+        }
     }
 
 }

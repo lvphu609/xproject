@@ -443,19 +443,6 @@ class Post extends CI_Model {
     function getPostInfoById($id)
     {
         try{
-            /*$query = $this->db->query("
-                SELECT p.created_at AS created_at, a.full_name AS full_name, t.name AS type_post_name
-                FROM posts AS p, accounts AS a, type_posts AS t
-                WHERE p.created_by = a.id AND p.type_id = t.id AND p.id =".$id
-            );*/
-
-            /*$this->db->select('p.*');
-            $this->db->from('posts as p');
-            $this->db->where('p.id',$id);
-            $this->db->join('');
-            $query = $this->db->get();
-            return $query->result_array();*/
-
             $this->db->select('*');
             $this->db->from('posts as p');
             $this->db->where('p.id',$id);
