@@ -142,6 +142,8 @@ class Post extends CI_Model {
 
         $this->db->order_by('po.created_at', 'DESC');
 
+        $this->db->order_by('po.updated_at', 'DESC');
+
         if ($page !== null)
         {
             $begin = ($page - 1)*$numberPerPage;
@@ -246,8 +248,9 @@ class Post extends CI_Model {
             }
 
             $this->db->where('po.is_delete', NULL);
-            $this->db->order_by('po.is_emergency', 'DESC');
+            //$this->db->order_by('po.is_emergency', 'DESC');
             $this->db->order_by('po.created_at', 'DESC');
+            $this->db->order_by('po.updated_at', 'DESC');
 
             $query = $this->db->get();
 
@@ -331,7 +334,7 @@ class Post extends CI_Model {
                   AND z.status <> 2
                   ".$query_newest."
                   AND x.name LIKE '%" . $input['query'] . "%'
-                  ORDER BY distance_in_km, z.created_at DESC
+                  ORDER BY z.created_at DESC
                   " . $limit . "
                 ");
 
@@ -397,7 +400,7 @@ class Post extends CI_Model {
                   AND z.status <> 2
                   AND x.name LIKE '%" . $input['query'] . "%'
 
-                  ORDER BY distance_in_km, z.created_at DESC
+                  ORDER BY z.created_at DESC
                 ");
 
             $result = $query->result_array();
@@ -534,7 +537,7 @@ class Post extends CI_Model {
             if($check_status_pick || $check_status_complete){ // check this post hasn't picked
                 return false;
             }else{
-                $isUpdatePost = $this->db->update('posts',$data,array('id' => $post_id));
+                $isUpdatePost = $this->db->update('posts',$data,array('id' => $post_id, 'is_delete' => null));
                 $isUpdateAccount = $this->db->update('accounts',array('location_lat' => $loaction_lat, 'location_lng' => $location_lng),array('id' => $account['id']));
                 if($isUpdatePost && $isUpdateAccount){
                     return true;
