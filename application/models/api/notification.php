@@ -19,17 +19,25 @@ class Notification extends CI_Model {
 
     //get my notification
     function getMyNotifications($account_id,$page = null,$numberPerPage = null){
-        $accountInfo = $this->account->getAccountById($account_id);
+        //$accountInfo = $this->account->getAccountById($account_id);
 
         $this->db->select('
-            n.*,
-            po.type_id
+            n.id,
+            n.read_at,
+            n.created_at,
+            n.record_id as post_id,
+            n.type_of_notification,
+            n.action,
+            ac.full_name,
+            pot.name
         ');
         $this->db->from('notifications as n');
 
         $this->db->join('posts as po', 'po.id = n.record_id');
 
         $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
+
+        $this->db->join('accounts as ac', 'ac.id = po.created_by');
 
         $this->db->where('n.is_delete', NULL);
 
@@ -48,26 +56,31 @@ class Notification extends CI_Model {
             $result = $query->result_array();
             if(count($result)>0){
                 $arrTemp = array();
-                foreach($result as $key => $type){
-                    //post type
-                    if(!empty($type['type_id'])) {
-                        $type['post_type'] = $this->post->getTypePostById($type['type_id']);
-                    }else{
-                        $type['post_type'] = null;
+                foreach($result as $key => $notify){
+                    $postInfo = $this->post->getPostDetailById($notify['post_id']);
+                    $post_type = $postInfo->post_type;
+                    $notify['avatar'] = $post_type['avatar'];
+                    $notify['title'] = my_lang('notify_'.get_notify_action(get_notify_type($notify['type_of_notification']),$notify['action']),array($notify['full_name'], $post_type['name']));
+
+                    $arrUnset = array(
+                        'type_of_notification',
+                        'action',
+                        'full_name',
+                        'name'
+                    );
+
+                    foreach($arrUnset as $value){
+                        unset($notify[$value]);
                     }
-                    //notify
-                    if(!empty($type['record_id']) && !empty($type['type_of_notification']) && !empty($type['action'])){
-                        $type['notify'] = $this->get_message_notification($type['record_id'],$type['type_of_notification'],$type['action']);
-                    }else{
-                        $type['notify'] = null;
-                    }
-                    array_push($arrTemp,$type);
+
+                    array_push($arrTemp,$notify);
                 }
                 return $arrTemp;
             }
             return $result;
         }
     }
+
 
     //count all notification
     function countAllMyNotifications($account_id){
@@ -134,8 +147,14 @@ class Notification extends CI_Model {
         $date_time = $input['date_time'];
         try {
             $this->db->select('
-                n.*,
-                po.type_id
+                n.id,
+                n.read_at,
+                n.created_at,
+                n.record_id as post_id,
+                n.type_of_notification,
+                n.action,
+                ac.full_name,
+                pot.name
             ');
             $this->db->from('notifications as n');
 
@@ -144,6 +163,8 @@ class Notification extends CI_Model {
             $this->db->join('posts as po', 'po.id = n.record_id');
 
             $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
+
+            $this->db->join('accounts as ac', 'ac.id = po.created_by');
 
             $this->db->where('n.is_delete', NULL);
 
@@ -157,20 +178,24 @@ class Notification extends CI_Model {
                 $result = $query->result_array();
                 if(count($result)>0){
                     $arrTemp = array();
-                    foreach($result as $key => $type){
-                        //post type
-                        if(!empty($type['type_id'])) {
-                            $type['post_type'] = $this->post->getTypePostById($type['type_id']);
-                        }else{
-                            $type['post_type'] = null;
+                    foreach($result as $key => $notify){
+                        $postInfo = $this->post->getPostDetailById($notify['post_id']);
+                        $post_type = $postInfo->post_type;
+                        $notify['avatar'] = $post_type['avatar'];
+                        $notify['title'] = my_lang('notify_'.get_notify_action(get_notify_type($notify['type_of_notification']),$notify['action']),array($notify['full_name'], $post_type['name']));
+
+                        $arrUnset = array(
+                            'type_of_notification',
+                            'action',
+                            'full_name',
+                            'name'
+                        );
+
+                        foreach($arrUnset as $value){
+                            unset($notify[$value]);
                         }
-                        //notify
-                        if(!empty($type['record_id']) && !empty($type['type_of_notification']) && !empty($type['action'])){
-                            $type['notify'] = $this->get_message_notification($type['record_id'],$type['type_of_notification'],$type['action']);
-                        }else{
-                            $type['notify'] = null;
-                        }
-                        array_push($arrTemp,$type);
+
+                        array_push($arrTemp,$notify);
                     }
                     return $arrTemp;
                 }
