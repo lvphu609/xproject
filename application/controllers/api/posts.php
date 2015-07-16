@@ -627,7 +627,7 @@ class Posts extends Rest_Controller
 
                 //push notify for user create this post
                 try {
-                    //$this->notify->send_notify_account(array($input['id']),1,2);
+                    $this->notify->send_notify_account(array($input['id']),1,2);
                 }catch (ErrorException $e){
                     return null;
                 }
@@ -687,7 +687,7 @@ class Posts extends Rest_Controller
 
                     //push notify for provider had picked this post
                     try {
-                        //$this->notify->send_notify_account(array($input['id']),1,3,$account['id']);
+                        $this->notify->send_notify_account(array($input['id']),1,3,$account['id']);
                     }catch (ErrorException $e){
                         return null;
                     }
@@ -749,7 +749,7 @@ class Posts extends Rest_Controller
 
                     //push notify for provider had picked this post
                     try{
-                        //$this->notify->send_notify_account(array($input['id']),1,4);
+                        $this->notify->send_notify_account(array($input['id']),1,4);
                     }catch (ErrorException $e){
                         return null;
                     }
@@ -926,7 +926,7 @@ class Posts extends Rest_Controller
                     $message = '';
                     $status = API_SUCCESS;
                     try {
-                        //$this->notify->send_notify_account($array_post_id,1,2);
+                        $this->notify->send_notify_account($array_post_id,1,2);
                     } catch (ErrorException $e) {
                         return null;
                     }

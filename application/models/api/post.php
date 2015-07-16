@@ -334,7 +334,7 @@ class Post extends CI_Model {
                   AND z.status <> 2
                   ".$query_newest."
                   AND x.name LIKE '%" . $input['query'] . "%'
-                  ORDER BY z.created_at DESC, z.picked_at ASC
+                  ORDER BY z.picked_at ASC, z.created_at DESC
                   " . $limit . "
                 ");
 
@@ -739,11 +739,12 @@ class Post extends CI_Model {
         try {
             $location_lat = $this->input->post('location_lat');
             $location_lng = $this->input->post('location_lng');
+            $pick_date = getCurrentDate();
             $data = array(
-                'picked_at' => getCurrentDate(),
+                'picked_at' => $pick_date,
                 'picked_by' => $account['id'],
                 'status' => 1,
-                'updated_at' => getCurrentDate()
+                'updated_at' => $pick_date
             );
             $error = array();
             $arr_post_update_success = array();
@@ -751,9 +752,10 @@ class Post extends CI_Model {
             for ($i = 0; $i < count($array_post_id); $i++) {
                 $check_status_pick = $this->checkStatus((int)$array_post_id[$i],1);
                 $check_status_complete = $this->checkStatus((int)$array_post_id[$i],2);
+                $check_is_delete = $this->checkIsdelete((int)$array_post_id[$i]);
 
-                //check the post is picked or complete
-                if($check_status_pick || $check_status_complete) {
+                //check the post is picked or complete or deleted
+                if($check_status_pick || $check_status_complete || $check_is_delete) {
                     $PostInfo = $this->getPostDetailById($array_post_id[$i]);
                     $title = $PostInfo->post_type['name'];
                     $user = $PostInfo->normal_account['full_name'];
