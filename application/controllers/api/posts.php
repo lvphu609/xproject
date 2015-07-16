@@ -467,9 +467,15 @@ class Posts extends Rest_Controller
         } else {
             $input = $this->input->post();
             $isDelete = $this->post->deletePostById($input['id'],$input['account_id']);
-            if($isDelete) {
+            if(is_array($isDelete)){
+                $status = API_FAILURE;
+                $message = $isDelete['message'];
+            }else if($isDelete == true){
                 $status = API_SUCCESS;
                 $message = API_SUCCESS;
+            }else {
+                $status = API_FAILURE;
+                $message = API_ERROR;
             }
         }
 
@@ -612,13 +618,16 @@ class Posts extends Rest_Controller
         } else {
             $input = $this->input->post();
             $pickStatus = $this->post->pick($this->account_info);
-            if($pickStatus){
+            if(is_array($pickStatus)){
+                $status = API_FAILURE;
+                $message = $pickStatus['message'];
+            }else if($pickStatus == true){
                 $message = '';
                 $status = API_SUCCESS;
 
                 //push notify for user create this post
                 try {
-                    $this->notify->send_notify_account(array($input['id']),1,2);
+                    //$this->notify->send_notify_account(array($input['id']),1,2);
                 }catch (ErrorException $e){
                     return null;
                 }
@@ -678,7 +687,7 @@ class Posts extends Rest_Controller
 
                     //push notify for provider had picked this post
                     try {
-                        $this->notify->send_notify_account(array($input['id']),1,3,$account['id']);
+                        //$this->notify->send_notify_account(array($input['id']),1,3,$account['id']);
                     }catch (ErrorException $e){
                         return null;
                     }
@@ -740,7 +749,7 @@ class Posts extends Rest_Controller
 
                     //push notify for provider had picked this post
                     try{
-                        $this->notify->send_notify_account(array($input['id']),1,4);
+                        //$this->notify->send_notify_account(array($input['id']),1,4);
                     }catch (ErrorException $e){
                         return null;
                     }
@@ -917,7 +926,7 @@ class Posts extends Rest_Controller
                     $message = '';
                     $status = API_SUCCESS;
                     try {
-                        $this->notify->send_notify_account($array_post_id,1,2);
+                        //$this->notify->send_notify_account($array_post_id,1,2);
                     } catch (ErrorException $e) {
                         return null;
                     }

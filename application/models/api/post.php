@@ -334,7 +334,7 @@ class Post extends CI_Model {
                   AND z.status <> 2
                   ".$query_newest."
                   AND x.name LIKE '%" . $input['query'] . "%'
-                  ORDER BY z.created_at DESC
+                  ORDER BY z.created_at DESC, z.picked_at ASC
                   " . $limit . "
                 ");
 
@@ -416,9 +416,17 @@ class Post extends CI_Model {
 *
 * */
     function deletePostById($id,$account_id){
-        $isDelete = $this->db->update('posts',array('is_delete' => 1, 'updated_at' => getCurrentDate()),array('id' => $id,'created_by' => $account_id));
-        if($isDelete){
-            return true;
+        $check_status_picked = $this->checkStatus($id,1);
+        if($check_status_picked){  //check status this post hasn't picked or completed
+            return array(
+                'status' => false,
+                'message' => $this->lang->line('delete_post_has_picked')
+            );
+        }else {
+            $isDelete = $this->db->update('posts', array('is_delete' => 1, 'updated_at' => getCurrentDate()), array('id' => $id, 'created_by' => $account_id));
+            if ($isDelete) {
+                return true;
+            }
         }
         return false;
     }
@@ -534,21 +542,36 @@ class Post extends CI_Model {
             );
             $check_status_pick = $this->checkStatus($post_id,1);
             $check_status_complete = $this->checkStatus($post_id,2);
+            $check_is_delete = $this->checkIsdelete($post_id);
             if($check_status_pick || $check_status_complete){ // check this post hasn't picked
                 return false;
+            }
+            else if($check_is_delete) {
+                return array(
+                    'status' => false,
+                    'message' => $this->lang->line('post_is_deleted')
+                );
             }else{
-                $isUpdatePost = $this->db->update('posts',$data,array('id' => $post_id, 'is_delete' => null));
-                $isUpdateAccount = $this->db->update('accounts',array('location_lat' => $loaction_lat, 'location_lng' => $location_lng),array('id' => $account['id']));
-                if($isUpdatePost && $isUpdateAccount){
-                    return true;
-                }else{
-                    return false;
-                }
+                    $isUpdatePost = $this->db->update('posts',$data,array('id' => $post_id, 'is_delete' => null));
+                    $isUpdateAccount = $this->db->update('accounts',array('location_lat' => $loaction_lat, 'location_lng' => $location_lng),array('id' => $account['id']));
+                    if($isUpdatePost && $isUpdateAccount){
+                        return true;
+                    }else{
+                        return false;
+                    }
             }
         }catch (ErrorException $e){
             return false;
         }
     }
+/*
+ * check record isdelete
+ */
+    function checkIsdelete($post_id){
+        $query = $this->db->get_where('posts', array('id' => $post_id, 'is_delete' => null));
+        return $query->num_rows() === 0;
+    }
+
 
 /*
 * unpicked post by post_id

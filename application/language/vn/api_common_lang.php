@@ -49,3 +49,5 @@ $lang['message_has_picked'] = 'Bài yêu cầu đã được chọn';
 $lang['message_has_pick_someone'] = 'Một số yêu cầu đã được chọn';
 $lang['arr_post_id'] = 'Danh sách id yêu cầu';
 $lang['date_time'] = 'Thời gian';
+$lang['post_is_deleted'] = 'Không thể chọn bài yêu cầu đã bị xóa.';
+$lang['delete_post_has_picked'] = "Không thể xóa bài yêu cầu đã được chọn.";
