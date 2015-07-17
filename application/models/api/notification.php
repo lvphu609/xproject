@@ -37,7 +37,7 @@ class Notification extends CI_Model {
 
         $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
 
-        $this->db->join('accounts as ac', 'ac.id = po.created_by');
+        $this->db->join('accounts as ac', 'ac.id = po.picked_by');
 
         $this->db->where('n.is_delete', NULL);
 
@@ -110,7 +110,7 @@ class Notification extends CI_Model {
     function get_message_notification($post_id,$type,$action){
         $postInfo = $this->post->getPostDetailById($post_id);
         $post_type = $postInfo->post_type;
-        $account = $this->account->getAccountInfoById($postInfo->created_by);
+        $account = $this->account->getAccountInfoById($postInfo->picked_by);
         if($account){
             $data = new stdClass();
             $data->title = my_lang('notify_'.get_notify_action(get_notify_type($type),$action),array($account['full_name'], $post_type['name']));
@@ -164,7 +164,7 @@ class Notification extends CI_Model {
 
             $this->db->join('type_posts as pot', 'pot.id = po.type_id', 'left');
 
-            $this->db->join('accounts as ac', 'ac.id = po.created_by');
+            $this->db->join('accounts as ac', 'ac.id = po.picked_by');
 
             $this->db->where('n.is_delete', NULL);
 

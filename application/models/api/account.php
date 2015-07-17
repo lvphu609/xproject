@@ -115,7 +115,15 @@ class Account extends CI_Model {
 
         if($query->num_rows()==1){
             $result = $query->result_array();
+            //delete old token
+            $this->db->delete('tokens',
+                array(
+                    'email' => $result[0]['email'],
+                    //'forgot_password_code' => null
+                )
+            );
 
+            //create new token
             $access_token = md5(uniqid().time().md5($result[0]['email']));
             $isCreateToken = $this->db->insert('tokens',array(
                 'access_token' => $access_token,
