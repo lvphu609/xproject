@@ -15,8 +15,8 @@
   $config['newline'] = "\r\n";
 
   $config['smtp_host'] = 'smtp.googlemail.com';
-  $config['smtp_user'] = 'devs@innoria.com';
-  $config['smtp_pass'] = 'Hoinguoi#di';
+  $config['smtp_user'] = '';
+  $config['smtp_pass'] = '';
   $config['smtp_port'] = '465';
 
   $config['protocol']		= 'smtp';
